@@ -7,10 +7,13 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
+    #  Enable Docker-in-Docker for Testcontainers
     services:
       docker:
         image: docker:dind
-        options: --privileged
+        options: --privileged  #  required to run containers inside CI
+        command: ["--tls=false"] # disable TLS so that Testcontainers connects without certificates
 
     steps:
       - name: Checkout code
@@ -32,6 +35,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      #  Checking that Docker is available in the runner
+      - name: Check Docker status
+        run: docker info
+
       - name: Build and test with Maven
         run: |
           mvn -B clean install -e -X -Dspring.test.constructor.autowire.mode=all
@@ -48,7 +55,7 @@ jobs:
         run: |
           mkdir -p target/unpacked-libs
           unzip -q -j target/*.jar 'BOOT-INF/lib/*.jar' -d target/unpacked-libs || echo "No libraries found in JAR"
-#!!!!
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
