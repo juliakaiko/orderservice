@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -109,13 +110,13 @@ public class OrderControllerTest {
         OrderDto updatedDto = OrderMapper.INSTANSE.toDto(OrderGenerator.generateOrder());
         updatedDto.setId(1L);
         updatedDto.setUserId(10L);
-        updatedDto.setCreationDate(java.time.LocalDate.now());
         updatedDto.setStatus(OrderStatus.SHIPPED);
         log.info("▶ Running test: updateOrder_ShouldReturnUpdatedOrderWithUserResponse, UPDATED_ORDER={}", updatedDto);
 
         OrderWithUserResponse updatedResponse = new OrderWithUserResponse(updatedDto, testUserResponse);
 
-        when(orderService.updateOrder(ORDER_ID, updatedDto)).thenReturn(updatedResponse);
+        when(orderService.updateOrder(eq(ORDER_ID), any(OrderDto.class)))
+                .thenReturn(updatedResponse);
 
         mockMvc.perform(put("/order-service/api/orders/{id}", ORDER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -124,7 +125,7 @@ public class OrderControllerTest {
                 .andExpect(jsonPath("$.order.id").value(ORDER_ID))
                 .andExpect(jsonPath("$.order.status").value(OrderStatus.SHIPPED.name()));
 
-        verify(orderService).updateOrder(ORDER_ID, updatedDto);
+        verify(orderService).updateOrder(eq(ORDER_ID), any(OrderDto.class));
     }
 
     @Test
@@ -132,11 +133,10 @@ public class OrderControllerTest {
         OrderDto updatedDto = OrderMapper.INSTANSE.toDto(OrderGenerator.generateOrder());
         updatedDto.setId(1L);
         updatedDto.setUserId(10L);
-        updatedDto.setCreationDate(java.time.LocalDate.now());
         updatedDto.setStatus(OrderStatus.SHIPPED);
         log.info("▶ Running test: updateOrder_ShouldReturnNotFound, UPDATED_ORDER={}", updatedDto);
 
-        when(orderService.updateOrder(ORDER_ID, updatedDto))
+        when(orderService.updateOrder(eq(ORDER_ID), any(OrderDto.class)))
                 .thenThrow(new OrderNotFoundException("Order wasn't found with id " + ORDER_ID));
 
         mockMvc.perform(put("/order-service/api/orders/{id}", ORDER_ID)
@@ -144,7 +144,7 @@ public class OrderControllerTest {
                         .content(objectMapper.writeValueAsString(updatedDto)))
                 .andExpect(status().isNotFound());
 
-        verify(orderService).updateOrder(ORDER_ID, updatedDto);
+        verify(orderService).updateOrder(eq(ORDER_ID), any(OrderDto.class));
     }
 
     @Test

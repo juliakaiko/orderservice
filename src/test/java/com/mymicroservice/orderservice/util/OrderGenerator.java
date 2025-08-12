@@ -12,7 +12,7 @@ public class OrderGenerator {
         return  Order.builder()
                 .userId(1l)
                 .status(OrderStatus.NEW)
-                .creationDate(LocalDate.of(2021, 1, 1))
+                .creationDate(LocalDate.now())
                 .build();
     }
 }

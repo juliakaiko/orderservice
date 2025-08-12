@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,6 +36,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderWithUserResponse createOrder(OrderDto orderDto) {
         Order order = OrderMapper.INSTANSE.toEntity(orderDto);
         log.info("createOrder(): {}",order);
+        order.setCreationDate(LocalDate.now());
         order = orderRepository.save(order);
         OrderDto orderDtoFromDb = OrderMapper.INSTANSE.toDto(order);
         UserResponse userDtoFromUserService = userClient.getUserById(orderDto.getUserId());
