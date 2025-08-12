@@ -12,7 +12,7 @@ jobs:
     services:
       docker:
         image: docker:dind
-        options: --privileged  #  required to run containers inside CI
+        options: --privileged --tls=false
         command: ["--tls=false"] # disable TLS so that Testcontainers connects without certificates
 
     steps:
