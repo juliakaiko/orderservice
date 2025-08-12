@@ -7,6 +7,19 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    services:
+      postgres:  # Required for Testcontainers and database tests
+        image: postgres:latest
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+      docker:
+        image: docker:dind
+        options: --privileged
 
     steps:
       # 1. Clone the repository
@@ -35,16 +48,23 @@ jobs:
       - name: Check Docker status
         run: docker info
 
-      # 5. Build and test with Maven + Testcontainers
+      # 5. Wait for PostgreSQL to initialize
+      - name: Wait for PostgreSQL
+        run: sleep 10
+
+      # 6. Build and test with Maven + Testcontainers
       - name: Build and test with Maven (Testcontainers)
         env:
           TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/test
+          SPRING_DATASOURCE_USERNAME: test
+          SPRING_DATASOURCE_PASSWORD: test
         run: |
           mvn -B clean install -e -X -Dspring.test.constructor.autowire.mode=all
           pkill -f surefirebooter || true           # Kill any stuck test processes
 
-      # 6. Upload test reports if tests fail
+      # 7. Upload test reports if tests fail
       - name: Upload Surefire Reports
         if: failure()
         uses: actions/upload-artifact@v4
@@ -52,13 +72,13 @@ jobs:
           name: surefire-reports
           path: target/surefire-reports/
 
-      # 7. Prepare JAR for SonarCloud analysis (extract dependencies)
+      # 8. Prepare JAR for SonarCloud analysis (extract dependencies)
       - name: Prepare for Sonar analysis
         run: |
           mkdir -p target/unpacked-libs
           unzip -q -j target/*.jar 'BOOT-INF/lib/*.jar' -d target/unpacked-libs || echo "No libraries found in JAR"
 
-      # 8. Static code analysis with SonarCloud
+      # 9. Static code analysis with SonarCloud
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
@@ -72,14 +92,14 @@ jobs:
             -Dsonar.java.binaries=target/classes
             -Dsonar.java.libraries=target/unpacked-libs/*.jar
 
-      # 9. Log in to Docker Hub
+      # 10. Log in to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 10. Build and push Docker image (using local Docker socket)
+      # 11. Build and push Docker image (using local Docker socket)
       - name: Build and Push Docker Image
         if: success()
         run: |
