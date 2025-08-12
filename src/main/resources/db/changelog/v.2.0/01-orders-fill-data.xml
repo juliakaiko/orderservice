@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+      http://www.liquibase.org/xml/ns/pro
+      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+
+    <changeSet id="orders_fill_data_1" author="julia_kaiko">
+        <preConditions>
+            <tableExists tableName="orders"/>
+        </preConditions>
+        <sql>
+            INSERT INTO orders (user_id, status, creation_date) VALUES (1, 'NEW', '2025-05-15');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (3, 'PROCESSING', '2025-01-12');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (7, 'SHIPPED', '2025-02-28');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (10, 'NEW', '2025-03-05');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (5, 'DELIVERED', '2025-04-10');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (12, 'CANCELLED', '2025-05-02');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (1, 'SHIPPED', '2025-05-18');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (8, 'PROCESSING', '2025-06-01');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (14, 'NEW', '2025-06-19');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (19, 'DELIVERED', '2025-07-07');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (21, 'CANCELLED', '2025-07-22');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (16, 'SHIPPED', '2025-08-01');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (9, 'NEW', '2025-08-06');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (4, 'PROCESSING', '2025-08-08');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (6, 'DELIVERED', '2025-09-10');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (17, 'CANCELLED', '2025-09-30');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (2, 'NEW', '2025-10-05');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (11, 'SHIPPED', '2025-10-22');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (13, 'PROCESSING', '2025-11-11');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (18, 'DELIVERED', '2025-11-28');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (20, 'CANCELLED', '2025-12-15');
+        </sql>
+        <rollback>
+            DELETE FROM orders WHERE id IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
