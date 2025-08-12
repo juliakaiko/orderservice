@@ -3,7 +3,6 @@ package com.mymicroservice.orderservice.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.mymicroservice.orderservice.annotations.CurrentDate;
 import com.mymicroservice.orderservice.model.OrderStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -28,7 +27,6 @@ public class OrderDto {
     @NotNull
     private OrderStatus status;
 
-    //@CurrentDate
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate creationDate;
