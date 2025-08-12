@@ -12,7 +12,9 @@ jobs:
     services:
       docker:
         image: docker:dind
-        options: --privileged --tls=false # disable TLS so that Testcontainers connects without certificates
+        options: --privileged
+        env:
+          DOCKER_TLS_CERTDIR: "" # disable TLS so that Testcontainers connects without certificates
 
     steps:
       - name: Checkout code
