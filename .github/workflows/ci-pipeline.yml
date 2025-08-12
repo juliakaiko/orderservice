@@ -8,22 +8,14 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
-    # Docker-in-Docker for Testcontainers
-    services:
-      docker:
-        image: docker:dind
-        options: --privileged --health-cmd "docker info" --health-interval 10s --health-timeout 5s --health-retries 3
-        env:
-          DOCKER_TLS_CERTDIR: "" # disable TLS so Testcontainers doesn't require certificates
-
     steps:
       # 1. Clone the repository
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Fetch full commit history (needed for Sonar analysis and versioning)
 
-      # 2. Cache Maven dependencies
+      # 2. Cache Maven dependencies (speeds up builds)
       - name: Cache Maven dependencies
         uses: actions/cache@v4
         with:
@@ -32,29 +24,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # 3. Set up JDK 21
+      # 3. Set up JDK 21 (change to 17 if your project requires it)
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      # 4. Verify Docker is available (uses local socket, not docker:2375)
+      # 4. Verify Docker is available (using GitHub Actions built-in Docker)
       - name: Check Docker status
         run: docker info
 
-      # 5. Maven build and tests with Testcontainers
+      # 5. Build and test with Maven + Testcontainers
       - name: Build and test with Maven (Testcontainers)
         env:
-          DOCKER_HOST: tcp://docker:2375            # connect to docker:dind service
-          DOCKER_TLS_CERTDIR: ""
-          TESTCONTAINERS_RYUK_DISABLED: "true"      # disable Ryuk for stability
-          MAVEN_OPTS: "-Dmaven.repo.local=.m2"
+          TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
+          MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
         run: |
           mvn -B clean install -e -X -Dspring.test.constructor.autowire.mode=all
-          pkill -f surefirebooter || true
+          pkill -f surefirebooter || true           # Kill any stuck test processes
 
-      # 6. Upload test reports if they fail
+      # 6. Upload test reports if tests fail
       - name: Upload Surefire Reports
         if: failure()
         uses: actions/upload-artifact@v4
@@ -62,13 +52,13 @@ jobs:
           name: surefire-reports
           path: target/surefire-reports/
 
-      # 7. Prepare jar for SonarCloud (extract libraries)
+      # 7. Prepare JAR for SonarCloud analysis (extract dependencies)
       - name: Prepare for Sonar analysis
         run: |
           mkdir -p target/unpacked-libs
           unzip -q -j target/*.jar 'BOOT-INF/lib/*.jar' -d target/unpacked-libs || echo "No libraries found in JAR"
 
-      # 8. Code analysis with SonarCloud
+      # 8. Static code analysis with SonarCloud
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
@@ -82,14 +72,14 @@ jobs:
             -Dsonar.java.binaries=target/classes
             -Dsonar.java.libraries=target/unpacked-libs/*.jar
 
-      # 9. Login to Docker Hub
+      # 9. Log in to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # 10. Build and push Docker image (local Docker socket)
+      # 10. Build and push Docker image (using local Docker socket)
       - name: Build and Push Docker Image
         if: success()
         run: |
