@@ -227,7 +227,7 @@ public class OrderServiceImplTest {
     }
 
     @Test
-    void getAllOrdersNativeWithPagination_ReturnsPagedOrderDtos() {
+    void getAllOrdersNativeWithPagination_thenReturnsPagedOrderDtos() {
         PageRequest pageable = PageRequest.of(0, 10, Sort.by("id"));
         Page<Order> page = new PageImpl<>(List.of(testOrder));
         when(orderRepository.findAllOrdersNative(pageable)).thenReturn(page);

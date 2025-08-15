@@ -1,12 +1,12 @@
 package com.mymicroservice.orderservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mymicroservice.orderservice.configuration.SecurityConfig;
 import com.mymicroservice.orderservice.dto.OrderDto;
 import com.mymicroservice.orderservice.dto.OrderWithUserResponse;
 import com.mymicroservice.orderservice.dto.UserResponse;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
 import com.mymicroservice.orderservice.mapper.OrderMapper;
-import com.mymicroservice.orderservice.mapper.OrderMapperTest;
 import com.mymicroservice.orderservice.model.Order;
 import com.mymicroservice.orderservice.model.OrderStatus;
 import com.mymicroservice.orderservice.service.OrderService;
@@ -16,11 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -37,12 +41,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@AutoConfigureMockMvc(addFilters = false)
+@Import(SecurityConfig.class)
+@WithMockUser(roles = {"ADMIN", "USER"})
 @WebMvcTest(OrderController.class)
 @Slf4j
 public class OrderControllerTest {
 
     @MockBean
     private OrderService orderService;
+
+    @MockBean
+    private JwtDecoder jwtDecoder;
 
     @Autowired
     private MockMvc mockMvc;

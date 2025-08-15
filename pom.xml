@@ -22,10 +22,13 @@
 		<mapstruct.version>1.6.0.Beta2</mapstruct.version>
 		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 		<org.testcontainers.version>1.19.8</org.testcontainers.version>
+		<jjwt.version>0.11.5</jjwt.version>
 		<sonar.organization>juliakaiko</sonar.organization>
 		<sonar.projectKey>juliakaiko_userservice</sonar.projectKey>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.java.binaries>target/classes</sonar.java.binaries>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -39,6 +42,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<!-- Spring Security + JWT (OAuth2 Resource Server) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
 		<!-- Feign Client -->
 		<dependency>
@@ -72,6 +80,28 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- To remove version conflict with Mockito-->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.5.0</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- For integration Feign and WireMock -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-contract-wiremock</artifactId>
+			<version>4.1.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- WireMock для мока HTTP-запросов -->
+		<dependency>
+			<groupId>com.github.tomakehurst</groupId>
+			<artifactId>wiremock-jre8</artifactId>
+			<version>2.35.0</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -110,6 +140,31 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-testcontainers</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- JWT -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>6.5.2</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -186,19 +241,38 @@
 				</configuration>
 			</plugin>
 			<!--For correct testing-->
+			<!--<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version> &lt;!&ndash; Обновите версию &ndash;&gt;
+				<configuration>
+					<argLine>-Dfile.encoding=UTF-8</argLine>
+					<debugForkedProcess>false</debugForkedProcess>
+					<systemPropertyVariables>
+						<spring.profiles.active>test</spring.profiles.active>
+					</systemPropertyVariables>
+					<forkCount>1</forkCount>
+					<reuseForks>false</reuseForks>
+				</configuration>
+			</plugin>-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
 				<configuration>
 					<argLine>
-						-Dorg.testcontainers.dockerclient.strategy=org.testcontainers.dockerclient.UnixSocketClientProviderStrategy
+						 -Dorg.testcontainers.dockerclient.strategy=org.testcontainers.dockerclient.UnixSocketClientProviderStrategy
+					<!--	-Dfile.encoding=UTF-8-->
+						<!-- -Dorg.testcontainers.dockerclient.strategy=org.testcontainers.dockerclient.WindowsNativeClientProviderStrategy-->
 					</argLine>
+					<!--<debugForkedProcess>true</debugForkedProcess>-->
+					<debugForkedProcess>false</debugForkedProcess> <!-- Важно отключить -->
 					<systemPropertyVariables>
 						<spring.profiles.active>test</spring.profiles.active>
 					</systemPropertyVariables>
 					<forkCount>1</forkCount>
-					<reuseForks>true</reuseForks>
+					<!--<reuseForks>true</reuseForks>-->
+					<reuseForks>false</reuseForks>
 					<parallel>none</parallel>
 					<runOrder>filesystem</runOrder>
 				</configuration>
