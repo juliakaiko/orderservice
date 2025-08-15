@@ -17,7 +17,7 @@ import com.mymicroservice.orderservice.service.OrderService;
 import com.mymicroservice.orderservice.util.OrderGenerator;
 import com.mymicroservice.orderservice.util.UserResponseGenerator;
 import org.junit.jupiter.api.*;
-import org.mockito.Mockito;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -34,10 +34,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.any;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 @SpringBootTest
 @AutoConfigureWireMock(port = 0) // WireMock will work on a random port
@@ -92,7 +96,7 @@ public class OrderServiceImplWireMockTest {
 
     @Test
     void testCreateNewOrder_ReturnsOrderWithUserResponse()  throws Exception {
-        Mockito.when(orderRepository.findById(1L)).thenReturn(Optional.of(testOrder));
+        when(orderRepository.findById(1L)).thenReturn(Optional.of(testOrder));
 
         OrderWithUserResponse result = orderService.getOrderById(1L);
 
@@ -105,7 +109,7 @@ public class OrderServiceImplWireMockTest {
 
     @Test
     void testGetOrderById_whenIdExists_thenReturnsOrderWithUserResponse() {
-        Mockito.when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(testOrder));
+        when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(testOrder));
 
         OrderWithUserResponse result = orderService.getOrderById(TEST_ORDER_ID);
 
@@ -118,7 +122,7 @@ public class OrderServiceImplWireMockTest {
 
     @Test
     void testGetOrderById_whenIdNotExist_thenNotFound() {
-        Mockito.when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.empty());
+        when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.empty());
 
         assertThrows(OrderNotFoundException.class, () -> {
             orderService.getOrderById(TEST_ORDER_ID);
@@ -133,8 +137,8 @@ public class OrderServiceImplWireMockTest {
         updatedOrder.setId(TEST_ORDER_ID);
         updatedOrder.setStatus(OrderStatus.PROCESSING);
 
-        Mockito.when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(testOrder));
-        Mockito.when(orderRepository.save(Mockito.any(Order.class))).thenReturn(updatedOrder);
+        when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(testOrder));
+        when(orderRepository.save(ArgumentMatchers.any(Order.class))).thenReturn(testOrder);
 
         OrderDto updateDto = OrderMapper.INSTANSE.toDto(updatedOrder);
         OrderWithUserResponse result = orderService.updateOrder(TEST_ORDER_ID, updateDto);
@@ -148,19 +152,19 @@ public class OrderServiceImplWireMockTest {
     //no Feign here
     @Test
     void testDeleteOrder_whenIdExists_thenDeletesAndReturnsOrderDto(){
-        Mockito.when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(testOrder));
+        when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(testOrder));
 
         OrderDto result = orderService.deleteOrder(TEST_ORDER_ID);
 
         assertNotNull(result);
         assertEquals(testOrderDto.getId(), result.getId());
-        Mockito.verify(orderRepository, times(1)).deleteById(TEST_ORDER_ID);
+        verify(orderRepository, times(1)).deleteById(TEST_ORDER_ID);
     }
 
     @Test
     void testGetOrdersByUserEmail_whenEmailExists_thenReturnsOrdersWithUser() throws JsonProcessingException {
         List<Order> orders = List.of(testOrder);
-        Mockito.when(orderRepository.findOrdersByUserId(testUserResponse.getUserId()))
+        when(orderRepository.findOrdersByUserId(testUserResponse.getUserId()))
                 .thenReturn(orders);
 
         WireMock.stubFor(WireMock.get(WireMock.urlPathEqualTo("/api/users/find-by-email"))
@@ -185,7 +189,7 @@ public class OrderServiceImplWireMockTest {
     @Test
     void testGetOrdersIdIn_whenIdsExists_thenReturnsOrdersWithUsers() {
         Set<Long> ids = Set.of(TEST_ORDER_ID);
-        Mockito.when(orderRepository.findAllByIdIn(ids)).thenReturn(List.of(testOrder));
+        when(orderRepository.findAllByIdIn(ids)).thenReturn(List.of(testOrder));
 
         List<OrderWithUserResponse> result = orderService.getOrdersIdIn(ids);
 
@@ -199,7 +203,7 @@ public class OrderServiceImplWireMockTest {
     @Test
     void testFindByStatusIn_whenStatusesExists_thenReturnsOrdersWithUsers()  {
         Set<OrderStatus> statuses = Set.of(OrderStatus.NEW);
-        Mockito.when(orderRepository.findByStatusIn(statuses)).thenReturn(List.of(testOrder));
+        when(orderRepository.findByStatusIn(statuses)).thenReturn(List.of(testOrder));
 
         List<OrderWithUserResponse> result = orderService.findByStatusIn(statuses);
 
@@ -212,7 +216,7 @@ public class OrderServiceImplWireMockTest {
 
     @Test
     void testGetAllOrders_thenReturnsAllOrdersWithUsers()  {
-        Mockito.when(orderRepository.findAll()).thenReturn(List.of(testOrder));
+        when(orderRepository.findAll()).thenReturn(List.of(testOrder));
 
         List<OrderWithUserResponse> result = orderService.getAllOrders();
 
@@ -227,7 +231,7 @@ public class OrderServiceImplWireMockTest {
     void testGetAllOrdersNativeWithPagination_thenReturnsPagedOrderDtos() {
         PageRequest pageable = PageRequest.of(0, 10, Sort.by("id"));
         Page<Order> page = new PageImpl<>(List.of(testOrder));
-        Mockito.when(orderRepository.findAllOrdersNative(pageable)).thenReturn(page);
+        when(orderRepository.findAllOrdersNative(pageable)).thenReturn(page);
 
         Page<OrderDto> result = orderService.getAllOrdersNativeWithPagination(0, 10);
 
