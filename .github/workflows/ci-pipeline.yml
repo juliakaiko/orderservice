@@ -17,7 +17,7 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       docker:
         image: docker:dind
-        options: --privilegedF
+        options: --privileged
 
     steps:
       # 1. Clone the repository
