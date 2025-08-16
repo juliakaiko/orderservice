@@ -1,8 +1,6 @@
 name: CI Pipeline for Spring Boot JAR
 
-on:
-  push:
-    branches: [ branch1 ]
+on: push
 
 jobs:
   build-and-deploy:
@@ -19,7 +17,7 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
       docker:
         image: docker:dind
-        options: --privileged
+        options: --privilegedF
 
     steps:
       # 1. Clone the repository
@@ -37,14 +35,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # 3. Set up JDK 21 (change to 17 if your project requires it)
+      # 3. Set up JDK 21
       - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
           java-version: '21'
           distribution: 'temurin'
 
-      # 4. Verify Docker is available (using GitHub Actions built-in Docker)
+      # 4. Verify Docker is available
       - name: Check Docker status
         run: docker info
 
@@ -72,7 +70,7 @@ jobs:
           name: surefire-reports
           path: target/surefire-reports/
 
-      # 8. Prepare JAR for SonarCloud analysis (extract dependencies)
+      # 8. Prepare JAR for SonarCloud analysis
       - name: Prepare for Sonar analysis
         run: |
           mkdir -p target/unpacked-libs
