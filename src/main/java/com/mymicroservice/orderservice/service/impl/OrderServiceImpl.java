@@ -98,11 +98,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderWithUserResponse> getOrdersIdIn(Set<Long> ids) {
         List <Order> orderList = orderRepository.findAllByIdIn(ids);
         log.info("getOrdersIdIn()");
-        return orderList.stream().map(order -> {
-            OrderDto orderDto = OrderMapper.INSTANSE.toDto(order);
-            UserResponse userResponse =  userClient.getUserById(orderDto.getUserId());
-            return new OrderWithUserResponse(orderDto, userResponse);
-        }).toList();
+        return toOrderWithUserResponseList(orderList);
     }
 
     @Override
@@ -110,11 +106,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderWithUserResponse> findByStatusIn(Set<OrderStatus> statuses) {
         List <Order> orderList = orderRepository.findByStatusIn(statuses);
         log.info("findByStatusIn()");
-        return orderList.stream().map(order -> {
-            OrderDto orderDto = OrderMapper.INSTANSE.toDto(order);
-            UserResponse userResponse =  userClient.getUserById(orderDto.getUserId());
-            return new OrderWithUserResponse(orderDto, userResponse);
-        }).toList();
+        return toOrderWithUserResponseList(orderList);
     }
 
     @Override
@@ -122,11 +114,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderWithUserResponse> getAllOrders() {
         List <Order> orderList = orderRepository.findAll();
         log.info("getAllOrders()");
-        return orderList.stream().map(order -> {
-            OrderDto orderDto = OrderMapper.INSTANSE.toDto(order);
-            UserResponse userResponse =  userClient.getUserById(orderDto.getUserId());
-            return new OrderWithUserResponse(orderDto, userResponse);
-        }).toList();
+        return toOrderWithUserResponseList(orderList);
     }
     
     @Override
@@ -136,5 +124,13 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> orderList = orderRepository.findAllOrdersNative(pageable);
         log.info("findAllOrdersNativeWithPagination()");
         return orderList.map(OrderMapper.INSTANSE::toDto);
+    }
+
+    private List<OrderWithUserResponse> toOrderWithUserResponseList (List <Order> orderList){
+        return orderList.stream().map(order -> {
+            OrderDto orderDto = OrderMapper.INSTANSE.toDto(order);
+            UserResponse userResponse =  userClient.getUserById(orderDto.getUserId());
+            return new OrderWithUserResponse(orderDto, userResponse);
+        }).toList();
     }
 }
