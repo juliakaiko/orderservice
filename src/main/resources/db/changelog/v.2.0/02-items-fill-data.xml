@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+            http://www.liquibase.org/xml/ns/pro
+            http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+
+    <changeSet id="items_fill_data" author="julia_kaiko">
+        <preConditions>
+            <tableExists tableName="items"/>
+        </preConditions>
+        <sql>
+            INSERT INTO items (name, price) VALUES ('MacBook Pro', 2500.00);
+            INSERT INTO items (name, price) VALUES ('iPhone 14', 999.00);
+            INSERT INTO items (name, price) VALUES ('iPad Pro', 1099.00);
+            INSERT INTO items (name, price) VALUES ('Apple Watch Series 9', 399.00);
+            INSERT INTO items (name, price) VALUES ('AirPods Pro', 249.00);
+            INSERT INTO items (name, price) VALUES ('Dell XPS 13', 1299.00);
+            INSERT INTO items (name, price) VALUES ('Samsung Galaxy S24', 899.00);
+            INSERT INTO items (name, price) VALUES ('Google Pixel 8 Pro', 999.00);
+            INSERT INTO items (name, price) VALUES ('Sony WH-1000XM5', 349.00);
+            INSERT INTO items (name, price) VALUES ('Lenovo ThinkPad X1', 1599.00);
+            INSERT INTO items (name, price) VALUES ('Microsoft Surface Pro 9', 1399.00);
+            INSERT INTO items (name, price) VALUES ('Asus ROG Zephyrus G14', 1899.00);
+            INSERT INTO items (name, price) VALUES ('HP Spectre x360', 1199.00);
+            INSERT INTO items (name, price) VALUES ('Logitech MX Master 3S', 99.00);
+            INSERT INTO items (name, price) VALUES ('Razer DeathAdder V2', 69.00);
+            INSERT INTO items (name, price) VALUES ('LG UltraFine 5K Monitor', 1299.00);
+            INSERT INTO items (name, price) VALUES ('Samsung Odyssey G9 Monitor', 1499.00);
+            INSERT INTO items (name, price) VALUES ('Corsair K95 RGB Keyboard', 199.00);
+            INSERT INTO items (name, price) VALUES ('Anker PowerCore 20000', 59.00);
+            INSERT INTO items (name, price) VALUES ('Bose QuietComfort 45', 329.00);
+            INSERT INTO items (name, price) VALUES ('Canon EOS R6 Camera', 2499.00);
+        </sql>
+        <rollback>
+            DELETE FROM items WHERE id IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>
