@@ -26,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
@@ -44,6 +45,7 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 @AutoConfigureWireMock(port = 0) // WireMock will work on a random port
 @Import({FeignTestConfig.class})
+@ActiveProfiles("test")
 public class OrderServiceImplWireMockTest {
 
     @MockBean
