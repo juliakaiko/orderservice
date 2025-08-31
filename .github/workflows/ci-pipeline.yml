@@ -57,9 +57,9 @@ jobs:
         env:
           TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/test
-          SPRING_DATASOURCE_USERNAME: test
-          SPRING_DATASOURCE_PASSWORD: test
+          #SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/test
+          #SPRING_DATASOURCE_USERNAME: test
+          #SPRING_DATASOURCE_PASSWORD: test
         run: |
           mvn -B clean install -e -X -Dspring.test.constructor.autowire.mode=all
           pkill -f surefirebooter || true           # Kill any stuck test processes
