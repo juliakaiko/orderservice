@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -50,9 +49,6 @@ public class OrderControllerTest {
 
     @MockBean
     private OrderService orderService;
-
-    @MockBean
-    private JwtDecoder jwtDecoder;
 
     @Autowired
     private MockMvc mockMvc;
@@ -83,7 +79,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: getOrderById_ShouldReturnOrderWithUserResponse, ORDER_ID={}", ORDER_ID);
         when(orderService.getOrderById(ORDER_ID)).thenReturn(testOrderWithUserResponse);
 
-        mockMvc.perform(get("/order-service/api/orders/{id}", ORDER_ID))
+        mockMvc.perform(get("/api/orders/{id}", ORDER_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.order.id").value(ORDER_ID));
 
@@ -95,7 +91,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: getOrderById_ShouldReturnNotFound, ORDER_ID={}", ORDER_ID);
         when(orderService.getOrderById(ORDER_ID)).thenReturn(null);
 
-        mockMvc.perform(get("/order-service/api/orders/{id}", ORDER_ID))
+        mockMvc.perform(get("/api/orders/{id}", ORDER_ID))
                 .andExpect(status().isNotFound());
 
         verify(orderService).getOrderById(ORDER_ID);
@@ -106,7 +102,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: createOrder_ShouldReturnCreatedOrderWithUserResponse, ORDER={}", testOrderDto);
         when(orderService.createOrder(any(OrderDto.class))).thenReturn(testOrderWithUserResponse);
 
-        mockMvc.perform(post("/order-service/api/orders/")
+        mockMvc.perform(post("/api/orders/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testOrderDto)))
                 .andExpect(status().isOk())
@@ -128,7 +124,7 @@ public class OrderControllerTest {
         when(orderService.updateOrder(eq(ORDER_ID), any(OrderDto.class)))
                 .thenReturn(updatedResponse);
 
-        mockMvc.perform(put("/order-service/api/orders/{id}", ORDER_ID)
+        mockMvc.perform(put("/api/orders/{id}", ORDER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedDto)))
                 .andExpect(status().isOk())
@@ -149,7 +145,7 @@ public class OrderControllerTest {
         when(orderService.updateOrder(eq(ORDER_ID), any(OrderDto.class)))
                 .thenThrow(new OrderNotFoundException("Order wasn't found with id " + ORDER_ID));
 
-        mockMvc.perform(put("/order-service/api/orders/{id}", ORDER_ID)
+        mockMvc.perform(put("/api/orders/{id}", ORDER_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedDto)))
                 .andExpect(status().isNotFound());
@@ -162,7 +158,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: deleteOrder_ShouldReturnDeletedOrderDto, ORDER_ID={}", ORDER_ID);
         when(orderService.deleteOrder(ORDER_ID)).thenReturn(testOrderDto);
 
-        mockMvc.perform(delete("/order-service/api/orders/{id}", ORDER_ID))
+        mockMvc.perform(delete("/api/orders/{id}", ORDER_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(ORDER_ID))
                 .andExpect(jsonPath("$.status").value(OrderStatus.NEW.name()));
@@ -175,7 +171,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: deleteOrder_ShouldReturnNotFound, ORDER_ID={}", ORDER_ID);
         when(orderService.deleteOrder(ORDER_ID)).thenReturn(null);
 
-        mockMvc.perform(delete("/order-service/api/orders/{id}", ORDER_ID))
+        mockMvc.perform(delete("/api/orders/{id}", ORDER_ID))
                 .andExpect(status().isNotFound());
 
         verify(orderService).deleteOrder(ORDER_ID);
@@ -187,7 +183,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: getOrdersByUserEmail_ShouldReturnListOfOrders, email={}", email);
         when(orderService.getOrdersByUserEmail(email)).thenReturn(List.of(testOrderWithUserResponse));
 
-        mockMvc.perform(get("/order-service/api/orders/email")
+        mockMvc.perform(get("/api/orders/by-email")
                         .param("email", email))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].order.id").value(ORDER_ID));
@@ -201,7 +197,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: getOrdersByUserEmail_ShouldReturnEmptyList, email={}", email);
         when(orderService.getOrdersByUserEmail(email)).thenReturn(List.of());
 
-        mockMvc.perform(get("/order-service/api/orders/email")
+        mockMvc.perform(get("/api/orders/by-email")
                         .param("email", email))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -216,7 +212,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: getOrdersIdIn_ShouldReturnOrdersForGivenIds, ids={}", ids);
         when(orderService.getOrdersIdIn(ids)).thenReturn(List.of(testOrderWithUserResponse));
 
-        mockMvc.perform(get("/order-service/api/orders/find-by-ids")
+        mockMvc.perform(get("/api/orders/find-by-ids")
                         .param("ids", ORDER_ID.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].order.id").value(ORDER_ID));
@@ -230,7 +226,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: getOrdersIdIn_ShouldReturnEmptyListWhenNoMatches, ids={}", ids);
         when(orderService.getOrdersIdIn(ids)).thenReturn(List.of());
 
-        mockMvc.perform(get("/order-service/api/orders/find-by-ids")
+        mockMvc.perform(get("/api/orders/find-by-ids")
                         .param("ids", "999"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -245,7 +241,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: getByStatusIn_ShouldReturnOrdersWithGivenStatuses, statuses={}", statuses);
         when(orderService.findByStatusIn(statuses)).thenReturn(List.of(testOrderWithUserResponse));
 
-        mockMvc.perform(get("/order-service/api/orders/find-by-statuses")
+        mockMvc.perform(get("/api/orders/find-by-statuses")
                         .param("statuses", OrderStatus.NEW.name()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].order.id").value(ORDER_ID));
@@ -258,7 +254,7 @@ public class OrderControllerTest {
         log.info("▶ Running test: getAllOrders_ShouldReturnAllOrders");
         when(orderService.getAllOrders()).thenReturn(List.of(testOrderWithUserResponse));
 
-        mockMvc.perform(get("/order-service/api/orders/all"))
+        mockMvc.perform(get("/api/orders/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].order.id").value(ORDER_ID));
 
@@ -271,7 +267,7 @@ public class OrderControllerTest {
         Page<OrderDto> page = new PageImpl<>(List.of(testOrderDto));
         when(orderService.getAllOrdersNativeWithPagination(0, 10)).thenReturn(page);
 
-        mockMvc.perform(get("/order-service/api/orders/paginated")
+        mockMvc.perform(get("/api/orders/paginated")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())

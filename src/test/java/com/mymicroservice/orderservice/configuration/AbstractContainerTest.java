@@ -1,26 +1,22 @@
 package com.mymicroservice.orderservice.configuration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Duration;
 
-@TestConfiguration
 @Testcontainers(disabledWithoutDocker = true)
 @ActiveProfiles("test")
 @Slf4j
-public class TestContainersConfig {
+public class AbstractContainerTest {
 
-    @Container
     public static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15-alpine") //postgres:15
-            .withDatabaseName("test")
+            .withDatabaseName("testdb")
             .withUsername("user")
             .withPassword("password")
             .waitingFor(Wait.forListeningPort()
@@ -42,5 +38,7 @@ public class TestContainersConfig {
 
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
         registry.add("spring.jpa.show-sql", () -> "true");
+
+        registry.add("spring.liquibase.enabled", () -> "false");
     }
 }

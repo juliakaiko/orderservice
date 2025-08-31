@@ -28,7 +28,7 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/order-service/api/orders")
+@RequestMapping("/api/orders")
 @Tag(name="OrderController")
 @Slf4j
 @Validated // for @NotEmpty
@@ -77,7 +77,7 @@ public class OrderController {
                 : ResponseEntity.ok(deletedOrderDto);
     }
 
-    @GetMapping("/email")
+    @GetMapping("/by-email")
     public ResponseEntity<List<OrderWithUserResponse>> getOrdersByUserEmail(@RequestParam String email) {
         log.info("Request to find all Orders of the User with email: {}", email);
         return ResponseEntity.ok(orderService.getOrdersByUserEmail(email));

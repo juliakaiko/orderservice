@@ -1,6 +1,6 @@
 package com.mymicroservice.orderservice.configuration;
 
-import com.mymicroservice.orderservice.security.AccessTokenProvider;
+import com.mymicroservice.orderservice.client.AccessTokenProvider;
 import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
