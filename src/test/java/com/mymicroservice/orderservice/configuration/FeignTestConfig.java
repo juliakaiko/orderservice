@@ -1,15 +1,17 @@
 package com.mymicroservice.orderservice.configuration;
 
-import com.mymicroservice.orderservice.security.AccessTokenProvider;
+import com.mymicroservice.orderservice.client.AccessTokenProvider;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import feign.RequestInterceptor;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 
 @TestConfiguration
+@Profile("test")
 public class FeignTestConfig {
 
-    @Bean
+    @Bean ("testAccessTokenProvider")
     @Primary
     public AccessTokenProvider accessTokenProvider() {
         return new AccessTokenProvider() {

@@ -60,7 +60,7 @@ public class OrderServiceImplWireMockTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("userservice.url", () -> "http://localhost:${wiremock.server.port}");
+        registry.add("user-service.url", () -> "http://localhost:${wiremock.server.port}");
     }
 
     private static final Long TEST_ORDER_ID = 1L;

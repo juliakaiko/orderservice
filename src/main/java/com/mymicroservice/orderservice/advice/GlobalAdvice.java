@@ -8,6 +8,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -61,7 +62,41 @@ public class GlobalAdvice {
      *         - HTTP 400 status (BAD_REQUEST)
      */
     @ExceptionHandler({ConstraintViolationException.class})
-    public ResponseEntity<ErrorItem> handleValidationException(ConstraintViolationException e) {
+    public ResponseEntity<ErrorItem> handleConstraintViolationException(ConstraintViolationException e) {
+        ErrorItem error = generateMessage(e, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handles {@link HttpMessageNotReadableException} which occurs when HTTP request body
+     * cannot be properly parsed or converted to the expected Java object.
+     *
+     * <p>This typically happens when:
+     * <ul>
+     *   <li>Malformed JSON syntax in request body</li>
+     *   <li>Type mismatch between JSON values and target Java types</li>
+     *   <li>Invalid enum values that cannot be converted to the target enum type</li>
+     *   <li>Missing required fields in JSON payload</li>
+     * </ul>
+     *
+     * <p><b>Example error response:</b>
+     * <pre>
+     * {
+     *   "message": "JSON parse error: Cannot coerce empty String (\"\") to `OrderStatus` value",
+     *   "timestamp": "2025-08-29 12:12",
+     *   "url": "http://localhost:8082/api/orders/7",
+     *   "statusCode": 400
+     * }
+     * </pre>
+     *
+     * @param e the HttpMessageNotReadableException that was thrown during request processing
+     * @return ResponseEntity containing ErrorItem with details about the parsing error
+     * @see org.springframework.http.converter.HttpMessageNotReadableException
+     * @see org.springframework.http.HttpStatus#BAD_REQUEST
+     * @since 1.0
+     */
+    @ExceptionHandler({HttpMessageNotReadableException.class})
+    public ResponseEntity<ErrorItem> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         ErrorItem error = generateMessage(e, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }

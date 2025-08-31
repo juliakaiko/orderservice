@@ -1,9 +1,7 @@
 package com.mymicroservice.orderservice.repository;
 
-import com.mymicroservice.orderservice.configuration.TestContainersConfig;
-import com.mymicroservice.orderservice.model.Order;
+import com.mymicroservice.orderservice.configuration.AbstractContainerTest;
 import com.mymicroservice.orderservice.model.OrderItem;
-import com.mymicroservice.orderservice.util.OrderGenerator;
 import com.mymicroservice.orderservice.util.OrderItemGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,11 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Set;
@@ -26,10 +22,8 @@ import static org.junit.Assert.assertEquals;
 
 @Slf4j
 @DataJpaTest
-@ActiveProfiles("test")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // Disabling DataSource Replacement
-@Import(TestContainersConfig.class)
-public class OrderItemRepositoryTest {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+public class OrderItemRepositoryTest extends AbstractContainerTest{
 
     @Autowired
     private OrderItemRepository orderItemRepository;

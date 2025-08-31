@@ -1,4 +1,4 @@
-package com.mymicroservice.orderservice.security;
+package com.mymicroservice.orderservice.client;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;

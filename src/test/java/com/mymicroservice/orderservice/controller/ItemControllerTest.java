@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -47,9 +46,6 @@ public class ItemControllerTest {
     @MockBean
     private ItemService itemService;
 
-    @MockBean
-    private JwtDecoder jwtDecoder;
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -74,7 +70,7 @@ public class ItemControllerTest {
         log.info("▶ Running test: getItemById_ShouldReturnItemDto(), ITEM_ID={}", ITEM_ID);
         when(itemService.getItemById(ITEM_ID)).thenReturn(testItemDto);
 
-        mockMvc.perform(get("/order-service/api/items/{id}", ITEM_ID))
+        mockMvc.perform(get("/api/items/{id}", ITEM_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(ITEM_ID));
 
@@ -86,7 +82,7 @@ public class ItemControllerTest {
         log.info("▶ Running test: getItemById_ShouldReturnNotFound(), _ITEM_ID={}", ITEM_ID);
         when(itemService.getItemById(ITEM_ID)).thenReturn(null);
 
-        mockMvc.perform(get("/order-service/api/items/{id}", ITEM_ID))
+        mockMvc.perform(get("/api/items/{id}", ITEM_ID))
                 .andExpect(status().isNotFound());
 
         verify(itemService).getItemById(ITEM_ID);
@@ -97,7 +93,7 @@ public class ItemControllerTest {
         log.info("▶ Running test: createItem_ShouldReturnCreatedItemDto, Item={}", testItemDto);
         when(itemService.createItem(any(ItemDto.class))).thenReturn(testItemDto);
 
-        mockMvc.perform(post("/order-service/api/items/")
+        mockMvc.perform(post("/api/items/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testItemDto)))
                 .andExpect(status().isOk())
@@ -116,7 +112,7 @@ public class ItemControllerTest {
 
         when(itemService.updateItem(ITEM_ID, updatedDto)).thenReturn(updatedDto);
 
-        mockMvc.perform(put("/order-service/api/items/{id}", ITEM_ID)
+        mockMvc.perform(put("/api/items/{id}", ITEM_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedDto)))
                 .andExpect(status().isOk())
@@ -137,7 +133,7 @@ public class ItemControllerTest {
         when(itemService.updateItem(ITEM_ID, updatedDto))
                 .thenThrow(new ItemNotFoundException("Item wasn't found with id " + ITEM_ID));
 
-        mockMvc.perform(put("/order-service/api/items/{id}", ITEM_ID)
+        mockMvc.perform(put("/api/items/{id}", ITEM_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedDto)))
                 .andExpect(status().isNotFound());
@@ -150,7 +146,7 @@ public class ItemControllerTest {
         log.info("▶ Running test: deleteItem_ShouldReturnDeletedItemDto, _ITEM_ID={}", ITEM_ID);
         when(itemService.deleteItem(ITEM_ID)).thenReturn(testItemDto);
 
-        mockMvc.perform(delete("/order-service/api/items/{id}", ITEM_ID))
+        mockMvc.perform(delete("/api/items/{id}", ITEM_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(ITEM_ID))
                 .andExpect(jsonPath("$.price").value(testItemDto.getPrice()));
@@ -163,7 +159,7 @@ public class ItemControllerTest {
         log.info("▶ Running test: deleteItem_ShouldReturnNotFound, ITEM_ID={}", ITEM_ID);
         when(itemService.deleteItem(ITEM_ID)).thenReturn(null);
 
-        mockMvc.perform(delete("/order-service/api/items/{id}", ITEM_ID))
+        mockMvc.perform(delete("/api/items/{id}", ITEM_ID))
                 .andExpect(status().isNotFound());
 
         verify(itemService).deleteItem(ITEM_ID);
@@ -175,7 +171,7 @@ public class ItemControllerTest {
         log.info("▶ Running test: getItemsIdIn_ShouldReturnItemsForGivenIds, ids={}", ids);
         when(itemService.getItemsIdIn(ids)).thenReturn(List.of(testItemDto));
 
-        mockMvc.perform(get("/order-service/api/items/find-by-ids")
+        mockMvc.perform(get("/api/items/find-by-ids")
                         .param("ids", ITEM_ID.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(ITEM_ID));
@@ -189,7 +185,7 @@ public class ItemControllerTest {
         log.info("▶ Running test: getItemsIdIn_ShouldReturnEmptyListWhenNoMatches, ids={}", ids);
         when(itemService.getItemsIdIn(ids)).thenReturn(List.of());
 
-        mockMvc.perform(get("/order-service/api/items/find-by-ids")
+        mockMvc.perform(get("/api/items/find-by-ids")
                         .param("ids", "999"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -203,7 +199,7 @@ public class ItemControllerTest {
         log.info("▶ Running test: getAllItems_ShouldReturnAllItems");
         when(itemService.getAllItems()).thenReturn(List.of(testItemDto));
 
-        mockMvc.perform(get("/order-service/api/items/all"))
+        mockMvc.perform(get("/api/items/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(ITEM_ID));
 
@@ -216,7 +212,7 @@ public class ItemControllerTest {
         Page<ItemDto> page = new PageImpl<>(List.of(testItemDto));
         when(itemService.getAllItemsNativeWithPagination(0, 10)).thenReturn(page);
 
-        mockMvc.perform(get("/order-service/api/items/paginated")
+        mockMvc.perform(get("/api/items/paginated")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())

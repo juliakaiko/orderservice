@@ -62,7 +62,6 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderFromDb.get();
         order.setUserId(orderDetails.getUserId());
         order.setStatus(orderDetails.getStatus());
-        order.setCreationDate(orderDetails.getCreationDate());
         log.info("updateOrder(): {}",order);
         orderRepository.save(order);
         OrderDto orderDtoFromDb=OrderMapper.INSTANSE.toDto(order);
