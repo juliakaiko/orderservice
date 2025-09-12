@@ -52,17 +52,17 @@ jobs:
       - name: Wait for PostgreSQL
         run: sleep 10
 
-      # 6.1. Build common-event to get the artifact into the local Maven repository (m2)
+      # 6.1. Build common-events first
       - name: Build common-events
-        run: mvn -B clean install -f rootproject/common-events/pom.xml
+        run: mvn -B clean install -f common-events/pom.xml
 
-      # 6.2. Build and test with Maven + Testcontainers
+      # 6.2. Build and test orderservice with Testcontainers
       - name: Build and test with Maven (Testcontainers)
         env:
           TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
         run: |
-          mvn -B clean install -e -X -Dspring.test.constructor.autowire.mode=all
+          mvn -B clean install -f orderservice/pom.xml -e -X -Dspring.test.constructor.autowire.mode=all
           pkill -f surefirebooter || true           # Kill any stuck test processes
 
       # 7. Upload test reports if tests fail
