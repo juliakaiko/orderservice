@@ -54,7 +54,7 @@ jobs:
 
       # 6.1. Build common-event to get the artifact into the local Maven repository (m2)
       - name: Build common-events
-        run: mvn -B clean install -f common-events/pom.xml
+        run: mvn -B clean install -f rootproject/common-events/pom.xml
 
       # 6.2. Build and test with Maven + Testcontainers
       - name: Build and test with Maven (Testcontainers)
