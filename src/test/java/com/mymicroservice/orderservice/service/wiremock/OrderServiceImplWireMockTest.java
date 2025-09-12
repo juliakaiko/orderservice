@@ -4,24 +4,27 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.mymicroservice.orderservice.client.UserClient;
-import com.mymicroservice.orderservice.configuration.FeignTestConfig;
 import com.mymicroservice.orderservice.dto.OrderDto;
 import com.mymicroservice.orderservice.dto.OrderWithUserResponse;
-import com.mymicroservice.orderservice.dto.UserResponse;
+import com.mymicroservice.orderservice.dto.UserDto;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
+import com.mymicroservice.orderservice.kafka.OrderEventProducer;
 import com.mymicroservice.orderservice.mapper.OrderMapper;
+import com.mymicroservice.orderservice.model.Item;
 import com.mymicroservice.orderservice.model.Order;
+import com.mymicroservice.orderservice.model.OrderItem;
 import com.mymicroservice.orderservice.model.OrderStatus;
+import com.mymicroservice.orderservice.repository.ItemRepository;
 import com.mymicroservice.orderservice.repository.OrderRepository;
 import com.mymicroservice.orderservice.service.OrderService;
 import com.mymicroservice.orderservice.util.OrderGenerator;
-import com.mymicroservice.orderservice.util.UserResponseGenerator;
+import com.mymicroservice.orderservice.util.UserGenerator;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentMatchers;
+import org.mymicroservices.common.events.OrderEventDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +34,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,18 +42,24 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureWireMock(port = 0) // WireMock will work on a random port
-@Import({FeignTestConfig.class})
 @ActiveProfiles("test")
 public class OrderServiceImplWireMockTest {
 
     @MockBean
     private OrderRepository orderRepository;
+
+    @MockBean
+    private ItemRepository itemRepository;
+
+    @MockBean
+    private OrderEventProducer orderEventProducer;
 
     @Autowired
     private OrderService orderService;
@@ -69,24 +79,36 @@ public class OrderServiceImplWireMockTest {
     private static final String TEST_USER_EMAIL = "test@test.by";
     private Order testOrder;
     private OrderDto testOrderDto;
-    private UserResponse testUserResponse;
+    private UserDto testUserDto;
     private OrderWithUserResponse testOrderWithUserResponse;
 
     @BeforeEach
     void setUp() throws Exception {
         testOrder = OrderGenerator.generateOrder();
         testOrder.setId(TEST_ORDER_ID);
-        testOrderDto = OrderMapper.INSTANSE.toDto(testOrder);
 
-        testUserResponse = UserResponseGenerator.generateUserResponse();
-        testOrderWithUserResponse = new OrderWithUserResponse(testOrderDto, testUserResponse);
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(1L);
+        orderItem.setQuantity(5L);
+
+        Item item = new Item();
+        item.setId(2L);
+        item.setPrice(BigDecimal.valueOf(100));
+        orderItem.setItem(item);
+        orderItem.setOrder(testOrder);
+
+        testOrder.setOrderItems(Set.of(orderItem));
+
+        testOrderDto = OrderMapper.INSTANCE.toDto(testOrder);
+
+        testUserDto = UserGenerator.generateUserResponse();
+        testOrderWithUserResponse = new OrderWithUserResponse(testOrderDto, testUserDto);
 
         // Stub for getting user by ID
-        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/api/users/1"))
-                .withHeader("Authorization", WireMock.equalTo("Bearer test-token"))
+        WireMock.stubFor(WireMock.get(WireMock.urlEqualTo("/api/internal/users/1"))
                 .willReturn(WireMock.aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(testUserResponse))));
+                        .withBody(objectMapper.writeValueAsString(testUserDto))));
     }
 
     @AfterEach
@@ -95,16 +117,25 @@ public class OrderServiceImplWireMockTest {
     }
 
     @Test
-    void testCreateNewOrder_ReturnsOrderWithUserResponse()  throws Exception {
-        when(orderRepository.findById(1L)).thenReturn(Optional.of(testOrder));
+    void testCreateNewOrder_ReturnsOrderWithUserResponse() {
 
-        OrderWithUserResponse result = orderService.getOrderById(1L);
+        Item mockItem = new Item();
+        mockItem.setId(2L);
+        mockItem.setPrice(BigDecimal.valueOf(100));
+
+        when(itemRepository.findById(2L)).thenReturn(Optional.of(mockItem));
+        when(orderRepository.save(any(Order.class))).thenReturn(testOrder);
+
+        OrderWithUserResponse result = orderService.createOrder(testOrderDto);
 
         assertNotNull(result);
         assertEquals(testOrderWithUserResponse.getOrder(), result.getOrder());
         assertEquals(testOrderWithUserResponse.getUser(), result.getUser());
 
-        verifyFeignCall("/api/users/1");
+        verify(orderEventProducer, times(1))
+                .sendCreateOrder(any(OrderEventDto.class), any(Runnable.class));
+
+        verifyFeignCall("/api/internal/users/1");
     }
 
     @Test
@@ -117,7 +148,7 @@ public class OrderServiceImplWireMockTest {
         assertEquals(testOrderWithUserResponse.getOrder(), result.getOrder());
         assertEquals(testOrderWithUserResponse.getUser(), result.getUser());
 
-        verifyFeignCall("/api/users/1");
+        verifyFeignCall("/api/internal/users/1");
     }
 
     @Test
@@ -128,7 +159,7 @@ public class OrderServiceImplWireMockTest {
             orderService.getOrderById(TEST_ORDER_ID);
         });
 
-        WireMock.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/api/users/1")));
+        WireMock.verify(0, WireMock.getRequestedFor(WireMock.urlEqualTo("/api/internal/users/1")));
     }
 
     @Test
@@ -138,15 +169,15 @@ public class OrderServiceImplWireMockTest {
         updatedOrder.setStatus(OrderStatus.PROCESSING);
 
         when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(testOrder));
-        when(orderRepository.save(ArgumentMatchers.any(Order.class))).thenReturn(testOrder);
+        when(orderRepository.save(any(Order.class))).thenReturn(testOrder);
 
-        OrderDto updateDto = OrderMapper.INSTANSE.toDto(updatedOrder);
+        OrderDto updateDto = OrderMapper.INSTANCE.toDto(updatedOrder);
         OrderWithUserResponse result = orderService.updateOrder(TEST_ORDER_ID, updateDto);
 
         assertNotNull(result);
         assertEquals(updateDto.getUserId(), result.getOrder().getUserId());
 
-        verifyFeignCall("/api/users/1");
+        verifyFeignCall("/api/internal/users/1");
     }
 
     //no Feign here
@@ -164,15 +195,14 @@ public class OrderServiceImplWireMockTest {
     @Test
     void testGetOrdersByUserEmail_whenEmailExists_thenReturnsOrdersWithUser() throws JsonProcessingException {
         List<Order> orders = List.of(testOrder);
-        when(orderRepository.findOrdersByUserId(testUserResponse.getUserId()))
+        when(orderRepository.findOrdersByUserId(testUserDto.getUserId()))
                 .thenReturn(orders);
 
-        WireMock.stubFor(WireMock.get(WireMock.urlPathEqualTo("/api/users/find-by-email"))
-                .withQueryParam("email", WireMock.matching("test(.+)test\\.by")) // Регулярное выражение
-                .withHeader("Authorization", WireMock.equalTo("Bearer test-token"))
+        WireMock.stubFor(WireMock.get(WireMock.urlPathEqualTo("/api/internal/users/find-by-email"))
+                .withQueryParam("email", WireMock.matching("test(.+)test\\.by"))
                 .willReturn(WireMock.aResponse()
                         .withHeader("Content-Type", "application/json")
-                        .withBody(objectMapper.writeValueAsString(testUserResponse))));
+                        .withBody(objectMapper.writeValueAsString(testUserDto))));
 
         List<OrderWithUserResponse> result = orderService.getOrdersByUserEmail(TEST_USER_EMAIL);
 
@@ -181,9 +211,8 @@ public class OrderServiceImplWireMockTest {
         assertEquals(testOrderDto.getId(), result.get(0).getOrder().getId());
         assertEquals(TEST_USER_EMAIL, result.get(0).getUser().getEmail());
 
-        WireMock.verify(1, WireMock.getRequestedFor(WireMock.urlPathEqualTo("/api/users/find-by-email"))
-                .withQueryParam("email", WireMock.matching("test(.+)test\\.by"))
-                .withHeader("Authorization", WireMock.equalTo("Bearer test-token")));
+        WireMock.verify(1, WireMock.getRequestedFor(WireMock.urlPathEqualTo("/api/internal/users/find-by-email"))
+                .withQueryParam("email", WireMock.matching("test(.+)test\\.by")));
     }
 
     @Test
@@ -197,12 +226,12 @@ public class OrderServiceImplWireMockTest {
         assertEquals(1, result.size());
         assertEquals(testOrderDto.getId(), result.get(0).getOrder().getId());
 
-        verifyFeignCall("/api/users/1");
+        verifyFeignCall("/api/internal/users/1");
     }
 
     @Test
     void testFindByStatusIn_whenStatusesExists_thenReturnsOrdersWithUsers()  {
-        Set<OrderStatus> statuses = Set.of(OrderStatus.NEW);
+        Set<OrderStatus> statuses = Set.of(OrderStatus.CREATED);
         when(orderRepository.findByStatusIn(statuses)).thenReturn(List.of(testOrder));
 
         List<OrderWithUserResponse> result = orderService.findByStatusIn(statuses);
@@ -211,7 +240,7 @@ public class OrderServiceImplWireMockTest {
         assertEquals(1, result.size());
         assertEquals(testOrderDto.getId(), result.get(0).getOrder().getId());
 
-        verifyFeignCall("/api/users/1");
+        verifyFeignCall("/api/internal/users/1");
     }
 
     @Test
@@ -224,7 +253,7 @@ public class OrderServiceImplWireMockTest {
         assertEquals(1, result.size());
         assertEquals(testOrderDto.getId(), result.get(0).getOrder().getId());
 
-        verifyFeignCall("/api/users/1");
+        verifyFeignCall("/api/internal/users/1");
     }
 
     @Test
@@ -241,7 +270,6 @@ public class OrderServiceImplWireMockTest {
     }
 
     private void verifyFeignCall(String url) {
-        WireMock.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(url))
-                .withHeader("Authorization", WireMock.equalTo("Bearer test-token")));
+        WireMock.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(url)));
     }
 }

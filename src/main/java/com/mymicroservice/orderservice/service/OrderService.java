@@ -2,7 +2,6 @@ package com.mymicroservice.orderservice.service;
 
 import com.mymicroservice.orderservice.dto.OrderDto;
 import com.mymicroservice.orderservice.dto.OrderWithUserResponse;
-import com.mymicroservice.orderservice.dto.UserResponse;
 import com.mymicroservice.orderservice.model.OrderStatus;
 import org.springframework.data.domain.Page;
 
@@ -12,6 +11,7 @@ import java.util.Set;
 public interface OrderService {
 
     OrderWithUserResponse createOrder(OrderDto orderDto);
+    void updateOrderStatus(Long orderId, OrderStatus status);
     OrderWithUserResponse getOrderById(Long orderId);
     OrderWithUserResponse updateOrder(Long orderId, OrderDto orderDetails);
     OrderDto deleteOrder(Long orderId);

@@ -12,7 +12,7 @@ public class OrderMapperTest {
     @Test
     public void itemToDto_whenOk_thenMapFieldsCorrectly() {
         Order order = OrderGenerator.generateOrder();
-        OrderDto orderDto = OrderMapper.INSTANSE.toDto(order);
+        OrderDto orderDto = OrderMapper.INSTANCE.toDto(order);
         assertEquals(order.getId(), orderDto.getId());
         assertEquals(order.getUserId(), orderDto.getUserId());
         assertEquals(order.getStatus(), orderDto.getStatus());
@@ -22,8 +22,8 @@ public class OrderMapperTest {
     @Test
     public void orderDtoToEntity_whenOk_thenMapFieldsCorrectly() {
         Order order = OrderGenerator.generateOrder();
-        OrderDto orderDto = OrderMapper.INSTANSE.toDto(order);
-        order = OrderMapper.INSTANSE.toEntity(orderDto);
+        OrderDto orderDto = OrderMapper.INSTANCE.toDto(order);
+        order = OrderMapper.INSTANCE.toEntity(orderDto);
         assertEquals(orderDto.getId(), order.getId());
         assertEquals(orderDto.getUserId(), order.getUserId());
         assertEquals(orderDto.getStatus(), order.getStatus());

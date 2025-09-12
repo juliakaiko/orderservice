@@ -28,10 +28,10 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional
     public ItemDto createItem(ItemDto ItemDto) {
-        Item item = ItemMapper.INSTANSE.toEntity(ItemDto);
+        Item item = ItemMapper.INSTANCE.toEntity(ItemDto);
         log.info("createItem(): {}",item);
         item = itemRepository.save(item);
-        return ItemMapper.INSTANSE.toDto(item);
+        return ItemMapper.INSTANCE.toDto(item);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
         Optional<Item> itemFromDb = Optional.ofNullable(itemRepository.findById(itemId)
                 .orElseThrow(() -> new ItemNotFoundException("Item wasn't found with id " + itemId)));
         log.info("getItemsById(): {}",itemId);
-        return ItemMapper.INSTANSE.toDto(itemFromDb.get());
+        return ItemMapper.INSTANCE.toDto(itemFromDb.get());
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
         item.setPrice(itemDetails.getPrice());
         log.info("updateItem(): {}",item);
         itemRepository.save(item);
-        return ItemMapper.INSTANSE.toDto(item);
+        return ItemMapper.INSTANCE.toDto(item);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new ItemNotFoundException("Item wasn't found with id " + itemId)));
         itemRepository.deleteById(itemId);
         log.info("deleteItem(): {}",itemId);
-        return ItemMapper.INSTANSE.toDto(itemFromDb.get());
+        return ItemMapper.INSTANCE.toDto(itemFromDb.get());
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ItemServiceImpl implements ItemService {
     public List <ItemDto> getItemsIdIn(Set<Long> ids) {
         List<Item> itemList = itemRepository.findAllByIdIn(ids);
         log.info("getItemsIdIn()");
-        return itemList.stream().map(ItemMapper.INSTANSE::toDto).toList();
+        return itemList.stream().map(ItemMapper.INSTANCE::toDto).toList();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ItemServiceImpl implements ItemService {
     public List <ItemDto> getAllItems() {
         List<Item> itemList = itemRepository.findAll();
         log.info("getAllItems()");
-        return itemList.stream().map(ItemMapper.INSTANSE::toDto).toList();
+        return itemList.stream().map(ItemMapper.INSTANCE::toDto).toList();
     }
 
     @Override
@@ -88,6 +88,6 @@ public class ItemServiceImpl implements ItemService {
         var pageable = PageRequest.of(page,size, Sort.by("id"));
         Page<Item> itemList = itemRepository.findAllItemsNative(pageable);
         log.info("findAllItemsNativeWithPagination()");
-        return itemList.map(ItemMapper.INSTANSE::toDto);
+        return itemList.map(ItemMapper.INSTANCE::toDto);
     }
 }

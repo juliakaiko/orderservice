@@ -1,6 +1,8 @@
 package com.mymicroservice.orderservice.advice;
 
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.mymicroservice.orderservice.exception.ItemNotFoundException;
+import com.mymicroservice.orderservice.exception.OrderAlreadyPaidException;
 import com.mymicroservice.orderservice.exception.OrderItemNotFoundException;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
 import com.mymicroservice.orderservice.util.ErrorItem;
@@ -146,6 +148,42 @@ public class GlobalAdvice {
     public ResponseEntity<ErrorItem> handleOrderNotFoundException(OrderNotFoundException e) {
         ErrorItem error = generateMessage(e, HttpStatus.NOT_FOUND);
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Handles Jackson InvalidDefinitionException which occurs during JSON deserialization
+     * when there are issues with object mapping definitions, particularly with managed/back references
+     * in bidirectional relationships.
+     *
+     * <p>This exception typically occurs when:
+     * <ul>
+     *   <li>There are circular references between entities</li>
+     *   <li>JsonManagedReference/JsonBackReference annotations are misconfigured</li>
+     *   <li>DTO objects contain entity references with bidirectional relationships</li>
+     * </ul>
+     *
+     * @param e the InvalidDefinitionException containing details about the mapping issue
+     * @return ResponseEntity with ErrorItem containing details about the deserialization failure
+     * @see InvalidDefinitionException
+     */
+    @ExceptionHandler({InvalidDefinitionException.class})
+    public ResponseEntity<ErrorItem> handleInvalidDefinitionException(InvalidDefinitionException e) {
+        ErrorItem error = generateMessage(e, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handles {@link OrderAlreadyPaidException} thrown when an attempt is made
+     * to update an order that is already marked as PAID.
+     *
+     * @param e the thrown {@link OrderAlreadyPaidException}
+     * @return a {@link ResponseEntity} containing an {@link ErrorItem} with
+     *         details of the error and HTTP 400 (Bad Request) status
+     */
+    @ExceptionHandler({OrderAlreadyPaidException.class})
+    public ResponseEntity<ErrorItem> handleOrderAlreadyPaidException(OrderAlreadyPaidException e) {
+        ErrorItem error = generateMessage(e, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
     /**

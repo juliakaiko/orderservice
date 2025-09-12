@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import com.mymicroservice.orderservice.configuration.AbstractContainerTest;
+import com.mymicroservice.orderservice.config.AbstractContainerTest;
 import com.mymicroservice.orderservice.model.OrderStatus;
 
 import java.util.List;

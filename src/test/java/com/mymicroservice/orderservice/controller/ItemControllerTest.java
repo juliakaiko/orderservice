@@ -1,7 +1,7 @@
 package com.mymicroservice.orderservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mymicroservice.orderservice.configuration.SecurityConfig;
+import com.mymicroservice.orderservice.config.SecurityConfig;
 import com.mymicroservice.orderservice.dto.ItemDto;
 import com.mymicroservice.orderservice.exception.ItemNotFoundException;
 import com.mymicroservice.orderservice.mapper.ItemMapper;
@@ -56,13 +56,12 @@ public class ItemControllerTest {
     private Item testItem;
     private ItemDto testItemDto;
 
-
     @BeforeEach
     void setUp() {
         testItem = ItemGenerator.generateItem();
         testItem.setId(ITEM_ID);
 
-        testItemDto = ItemMapper.INSTANSE.toDto(testItem);
+        testItemDto = ItemMapper.INSTANCE.toDto(testItem);
     }
 
     @Test
@@ -104,7 +103,7 @@ public class ItemControllerTest {
 
     @Test
     public void updateItem_ShouldReturnUpdatedItemDto() throws Exception {
-        ItemDto updatedDto = ItemMapper.INSTANSE.toDto(ItemGenerator.generateItem());
+        ItemDto updatedDto = ItemMapper.INSTANCE.toDto(ItemGenerator.generateItem());
         updatedDto.setId(1L);
         updatedDto.setName("UpdatedName");
         updatedDto.setPrice(BigDecimal.valueOf(101));
@@ -124,7 +123,7 @@ public class ItemControllerTest {
 
     @Test
     public void updateItem_ShouldReturnNotFound() throws Exception {
-        ItemDto updatedDto = ItemMapper.INSTANSE.toDto(ItemGenerator.generateItem());
+        ItemDto updatedDto = ItemMapper.INSTANCE.toDto(ItemGenerator.generateItem());
         updatedDto.setId(1L);
         updatedDto.setName("UpdatedName");
         updatedDto.setPrice(BigDecimal.valueOf(101));

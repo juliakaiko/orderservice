@@ -1,4 +1,4 @@
-package com.mymicroservice.orderservice.configuration;
+package com.mymicroservice.orderservice.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.test.context.ActiveProfiles;

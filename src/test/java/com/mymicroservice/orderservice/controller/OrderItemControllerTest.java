@@ -1,7 +1,7 @@
 package com.mymicroservice.orderservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mymicroservice.orderservice.configuration.SecurityConfig;
+import com.mymicroservice.orderservice.config.SecurityConfig;
 import com.mymicroservice.orderservice.dto.OrderItemDto;
 import com.mymicroservice.orderservice.exception.OrderItemNotFoundException;
 import com.mymicroservice.orderservice.mapper.OrderItemMapper;
@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -62,7 +61,7 @@ public class OrderItemControllerTest {
         testOrderItem = OrderItemGenerator.generateOrderItem();
         testOrderItem.setId(ORDER_ITEM_ID);
 
-        testOrderItemDto = OrderItemMapper.INSTANSE.toDto(testOrderItem);
+        testOrderItemDto = OrderItemMapper.INSTANCE.toDto(testOrderItem);
     }
 
     @Test
@@ -104,7 +103,7 @@ public class OrderItemControllerTest {
 
     @Test
     public void updateOrderItem_ShouldReturnUpdatedOrderItemDto() throws Exception {
-        OrderItemDto updatedDto = OrderItemMapper.INSTANSE.toDto(OrderItemGenerator.generateOrderItem());
+        OrderItemDto updatedDto = OrderItemMapper.INSTANCE.toDto(OrderItemGenerator.generateOrderItem());
         updatedDto.setId(1L);
         updatedDto.setItemId(1L);
         updatedDto.setItemId(1L);
@@ -125,7 +124,7 @@ public class OrderItemControllerTest {
 
     @Test
     public void updateOrderItem_ShouldReturnNotFound() throws Exception {
-        OrderItemDto updatedDto = OrderItemMapper.INSTANSE.toDto(OrderItemGenerator.generateOrderItem());
+        OrderItemDto updatedDto = OrderItemMapper.INSTANCE.toDto(OrderItemGenerator.generateOrderItem());
         updatedDto.setId(1L);
         updatedDto.setItemId(1L);
         updatedDto.setItemId(1L);

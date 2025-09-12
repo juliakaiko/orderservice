@@ -1,4 +1,4 @@
-package com.mymicroservice.orderservice.configuration;
+package com.mymicroservice.orderservice.config;
 
 import com.mymicroservice.orderservice.security.CustomAccessDeniedHandler;
 import com.mymicroservice.orderservice.security.CustomAuthenticationEntryPoint;

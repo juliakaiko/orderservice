@@ -1,17 +1,18 @@
 package com.mymicroservice.orderservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mymicroservice.orderservice.configuration.SecurityConfig;
+import com.mymicroservice.orderservice.config.SecurityConfig;
 import com.mymicroservice.orderservice.dto.OrderDto;
+import com.mymicroservice.orderservice.dto.OrderItemDto;
 import com.mymicroservice.orderservice.dto.OrderWithUserResponse;
-import com.mymicroservice.orderservice.dto.UserResponse;
+import com.mymicroservice.orderservice.dto.UserDto;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
 import com.mymicroservice.orderservice.mapper.OrderMapper;
 import com.mymicroservice.orderservice.model.Order;
 import com.mymicroservice.orderservice.model.OrderStatus;
 import com.mymicroservice.orderservice.service.OrderService;
 import com.mymicroservice.orderservice.util.OrderGenerator;
-import com.mymicroservice.orderservice.util.UserResponseGenerator;
+import com.mymicroservice.orderservice.util.UserGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ public class OrderControllerTest {
     private final static Long ORDER_ID = 1L;
     private Order testOrder;
     private OrderDto testOrderDto;
-    private UserResponse testUserResponse;
+    private UserDto testUserDto;
     private OrderWithUserResponse testOrderWithUserResponse;
 
     @BeforeEach
@@ -67,11 +68,12 @@ public class OrderControllerTest {
         testOrder = OrderGenerator.generateOrder();
         testOrder.setId(ORDER_ID);
 
-        testOrderDto = OrderMapper.INSTANSE.toDto(testOrder);
+        testOrderDto = OrderMapper.INSTANCE.toDto(testOrder);
+        testOrderDto.setOrderItems(Set.of(new OrderItemDto(1L,1L,2L,5L)));
 
-        testUserResponse = UserResponseGenerator.generateUserResponse();
+        testUserDto = UserGenerator.generateUserResponse();
 
-        testOrderWithUserResponse = new OrderWithUserResponse(testOrderDto, testUserResponse);
+        testOrderWithUserResponse = new OrderWithUserResponse(testOrderDto, testUserDto);
     }
 
     @Test
@@ -113,13 +115,16 @@ public class OrderControllerTest {
 
     @Test
     public void updateOrder_ShouldReturnUpdatedOrderWithUserResponse() throws Exception {
-        OrderDto updatedDto = OrderMapper.INSTANSE.toDto(OrderGenerator.generateOrder());
+        OrderDto updatedDto = OrderMapper.INSTANCE.toDto(OrderGenerator.generateOrder());
         updatedDto.setId(1L);
         updatedDto.setUserId(10L);
-        updatedDto.setStatus(OrderStatus.SHIPPED);
+        updatedDto.setStatus(OrderStatus.CANCELLED);
+        updatedDto.setOrderItems(Set.of(
+                new OrderItemDto(100L, 1L, 2L, 3L)
+        ));
         log.info("▶ Running test: updateOrder_ShouldReturnUpdatedOrderWithUserResponse, UPDATED_ORDER={}", updatedDto);
 
-        OrderWithUserResponse updatedResponse = new OrderWithUserResponse(updatedDto, testUserResponse);
+        OrderWithUserResponse updatedResponse = new OrderWithUserResponse(updatedDto, testUserDto);
 
         when(orderService.updateOrder(eq(ORDER_ID), any(OrderDto.class)))
                 .thenReturn(updatedResponse);
@@ -129,17 +134,20 @@ public class OrderControllerTest {
                         .content(objectMapper.writeValueAsString(updatedDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.order.id").value(ORDER_ID))
-                .andExpect(jsonPath("$.order.status").value(OrderStatus.SHIPPED.name()));
+                .andExpect(jsonPath("$.order.status").value(OrderStatus.CANCELLED.name()));
 
         verify(orderService).updateOrder(eq(ORDER_ID), any(OrderDto.class));
     }
 
     @Test
     public void updateOrder_ShouldReturnNotFound() throws Exception {
-        OrderDto updatedDto = OrderMapper.INSTANSE.toDto(OrderGenerator.generateOrder());
+        OrderDto updatedDto = OrderMapper.INSTANCE.toDto(OrderGenerator.generateOrder());
         updatedDto.setId(1L);
         updatedDto.setUserId(10L);
-        updatedDto.setStatus(OrderStatus.SHIPPED);
+        updatedDto.setStatus(OrderStatus.CANCELLED);
+        updatedDto.setOrderItems(Set.of(
+                new OrderItemDto(100L, 1L, 2L, 3L)
+        ));
         log.info("▶ Running test: updateOrder_ShouldReturnNotFound, UPDATED_ORDER={}", updatedDto);
 
         when(orderService.updateOrder(eq(ORDER_ID), any(OrderDto.class)))
@@ -161,7 +169,7 @@ public class OrderControllerTest {
         mockMvc.perform(delete("/api/orders/{id}", ORDER_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(ORDER_ID))
-                .andExpect(jsonPath("$.status").value(OrderStatus.NEW.name()));
+                .andExpect(jsonPath("$.status").value(OrderStatus.CREATED.name()));
 
         verify(orderService).deleteOrder(ORDER_ID);
     }
@@ -237,12 +245,12 @@ public class OrderControllerTest {
 
     @Test
     public void getByStatusIn_ShouldReturnOrdersWithGivenStatuses() throws Exception {
-        Set<OrderStatus> statuses = Set.of(OrderStatus.NEW);
+        Set<OrderStatus> statuses = Set.of(OrderStatus.CREATED);
         log.info("▶ Running test: getByStatusIn_ShouldReturnOrdersWithGivenStatuses, statuses={}", statuses);
         when(orderService.findByStatusIn(statuses)).thenReturn(List.of(testOrderWithUserResponse));
 
         mockMvc.perform(get("/api/orders/find-by-statuses")
-                        .param("statuses", OrderStatus.NEW.name()))
+                        .param("statuses", OrderStatus.CREATED.name()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].order.id").value(ORDER_ID));
 

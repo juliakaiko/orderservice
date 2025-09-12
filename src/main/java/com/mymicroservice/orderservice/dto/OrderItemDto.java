@@ -26,7 +26,7 @@ public class OrderItemDto {
      * Participates in serialization (object to JSON conversion) and deserialization
      * (JSON to object conversion) under the name {@code "itemId"}.
      * <p>
-     * When mapping ({@code Mapping}), the ID of the associated User is used.
+     * When mapping ({@code Mapping}), the ID of the associated Item is used.
      */
     @JsonProperty("itemId")
     private Long itemId;

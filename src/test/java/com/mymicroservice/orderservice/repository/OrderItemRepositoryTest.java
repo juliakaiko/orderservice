@@ -1,6 +1,6 @@
 package com.mymicroservice.orderservice.repository;
 
-import com.mymicroservice.orderservice.configuration.AbstractContainerTest;
+import com.mymicroservice.orderservice.config.AbstractContainerTest;
 import com.mymicroservice.orderservice.model.OrderItem;
 import com.mymicroservice.orderservice.util.OrderItemGenerator;
 import lombok.extern.slf4j.Slf4j;
