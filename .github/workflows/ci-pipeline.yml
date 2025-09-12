@@ -52,13 +52,19 @@ jobs:
       - name: Wait for PostgreSQL
         run: sleep 10
 
-      # 5.5. Show repo structure
-      - name: Show repo structure
-        run: ls -R
-
-      # 6.1. Build common-event to get the artifact into the local Maven repository (m2)
-      - name: Build common-events
-        run: mvn -B clean install -f common-events/pom.xml
+      # 6.1. Maven downloads common-events from GitHub Packages to Actions
+      - name: Set up Maven settings.xml for GitHub Packages
+        run: |
+          mkdir -p ~/.m2
+          echo "<settings>
+            <servers>
+              <server>
+                <id>github</id>
+                <username>${GITHUB_ACTOR}</username>
+                <password>${{ secrets.GITHUB_TOKEN }}</password>
+              </server>
+            </servers>
+          </settings>" > ~/.m2/settings.xml
 
       # 6.2. Build and test with Maven + Testcontainers
       - name: Build and test with Maven (Testcontainers)
