@@ -52,7 +52,11 @@ jobs:
       - name: Wait for PostgreSQL
         run: sleep 10
 
-      # 6. Build and test with Maven + Testcontainers
+      # 6.1. Build common-event to get the artifact into the local Maven repository (m2)
+      - name: Build common-event
+        run: mvn -B clean install -f common-event/pom.xml
+
+      # 6.2. Build and test with Maven + Testcontainers
       - name: Build and test with Maven (Testcontainers)
         env:
           TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
