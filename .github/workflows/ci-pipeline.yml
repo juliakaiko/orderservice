@@ -54,7 +54,7 @@ jobs:
 
       # 6.1. Build common-events first
       - name: Build common-events
-        run: mvn -B clean install -f common-events/pom.xml
+        run: mvn -B clean install -f ./common-events/pom.xml
 
       # 6.2. Build and test orderservice with Testcontainers
       - name: Build and test with Maven (Testcontainers)
