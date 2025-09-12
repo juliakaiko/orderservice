@@ -110,7 +110,7 @@
 			<version>4.1.1</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- WireMock для мока HTTP-запросов -->
+		<!-- WireMock for mocking HTTP requests -->
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
 			<artifactId>wiremock-jre8</artifactId>
