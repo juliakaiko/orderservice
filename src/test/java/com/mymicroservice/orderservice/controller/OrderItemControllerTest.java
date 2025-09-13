@@ -55,7 +55,6 @@ public class OrderItemControllerTest {
     private OrderItem testOrderItem;
     private OrderItemDto testOrderItemDto;
 
-
     @BeforeEach
     void setUp() {
         testOrderItem = OrderItemGenerator.generateOrderItem();

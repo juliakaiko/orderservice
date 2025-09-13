@@ -24,7 +24,7 @@ public class OrderDto {
 
     private Long id;
 
-    @NotNull
+    @NotNull(message = "User ID cannot be null")
     private Long userId;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -34,6 +34,6 @@ public class OrderDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDate creationDate;
 
-    @NotEmpty
+    @NotEmpty(message = "OrderItems cannot be empty")
     private Set<OrderItemDto> orderItems = new HashSet<>();
 }

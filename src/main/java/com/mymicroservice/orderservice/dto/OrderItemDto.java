@@ -18,6 +18,7 @@ public class OrderItemDto {
     private Long id;
 
     @JsonProperty("orderId")
+    @NotNull(message = "Order ID cannot be null")
     private Long orderId;
 
     /**
@@ -29,8 +30,9 @@ public class OrderItemDto {
      * When mapping ({@code Mapping}), the ID of the associated Item is used.
      */
     @JsonProperty("itemId")
+    @NotNull(message = "Item ID cannot be null")
     private Long itemId;
 
-    @NotNull
+    @NotNull(message = "Quantity cannot be null")
     private Long quantity;
 }
