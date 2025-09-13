@@ -59,8 +59,9 @@ public class OrderItemControllerTest {
     void setUp() {
         testOrderItem = OrderItemGenerator.generateOrderItem();
         testOrderItem.setId(ORDER_ITEM_ID);
-
         testOrderItemDto = OrderItemMapper.INSTANCE.toDto(testOrderItem);
+        testOrderItemDto.setOrderId(1l);
+        testOrderItemDto.setItemId(1l);
     }
 
     @Test
@@ -105,7 +106,7 @@ public class OrderItemControllerTest {
         OrderItemDto updatedDto = OrderItemMapper.INSTANCE.toDto(OrderItemGenerator.generateOrderItem());
         updatedDto.setId(1L);
         updatedDto.setItemId(1L);
-        updatedDto.setItemId(1L);
+        updatedDto.setOrderId(1L);
         updatedDto.setQuantity(11l);
         log.info("▶ Running test: updateOrderItem_ShouldReturnUpdatedOrderItemDto, UPDATED_ORDER_ITEM={}", updatedDto);
 
@@ -126,7 +127,7 @@ public class OrderItemControllerTest {
         OrderItemDto updatedDto = OrderItemMapper.INSTANCE.toDto(OrderItemGenerator.generateOrderItem());
         updatedDto.setId(1L);
         updatedDto.setItemId(1L);
-        updatedDto.setItemId(1L);
+        updatedDto.setOrderId(1L);
         updatedDto.setQuantity(11l);
         log.info("▶ Running test: updateOrderItem_ShouldReturnNotFound, UPDATED_ORDER_ITEM={}", updatedDto);
 
