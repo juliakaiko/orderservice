@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
         UserDto userDtoFromUserService = userClient.getUserById(orderDto.getUserId());
         // Send event to PaymentService
         OrderEventDto event = createOrderEvent(order);
-        // We are sending with a callback, the status update will be performed after successful sending.
+        // sending with a callback, the status update will be performed after successful sending
         orderEventProducer.sendCreateOrder(event, () -> {
             updateOrderStatus(orderDtoFromDb.getId(), OrderStatus.PROCESSING);
         });
