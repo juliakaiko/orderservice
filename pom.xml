@@ -24,7 +24,7 @@
 		<org.testcontainers.version>1.19.8</org.testcontainers.version>
 		<jjwt.version>0.11.5</jjwt.version>
 		<sonar.organization>juliakaiko</sonar.organization>
-		<sonar.projectKey>juliakaiko_userservice</sonar.projectKey>
+		<sonar.projectKey>juliakaiko_orderservice</sonar.projectKey>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.java.binaries>target/classes</sonar.java.binaries>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

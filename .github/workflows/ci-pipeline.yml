@@ -1,8 +1,10 @@
-name: CI Pipeline for Spring Boot JAR
+name: CI Pipeline for Spring Boot JAR (OrderService)
 
 on:
   push:
-    branches: [ branch1 ]
+    branches:
+      - branch1
+      - main
 
 jobs:
   build-and-deploy:
@@ -74,7 +76,6 @@ jobs:
         run: |
           mvn -B clean install -e -X -Dspring.test.constructor.autowire.mode=all
           pkill -f surefirebooter || true           # Kill any stuck test processes
-
 
       # 7. Upload test reports if tests fail
       - name: Upload Surefire Reports
