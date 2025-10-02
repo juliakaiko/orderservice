@@ -36,10 +36,10 @@ public class OrderItemServiceImpl implements OrderItemService {
     @Override
     @Transactional
     public OrderItemDto createOrderItem(OrderItemDto orderItemDto) {
-        OrderItem orderItem = OrderItemMapper.INSTANSE.toEntity(orderItemDto);
+        OrderItem orderItem = OrderItemMapper.INSTANCE.toEntity(orderItemDto);
         log.info("createOrderItem(): {}", orderItem);
         orderItem = orderItemRepository.save(orderItem);
-        return OrderItemMapper.INSTANSE.toDto(orderItem);
+        return OrderItemMapper.INSTANCE.toDto(orderItem);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class OrderItemServiceImpl implements OrderItemService {
         Optional<OrderItem> orderItemFromDb = Optional.ofNullable(orderItemRepository.findById(orderItemId)
                 .orElseThrow(() -> new OrderItemNotFoundException("OrderItem wasn't found with id " + orderItemId)));
         log.info("getOrderItemsById(): {}", orderItemId);
-        return OrderItemMapper.INSTANSE.toDto(orderItemFromDb.get());
+        return OrderItemMapper.INSTANCE.toDto(orderItemFromDb.get());
     }
 
     @Override
@@ -69,7 +69,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         log.info("updateOrderItem(): {}", orderItem);
         orderItemRepository.save(orderItem);
-        return OrderItemMapper.INSTANSE.toDto(orderItem);
+        return OrderItemMapper.INSTANCE.toDto(orderItem);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class OrderItemServiceImpl implements OrderItemService {
                 .orElseThrow(() -> new OrderItemNotFoundException("OrderItem wasn't found with id " + orderItemId)));
         orderItemRepository.deleteById(orderItemId);
         log.info("deleteOrderItem(): {}", orderItemId);
-        return OrderItemMapper.INSTANSE.toDto(orderItemFromDb.get());
+        return OrderItemMapper.INSTANCE.toDto(orderItemFromDb.get());
     }
 
     @Override
@@ -87,7 +87,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     public List<OrderItemDto> getOrderItemsIdIn(Set<Long> ids) {
         List <OrderItem> orderItemList = orderItemRepository.findAllByIdIn(ids);
         log.info("getOrderItemsIdIn()");
-        return orderItemList.stream().map(OrderItemMapper.INSTANSE::toDto).toList();
+        return orderItemList.stream().map(OrderItemMapper.INSTANCE::toDto).toList();
     }
 
     @Override
@@ -95,7 +95,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     public List<OrderItemDto> getAllOrderItems() {
         List <OrderItem> orderItemList = orderItemRepository.findAll();
         log.info("getAllOrderItems()");
-        return orderItemList.stream().map(OrderItemMapper.INSTANSE::toDto).toList();
+        return orderItemList.stream().map(OrderItemMapper.INSTANCE::toDto).toList();
     }
 
     @Override
@@ -104,6 +104,6 @@ public class OrderItemServiceImpl implements OrderItemService {
         var pageable  = PageRequest.of(page,size, Sort.by("id"));
         Page<OrderItem> orderItemList = orderItemRepository.findAllOrderItemsNative(pageable);
         log.info("findAllOrderItemsNativeWithPagination()");
-        return orderItemList.map(OrderItemMapper.INSTANSE::toDto);
+        return orderItemList.map(OrderItemMapper.INSTANCE::toDto);
     }
 }

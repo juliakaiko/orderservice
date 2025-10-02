@@ -65,7 +65,7 @@ public class OrderItemServiceImplTest {
         testOrderItem = OrderItemGenerator.generateOrderItem();
         testOrderItem.setId(TEST_ORDER_ITEM_ID);
 
-        testOrderItemDto = OrderItemMapper.INSTANSE.toDto(testOrderItem);
+        testOrderItemDto = OrderItemMapper.INSTANCE.toDto(testOrderItem);
     }
 
     @Test

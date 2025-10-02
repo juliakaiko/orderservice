@@ -42,7 +42,7 @@ public class OrderItem {
 }
 
 /*
-    Order (id=1, userId=101, status="NEW", date=2025-08-08)
+    Order (id=1, userId=101, status="CREATED", date=2025-08-08)
     └── OrderItem 1 (id=1, quantity=1) —→ Item (id=1, "MacBook Pro", $2500)
     └── OrderItem 2 (id=2, quantity=2) —→ Item (id=2, "Apple Mouse", $100)
  */

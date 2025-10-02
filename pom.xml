@@ -24,12 +24,19 @@
 		<org.testcontainers.version>1.19.8</org.testcontainers.version>
 		<jjwt.version>0.11.5</jjwt.version>
 		<sonar.organization>juliakaiko</sonar.organization>
-		<sonar.projectKey>juliakaiko_userservice</sonar.projectKey>
+		<sonar.projectKey>juliakaiko_orderservice</sonar.projectKey>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.java.binaries>target/classes</sonar.java.binaries>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
+	<repositories>
+		<repository>
+			<id>github</id>
+			<name>GitHub Packages</name>
+			<url>https://maven.pkg.github.com/juliakaiko/common-events</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -75,6 +82,28 @@
 			<artifactId>mapstruct</artifactId>
 			<version>${mapstruct.version}</version>
 		</dependency>
+		<!-- Kafka -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+		<!-- Own library for DTO in Kafka -->
+		<dependency>
+			<groupId>com.mymicroservices</groupId>
+			<artifactId>common-events</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<!--  Swagger -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc-openapi.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.17.0</version>
+		</dependency>
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -88,24 +117,12 @@
 			<version>4.1.1</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- WireMock для мока HTTP-запросов -->
+		<!-- WireMock for mocking HTTP requests -->
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
 			<artifactId>wiremock-jre8</artifactId>
 			<version>2.35.0</version>
 			<scope>test</scope>
-		</dependency>
-		<!--  Swagger -->
-		<dependency>
-			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-			<version>${springdoc-openapi.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.17.0</version> <!-- Compatible version with Spring Boot 3.2.4 -->
 		</dependency>
 		<!-- Testcontainers -->
 		<dependency>

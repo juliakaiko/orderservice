@@ -17,7 +17,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -42,7 +43,7 @@ public class Item {
     private BigDecimal price;
 
     @OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItem> orderItems;
+    private Set<OrderItem> orderItems = new HashSet<>();;
 
 }
 

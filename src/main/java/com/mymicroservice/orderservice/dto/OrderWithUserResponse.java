@@ -13,5 +13,5 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true) // ignore unknown fields
 public class OrderWithUserResponse {
     private OrderDto order;
-    private UserResponse user;
+    private UserDto user;
 }

@@ -1,6 +1,5 @@
 package com.mymicroservice.orderservice.mapper;
 
-import com.mymicroservice.orderservice.dto.ItemDto;
 import com.mymicroservice.orderservice.dto.OrderItemDto;
 import com.mymicroservice.orderservice.model.Item;
 import com.mymicroservice.orderservice.model.Order;
@@ -21,7 +20,7 @@ public class OrderItemMapperTest {
         Item item = ItemGenerator.generateItem();
         orderItem.setOrder(order);
         orderItem.setItem(item);
-        OrderItemDto orderItemDto = OrderItemMapper.INSTANSE.toDto(orderItem);
+        OrderItemDto orderItemDto = OrderItemMapper.INSTANCE.toDto(orderItem);
         assertEquals(orderItem.getId(), orderItemDto.getId());
         assertEquals(orderItem.getOrder().getId(), orderItemDto.getOrderId());
         assertEquals(orderItem.getItem().getId(), orderItemDto.getId());
@@ -31,8 +30,8 @@ public class OrderItemMapperTest {
     @Test
     public void orderItemDtoToEntity_whenOk_thenMapFieldsCorrectly() {
         OrderItem orderItem = OrderItemGenerator.generateOrderItem();
-        OrderItemDto orderItemDto = OrderItemMapper.INSTANSE.toDto(orderItem);
-        orderItem = OrderItemMapper.INSTANSE.toEntity(orderItemDto);
+        OrderItemDto orderItemDto = OrderItemMapper.INSTANCE.toDto(orderItem);
+        orderItem = OrderItemMapper.INSTANCE.toEntity(orderItemDto);
         assertEquals(orderItemDto.getId(), orderItem.getId());
         assertEquals(orderItemDto.getOrderId(), orderItem.getOrder().getId());
         assertEquals(orderItemDto.getId(), orderItem.getItem().getId());

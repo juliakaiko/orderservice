@@ -11,7 +11,7 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public interface ItemMapper {
 
-    ItemMapper INSTANSE = Mappers.getMapper(ItemMapper.class);
+    ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
     @Mapping(target = "id", source = "item.id")
     @Mapping(target = "name", source = "item.name") //ID from Order

@@ -1,6 +1,5 @@
 package com.mymicroservice.orderservice.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,7 +42,7 @@ public class Order {
     @Column(name="user_id")
     private Long userId;
 
-    @Enumerated(EnumType.STRING) //enum type field must be stored in the database as a string
+    @Enumerated(EnumType.STRING)
     @Column(name="status")
     private OrderStatus status;
 
@@ -51,7 +50,6 @@ public class Order {
     private LocalDate creationDate;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
     private Set<OrderItem> orderItems = new HashSet<>();
 
 }

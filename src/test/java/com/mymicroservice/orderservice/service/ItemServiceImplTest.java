@@ -52,7 +52,7 @@ public class ItemServiceImplTest {
         testItem = ItemGenerator.generateItem();
         testItem.setId(TEST_ITEM_ID);
 
-        testItemDto = ItemMapper.INSTANSE.toDto(testItem);
+        testItemDto = ItemMapper.INSTANCE.toDto(testItem);
     }
 
     @Test

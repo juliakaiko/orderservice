@@ -4,11 +4,12 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public enum OrderStatus {
-    NEW ("NEW"),
-    DELIVERED ("DELIVERED"),
+
+    CREATED ("CREATED"),
+    PROCESSING ("PROCESSING"),
+    PAID ("PAID"),
     CANCELLED ("CANCELLED"),
-    SHIPPED ("SHIPPED"),
-    PROCESSING ("PROCESSING");
+    FAILED ("FAILED");
 
     private final String status;
 }

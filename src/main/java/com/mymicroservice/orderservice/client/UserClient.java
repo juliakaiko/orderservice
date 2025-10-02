@@ -1,19 +1,19 @@
 package com.mymicroservice.orderservice.client;
 
-import com.mymicroservice.orderservice.configuration.UserClientConfig;
-import com.mymicroservice.orderservice.dto.UserResponse;
+import com.mymicroservice.orderservice.config.FeignConfig;
+import com.mymicroservice.orderservice.dto.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "userservice", url = "${user-service.url}",configuration = UserClientConfig.class)
+@FeignClient(name = "userservice", url = "${user-service.url}", configuration = FeignConfig.class)
 public interface UserClient {
 
-    @GetMapping("/api/users/find-by-email")  // mapping to endpoint of userservice "getUserByEmail()"
-    UserResponse getUserByEmail(@RequestParam String email);
+    @GetMapping("/api/internal/users/find-by-email")  // mapping to endpoint of userservice "getUserByEmail()"
+    UserDto getUserByEmail(@RequestParam String email);
 
-    @GetMapping("/api/users/{id}")  // mapping to endpoint of userservice "getUserById()"
-    UserResponse getUserById(@PathVariable("id") Long id);
+    @GetMapping("/api/internal/users/{id}")  // mapping to endpoint of userservice "getUserById()"
+    UserDto getUserById(@PathVariable("id") Long id);
 
 }

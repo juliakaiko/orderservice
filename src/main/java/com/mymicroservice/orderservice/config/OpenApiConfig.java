@@ -1,4 +1,4 @@
-package com.mymicroservice.orderservice.configuration;
+package com.mymicroservice.orderservice.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

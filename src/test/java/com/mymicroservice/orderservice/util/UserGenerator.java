@@ -1,13 +1,13 @@
 package com.mymicroservice.orderservice.util;
 
-import com.mymicroservice.orderservice.dto.UserResponse;
+import com.mymicroservice.orderservice.dto.UserDto;
 import java.time.LocalDate;
 
-public class UserResponseGenerator {
+public class UserGenerator {
 
-    public static UserResponse generateUserResponse() {
+    public static UserDto generateUserResponse() {
 
-        return  UserResponse.builder()
+        return  UserDto.builder()
                 .userId(1l)
                 .name("test_name")
                 .surname("test_surname")

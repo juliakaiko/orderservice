@@ -1,7 +1,7 @@
 package com.mymicroservice.orderservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mymicroservice.orderservice.configuration.SecurityConfig;
+import com.mymicroservice.orderservice.config.SecurityConfig;
 import com.mymicroservice.orderservice.dto.OrderItemDto;
 import com.mymicroservice.orderservice.exception.OrderItemNotFoundException;
 import com.mymicroservice.orderservice.mapper.OrderItemMapper;
@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -46,9 +45,6 @@ public class OrderItemControllerTest {
     @MockBean
     private OrderItemService orderItemService;
 
-    @MockBean
-    private JwtDecoder jwtDecoder;
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -59,13 +55,13 @@ public class OrderItemControllerTest {
     private OrderItem testOrderItem;
     private OrderItemDto testOrderItemDto;
 
-
     @BeforeEach
     void setUp() {
         testOrderItem = OrderItemGenerator.generateOrderItem();
         testOrderItem.setId(ORDER_ITEM_ID);
-
-        testOrderItemDto = OrderItemMapper.INSTANSE.toDto(testOrderItem);
+        testOrderItemDto = OrderItemMapper.INSTANCE.toDto(testOrderItem);
+        testOrderItemDto.setOrderId(1l);
+        testOrderItemDto.setItemId(1l);
     }
 
     @Test
@@ -73,7 +69,7 @@ public class OrderItemControllerTest {
         log.info("▶ Running test: getOrderItemById_ShouldReturnOrderItemDto(), ORDER_ITEM_ID={}", ORDER_ITEM_ID);
         when(orderItemService.getOrderItemById(ORDER_ITEM_ID)).thenReturn(testOrderItemDto);
 
-        mockMvc.perform(get("/order-service/api/order-items/{id}", ORDER_ITEM_ID))
+        mockMvc.perform(get("/api/order-items/{id}", ORDER_ITEM_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(ORDER_ITEM_ID));
 
@@ -85,7 +81,7 @@ public class OrderItemControllerTest {
         log.info("▶ Running test: getOrderItemById_ShouldReturnNotFound(), ORDER_ITEM_ID={}", ORDER_ITEM_ID);
         when(orderItemService.getOrderItemById(ORDER_ITEM_ID)).thenReturn(null);
 
-        mockMvc.perform(get("/order-service/api/order-items/{id}", ORDER_ITEM_ID))
+        mockMvc.perform(get("/api/order-items/{id}", ORDER_ITEM_ID))
                 .andExpect(status().isNotFound());
 
         verify(orderItemService).getOrderItemById(ORDER_ITEM_ID);
@@ -96,7 +92,7 @@ public class OrderItemControllerTest {
         log.info("▶ Running test: createOrderItem_ShouldReturnCreatedOrderItemDto, OrderItem={}", testOrderItemDto);
         when(orderItemService.createOrderItem(any(OrderItemDto.class))).thenReturn(testOrderItemDto);
 
-        mockMvc.perform(post("/order-service/api/order-items/")
+        mockMvc.perform(post("/api/order-items/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testOrderItemDto)))
                 .andExpect(status().isOk())
@@ -107,16 +103,16 @@ public class OrderItemControllerTest {
 
     @Test
     public void updateOrderItem_ShouldReturnUpdatedOrderItemDto() throws Exception {
-        OrderItemDto updatedDto = OrderItemMapper.INSTANSE.toDto(OrderItemGenerator.generateOrderItem());
+        OrderItemDto updatedDto = OrderItemMapper.INSTANCE.toDto(OrderItemGenerator.generateOrderItem());
         updatedDto.setId(1L);
         updatedDto.setItemId(1L);
-        updatedDto.setItemId(1L);
+        updatedDto.setOrderId(1L);
         updatedDto.setQuantity(11l);
         log.info("▶ Running test: updateOrderItem_ShouldReturnUpdatedOrderItemDto, UPDATED_ORDER_ITEM={}", updatedDto);
 
         when(orderItemService.updateOrderItem(ORDER_ITEM_ID, updatedDto)).thenReturn(updatedDto);
 
-        mockMvc.perform(put("/order-service/api/order-items/{id}", ORDER_ITEM_ID)
+        mockMvc.perform(put("/api/order-items/{id}", ORDER_ITEM_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedDto)))
                 .andExpect(status().isOk())
@@ -128,17 +124,17 @@ public class OrderItemControllerTest {
 
     @Test
     public void updateOrderItem_ShouldReturnNotFound() throws Exception {
-        OrderItemDto updatedDto = OrderItemMapper.INSTANSE.toDto(OrderItemGenerator.generateOrderItem());
+        OrderItemDto updatedDto = OrderItemMapper.INSTANCE.toDto(OrderItemGenerator.generateOrderItem());
         updatedDto.setId(1L);
         updatedDto.setItemId(1L);
-        updatedDto.setItemId(1L);
+        updatedDto.setOrderId(1L);
         updatedDto.setQuantity(11l);
         log.info("▶ Running test: updateOrderItem_ShouldReturnNotFound, UPDATED_ORDER_ITEM={}", updatedDto);
 
         when(orderItemService.updateOrderItem(ORDER_ITEM_ID, updatedDto))
                 .thenThrow(new OrderItemNotFoundException("OrderItem wasn't found with id " + ORDER_ITEM_ID));
 
-        mockMvc.perform(put("/order-service/api/order-items/{id}", ORDER_ITEM_ID)
+        mockMvc.perform(put("/api/order-items/{id}", ORDER_ITEM_ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedDto)))
                 .andExpect(status().isNotFound());
@@ -151,7 +147,7 @@ public class OrderItemControllerTest {
         log.info("▶ Running test: deleteOrderItem_ShouldReturnDeletedOrderItemDto, ORDER_ITEM_ID={}", ORDER_ITEM_ID);
         when(orderItemService.deleteOrderItem(ORDER_ITEM_ID)).thenReturn(testOrderItemDto);
 
-        mockMvc.perform(delete("/order-service/api/order-items/{id}", ORDER_ITEM_ID))
+        mockMvc.perform(delete("/api/order-items/{id}", ORDER_ITEM_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(ORDER_ITEM_ID))
                 .andExpect(jsonPath("$.quantity").value(testOrderItemDto.getQuantity()));
@@ -164,7 +160,7 @@ public class OrderItemControllerTest {
         log.info("▶ Running test: deleteOrderItem_ShouldReturnNotFound, ORDER_ITEM_ID={}", ORDER_ITEM_ID);
         when(orderItemService.deleteOrderItem(ORDER_ITEM_ID)).thenReturn(null);
 
-        mockMvc.perform(delete("/order-service/api/order-items/{id}", ORDER_ITEM_ID))
+        mockMvc.perform(delete("/api/order-items/{id}", ORDER_ITEM_ID))
                 .andExpect(status().isNotFound());
 
         verify(orderItemService).deleteOrderItem(ORDER_ITEM_ID);
@@ -176,7 +172,7 @@ public class OrderItemControllerTest {
         log.info("▶ Running test: getOrderItemsIdIn_ShouldReturnOrderItemsForGivenIds, ids={}", ids);
         when(orderItemService.getOrderItemsIdIn(ids)).thenReturn(List.of(testOrderItemDto));
 
-        mockMvc.perform(get("/order-service/api/order-items/find-by-ids")
+        mockMvc.perform(get("/api/order-items/find-by-ids")
                         .param("ids", ORDER_ITEM_ID.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(ORDER_ITEM_ID));
@@ -190,7 +186,7 @@ public class OrderItemControllerTest {
         log.info("▶ Running test: getOrderItemsIdIn_ShouldReturnEmptyListWhenNoMatches, ids={}", ids);
         when(orderItemService.getOrderItemsIdIn(ids)).thenReturn(List.of());
 
-        mockMvc.perform(get("/order-service/api/order-items/find-by-ids")
+        mockMvc.perform(get("/api/order-items/find-by-ids")
                         .param("ids", "999"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
@@ -204,7 +200,7 @@ public class OrderItemControllerTest {
         log.info("▶ Running test: getAllOrderItems_ShouldReturnAllOrderItems");
         when(orderItemService.getAllOrderItems()).thenReturn(List.of(testOrderItemDto));
 
-        mockMvc.perform(get("/order-service/api/order-items/all"))
+        mockMvc.perform(get("/api/order-items/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(ORDER_ITEM_ID));
 
@@ -217,7 +213,7 @@ public class OrderItemControllerTest {
         Page<OrderItemDto> page = new PageImpl<>(List.of(testOrderItemDto));
         when(orderItemService.getAllOrderItemsNativeWithPagination(0, 10)).thenReturn(page);
 
-        mockMvc.perform(get("/order-service/api/order-items/paginated")
+        mockMvc.perform(get("/api/order-items/paginated")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())

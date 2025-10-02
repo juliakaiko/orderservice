@@ -26,7 +26,7 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/order-service/api/items")
+@RequestMapping("/api/items")
 @Tag(name="ItemController")
 @Slf4j
 @Validated // for @NotEmpty

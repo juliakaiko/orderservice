@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true) // ignore unknown fields
-public class UserResponse {
+public class UserDto {
 
     private Long userId;
 
@@ -40,12 +40,4 @@ public class UserResponse {
     @NotBlank(message = "Email address may not be blank")
     private String email;
 
-    /*@NotBlank (message = "Password may not be blank")
-    @Size(min=5, max=255, message = "Password size must be between 5 and 255")
-    @JsonIgnore
-    private String password;
-
-    @NotBlank(message = "Role cannot be blank")
-    @JsonIgnore
-    private String role;*/
 }
