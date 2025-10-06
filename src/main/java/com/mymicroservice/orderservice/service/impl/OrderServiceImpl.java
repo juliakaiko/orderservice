@@ -140,9 +140,15 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("updateOrder(): {}", order);
         Order updatedOrder = orderRepository.save(order);
-
         OrderDto orderDtoFromDb = OrderMapper.INSTANCE.toDto(updatedOrder);
         UserDto userDtoFromUserService = userClient.getUserById(orderDtoFromDb.getUserId());
+
+        // Send event to PaymentService
+        OrderEventDto event = createOrderEvent(order);
+        // sending with a callback, the status update will be performed after successful sending
+        orderEventProducer.sendCreateOrder(event, () -> {
+            updateOrderStatus(orderDtoFromDb.getId(), OrderStatus.PROCESSING);
+        });
         return new OrderWithUserResponse(orderDtoFromDb, userDtoFromUserService);
     }
     

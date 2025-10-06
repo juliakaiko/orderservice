@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface UserClient {
 
     @GetMapping("/api/internal/users/find-by-email")  // mapping to endpoint of userservice "getUserByEmail()"
-    UserDto getUserByEmail(@RequestParam String email);
+    UserDto getUserByEmail(@RequestParam("email")  String email);
 
     @GetMapping("/api/internal/users/{id}")  // mapping to endpoint of userservice "getUserById()"
     UserDto getUserById(@PathVariable("id") Long id);

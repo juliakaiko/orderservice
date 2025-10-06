@@ -78,7 +78,7 @@ public class OrderController {
     }
 
     @GetMapping("/by-email")
-    public ResponseEntity<List<OrderWithUserResponse>> getOrdersByUserEmail(@RequestParam String email) {
+    public ResponseEntity<List<OrderWithUserResponse>> getOrdersByUserEmail(@RequestParam("email") String email) {
         log.info("Request to find all Orders of the User with email: {}", email);
         return ResponseEntity.ok(orderService.getOrdersByUserEmail(email));
     }
