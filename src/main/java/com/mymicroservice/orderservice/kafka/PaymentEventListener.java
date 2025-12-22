@@ -2,11 +2,16 @@ package com.mymicroservice.orderservice.kafka;
 
 import com.mymicroservice.orderservice.model.OrderStatus;
 import com.mymicroservice.orderservice.service.OrderService;
+import com.mymicroservice.orderservice.util.KafkaMdcUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mymicroservices.common.events.PaymentEventDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
@@ -17,16 +22,23 @@ import org.springframework.stereotype.Component;
 public class PaymentEventListener {
 
     private final OrderService orderService;
+    private static final Logger TRACE_LOGGER = LoggerFactory.getLogger("TRACE_MDC_LOGGER");
 
     @KafkaListener(topics = "create-payment", groupId = "order-service-group")
     public void onCreatePayment(
             @Payload PaymentEventDto event,
             @Header(KafkaHeaders.RECEIVED_KEY) String key,
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
-            @Header(KafkaHeaders.OFFSET) long offset) {
+            @Header(KafkaHeaders.OFFSET) long offset,
+            Message<PaymentEventDto> message) {
+
+        KafkaMdcUtil.restoreMdcFromMessage(message);
+        MDC.put("serviceName", "orderservice");
 
         try {
             log.info("Received CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
+                    key, partition, offset, event);
+            TRACE_LOGGER.info("Received CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
                     key, partition, offset, event);
 
             if (event == null) {
@@ -68,11 +80,18 @@ public class PaymentEventListener {
             }
 
             orderService.updateOrderStatus(orderId, enumStatus);
+
             log.info("Successfully updated order {} status to {}", orderId, enumStatus);
+            TRACE_LOGGER.info("Successfully updated order {} status to {}", orderId, enumStatus);
 
         } catch (Exception e) {
             log.error("Error processing CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
                     key, partition, offset, e.getMessage(), e);
+            TRACE_LOGGER.error("Error processing CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
+                    key, partition, offset, e.getMessage(), e);
+        }
+        finally {
+            MDC.clear();
         }
     }
 }
