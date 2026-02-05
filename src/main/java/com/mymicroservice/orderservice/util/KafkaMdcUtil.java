@@ -33,7 +33,7 @@ public class KafkaMdcUtil {
     /**
      * Recover MDC from Kafka headers
      */
-    public static void restoreMdcFromMessage(Message<?> message) {
+    /*public static void restoreMdcFromMessage(Message<?> message) {
         // Берем requestId из заголовков
         Object requestId = message.getHeaders().get("X-Request-Id");
         if (requestId != null) {
@@ -45,5 +45,5 @@ public class KafkaMdcUtil {
         if (sourceService != null) {
             MDC.put("sourceService", sourceService.toString());
         }
-    }
+    }*/
 }

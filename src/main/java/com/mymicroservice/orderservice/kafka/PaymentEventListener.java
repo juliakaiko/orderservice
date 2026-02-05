@@ -2,19 +2,18 @@ package com.mymicroservice.orderservice.kafka;
 
 import com.mymicroservice.orderservice.model.OrderStatus;
 import com.mymicroservice.orderservice.service.OrderService;
-import com.mymicroservice.orderservice.util.KafkaMdcUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mymicroservices.common.events.PaymentEventDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
+
+import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ import org.springframework.stereotype.Component;
 public class PaymentEventListener {
 
     private final OrderService orderService;
-    private static final Logger TRACE_LOGGER = LoggerFactory.getLogger("TRACE_MDC_LOGGER");
+    private final String SERVICE_NAME = "orderservice";
 
     @KafkaListener(topics = "create-payment", groupId = "order-service-group")
     public void onCreatePayment(
@@ -30,15 +29,20 @@ public class PaymentEventListener {
             @Header(KafkaHeaders.RECEIVED_KEY) String key,
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset,
-            Message<PaymentEventDto> message) {
+            @Header("X-Request-Id") String requestId,
+            @Header("X-Source-Service") String sourceService,
+            Acknowledgment ack) {
 
-        KafkaMdcUtil.restoreMdcFromMessage(message);
-        MDC.put("serviceName", "orderservice");
+        if (requestId != null) {
+            MDC.put("requestId", requestId);
+        }
+        if (sourceService != null) {
+            MDC.put("sourceService", sourceService);
+        }
+        MDC.put("serviceName", SERVICE_NAME);
 
         try {
             log.info("Received CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
-                    key, partition, offset, event);
-            TRACE_LOGGER.info("Received CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
                     key, partition, offset, event);
 
             if (event == null) {
@@ -80,15 +84,14 @@ public class PaymentEventListener {
             }
 
             orderService.updateOrderStatus(orderId, enumStatus);
+            ack.acknowledge(); // commit offset
 
             log.info("Successfully updated order {} status to {}", orderId, enumStatus);
-            TRACE_LOGGER.info("Successfully updated order {} status to {}", orderId, enumStatus);
 
         } catch (Exception e) {
             log.error("Error processing CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
                     key, partition, offset, e.getMessage(), e);
-            TRACE_LOGGER.error("Error processing CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
-                    key, partition, offset, e.getMessage(), e);
+            ack.nack(Duration.ofMillis(100)); // sleep and try again
         }
         finally {
             MDC.clear();

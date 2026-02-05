@@ -127,8 +127,9 @@ public class OrderServiceImplTest {
         orderService.updateOrderStatus(TEST_ORDER_ID, OrderStatus.PROCESSING);
 
         assertEquals(OrderStatus.PROCESSING, testOrder.getStatus());
-        verify(orderRepository, times(1)).findById(TEST_ORDER_ID);
-        verify(orderRepository, times(1)).save(testOrder);
+
+        verify(orderRepository).findById(TEST_ORDER_ID);
+        verify(orderRepository).save(testOrder);
     }
 
     @Test

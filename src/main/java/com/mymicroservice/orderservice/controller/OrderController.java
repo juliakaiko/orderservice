@@ -45,7 +45,7 @@ public class OrderController {
                 : ResponseEntity.ok(orderWithUserResponse);
     }
 
-    @PostMapping("/")
+    @PostMapping({"", "/"})
     public ResponseEntity<?> createOrder (@RequestBody @Valid OrderDto orderDto){
         log.info("Request to create a new Order: {}", orderDto);
         OrderWithUserResponse orderWithUserResponse =  orderService.createOrder(orderDto);

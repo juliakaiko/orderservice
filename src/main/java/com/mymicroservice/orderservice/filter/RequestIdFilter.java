@@ -4,8 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -15,10 +14,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@Slf4j
 public class RequestIdFilter extends OncePerRequestFilter {
 
     private static final String REQUEST_ID = "requestId";
-    private static final Logger TRACE_MDC_LOGGER = LoggerFactory.getLogger("TRACE_MDC_LOGGER");
+    private static final String SERVICE_NAME = "orderservice";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -29,20 +29,24 @@ public class RequestIdFilter extends OncePerRequestFilter {
                 .orElse(UUID.randomUUID().toString());
 
         MDC.put(REQUEST_ID, requestId);
-        MDC.put("serviceName", "orderservice");
+        MDC.put("serviceName", SERVICE_NAME);
 
         response.setHeader("X-Request-Id", requestId);
 
-        // log the INCOMING request
-        TRACE_MDC_LOGGER.info("{} {}",
+        /**
+         * Write a log to the trace file at the beginning of the request
+         */
+        log.info("{} {}",
                 request.getMethod(),
                 request.getRequestURI());
 
         try {
             filterChain.doFilter(request, response);
         } finally {
-            // log the OUTGOING response
-            TRACE_MDC_LOGGER.info("Response status: {}", response.getStatus());
+            /**
+             * Write the response log to the trace file
+             */
+            log.info("Response status: {}", response.getStatus());
 
             MDC.clear();
         }

@@ -6,6 +6,7 @@ import com.mymicroservice.orderservice.exception.OrderAlreadyPaidException;
 import com.mymicroservice.orderservice.exception.OrderItemNotFoundException;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
 import com.mymicroservice.orderservice.util.ErrorItem;
+import feign.FeignException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -184,6 +185,17 @@ public class GlobalAdvice {
     public ResponseEntity<ErrorItem> handleOrderAlreadyPaidException(OrderAlreadyPaidException e) {
         ErrorItem error = generateMessage(e, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handles Feign client exceptions when calling external services.
+     * Extracts custom error message from response body if available.
+     */
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<ErrorItem> handleFeignException(FeignException e) {
+        HttpStatus status = HttpStatus.valueOf(e.status());
+        ErrorItem error = generateMessage(e, status);
+        return new ResponseEntity<>(error, status);
     }
 
     /**
