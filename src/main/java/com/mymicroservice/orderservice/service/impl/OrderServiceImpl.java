@@ -46,7 +46,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderWithUserResponse createOrder(OrderDto orderDto) {
         Order order = OrderMapper.INSTANCE.toEntity(orderDto);
-        log.info("createOrder(): {}",order);
+        log.info("createOrder(): {}", order);
         order.setCreationDate(LocalDate.now());
         order.setStatus(OrderStatus.CREATED);
 
@@ -62,14 +62,18 @@ public class OrderServiceImpl implements OrderService {
         order = orderRepository.save(order);
 
         OrderDto orderDtoFromDb = OrderMapper.INSTANCE.toDto(order);
+
+        log.info("BEFORE calling userClient.getUserById({})", orderDto.getUserId());
         UserDto userDtoFromUserService = userClient.getUserById(orderDto.getUserId());
+        log.info("AFTER calling userClient.getUserById({})", userDtoFromUserService.getUserId());
+
         // Send event to PaymentService
         OrderEventDto event = createOrderEvent(order);
         // sending with a callback, the status update will be performed after successful sending
         orderEventProducer.sendCreateOrder(event, () -> {
             updateOrderStatus(orderDtoFromDb.getId(), OrderStatus.PROCESSING);
         });
-        return new OrderWithUserResponse (orderDtoFromDb, userDtoFromUserService);
+        return new OrderWithUserResponse(orderDtoFromDb, userDtoFromUserService);
     }
 
     @Override
@@ -140,9 +144,15 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("updateOrder(): {}", order);
         Order updatedOrder = orderRepository.save(order);
-
         OrderDto orderDtoFromDb = OrderMapper.INSTANCE.toDto(updatedOrder);
         UserDto userDtoFromUserService = userClient.getUserById(orderDtoFromDb.getUserId());
+
+        // Send event to PaymentService
+        OrderEventDto event = createOrderEvent(order);
+        // sending with a callback, the status update will be performed after successful sending
+        orderEventProducer.sendCreateOrder(event, () -> {
+            updateOrderStatus(orderDtoFromDb.getId(), OrderStatus.PROCESSING);
+        });
         return new OrderWithUserResponse(orderDtoFromDb, userDtoFromUserService);
     }
     

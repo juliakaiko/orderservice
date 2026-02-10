@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.mymicroservice.orderservice.client.UserClient;
 import com.mymicroservice.orderservice.dto.OrderDto;
+import com.mymicroservice.orderservice.dto.OrderItemDto;
 import com.mymicroservice.orderservice.dto.OrderWithUserResponse;
 import com.mymicroservice.orderservice.dto.UserDto;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
@@ -36,6 +37,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -44,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -98,7 +101,8 @@ public class OrderServiceImplWireMockTest {
         orderItem.setItem(item);
         orderItem.setOrder(testOrder);
 
-        testOrder.setOrderItems(Set.of(orderItem));
+        //testOrder.setOrderItems(Set.of(orderItem));
+        testOrder.setOrderItems(new HashSet<>(Set.of(orderItem)));
 
         testOrderDto = OrderMapper.INSTANCE.toDto(testOrder);
 
@@ -169,14 +173,48 @@ public class OrderServiceImplWireMockTest {
         updatedOrder.setId(TEST_ORDER_ID);
         updatedOrder.setStatus(OrderStatus.PROCESSING);
 
+        OrderItem orderItem = new OrderItem();
+        orderItem.setId(1L);
+        orderItem.setQuantity(5L);
+
+        Item item = new Item();
+        item.setId(2L);
+        item.setPrice(BigDecimal.valueOf(100));
+        orderItem.setItem(item);
+        orderItem.setOrder(testOrder);
+
+        updatedOrder.setOrderItems(new HashSet<>(Set.of(orderItem)));
+
+        testOrder.setOrderItems(new HashSet<>(Set.of(orderItem)));
+
         when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(testOrder));
-        when(orderRepository.save(any(Order.class))).thenReturn(testOrder);
+        when(orderRepository.save(any(Order.class))).thenReturn(updatedOrder);
+        when(itemRepository.findById(anyLong())).thenReturn(Optional.of(item));
+
+        // Mock for orderEventProducer
+        org.mockito.Mockito.doAnswer(invocation -> {
+            Runnable callback = invocation.getArgument(1);
+            callback.run(); // Performing a callback to update the status
+            return null;
+        }).when(orderEventProducer).sendCreateOrder(any(OrderEventDto.class), any(Runnable.class));
 
         OrderDto updateDto = OrderMapper.INSTANCE.toDto(updatedOrder);
+
+        OrderItemDto orderItemDto = new OrderItemDto();
+        orderItemDto.setItemId(2L);
+        orderItemDto.setQuantity(10L);
+        updateDto.setOrderItems(Set.of(orderItemDto));
+
         OrderWithUserResponse result = orderService.updateOrder(TEST_ORDER_ID, updateDto);
 
         assertNotNull(result);
         assertEquals(updateDto.getUserId(), result.getOrder().getUserId());
+
+        verify(orderEventProducer, times(1))
+                .sendCreateOrder(any(OrderEventDto.class), any(Runnable.class));
+
+        // check that save was called twice (main update + status update when callback)
+        verify(orderRepository, times(2)).save(any(Order.class));
 
         verifyFeignCall("/api/internal/users/1");
     }

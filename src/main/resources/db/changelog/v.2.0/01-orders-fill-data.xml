@@ -23,16 +23,16 @@
             INSERT INTO orders (user_id, status, creation_date) VALUES (8, 'FAILED', '2025-06-01');
             INSERT INTO orders (user_id, status, creation_date) VALUES (14, 'CREATED', '2025-06-19');
             INSERT INTO orders (user_id, status, creation_date) VALUES (19, 'PROCESSING', '2025-07-07');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (21, 'FAILED', '2025-07-22');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (1, 'FAILED', '2025-07-22');
             INSERT INTO orders (user_id, status, creation_date) VALUES (16, 'PAID', '2025-08-01');
             INSERT INTO orders (user_id, status, creation_date) VALUES (9, 'CREATED', '2025-08-06');
             INSERT INTO orders (user_id, status, creation_date) VALUES (4, 'PROCESSING', '2025-08-08');
             INSERT INTO orders (user_id, status, creation_date) VALUES (6, 'PAID', '2025-09-10');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (17, 'CANCELLED', '2025-09-30');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (1, 'CANCELLED', '2025-09-30');
             INSERT INTO orders (user_id, status, creation_date) VALUES (2, 'CREATED', '2025-10-05');
             INSERT INTO orders (user_id, status, creation_date) VALUES (11, 'PAID', '2025-10-22');
             INSERT INTO orders (user_id, status, creation_date) VALUES (13, 'FAILED', '2025-11-11');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (18, 'PROCESSING', '2025-11-28');
+            INSERT INTO orders (user_id, status, creation_date) VALUES (1, 'PROCESSING', '2025-11-28');
             INSERT INTO orders (user_id, status, creation_date) VALUES (20, 'CANCELLED', '2025-12-15');
 
         </sql>

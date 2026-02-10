@@ -29,6 +29,14 @@
 		<sonar.java.binaries>target/classes</sonar.java.binaries>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <spring-cloud-starter-openfeign.version>4.1.5</spring-cloud-starter-openfeign.version>
+        <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
+        <jackson-databind.version>2.17.0</jackson-databind.version>
+        <spring-cloud-contract-wiremock.version>4.1.1</spring-cloud-contract-wiremock.version>
+        <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
+        <spring-security-test.version>6.5.2</spring-security-test.version>
+        <common-events.version>1.0.0</common-events.version>
+        <postgresql.version>42.7.4</postgresql.version>
 	</properties>
 	<repositories>
 		<repository>
@@ -50,6 +58,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 		<!-- Spring Security + JWT (OAuth2 Resource Server) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -59,12 +71,12 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
-			<version>4.1.5</version>
+            <version>${spring-cloud-starter-openfeign.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.4</version>
+			<version>${postgresql.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -91,7 +103,7 @@
 		<dependency>
 			<groupId>com.mymicroservices</groupId>
 			<artifactId>common-events</artifactId>
-			<version>1.0.0</version>
+            <version>${common-events.version}</version>
 		</dependency>
 		<!--  Swagger -->
 		<dependency>
@@ -102,7 +114,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.17.0</version>
+            <version>${jackson-databind.version}</version>
 		</dependency>
 		<!-- Testing -->
 		<dependency>
@@ -114,14 +126,20 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
-			<version>4.1.1</version>
+            <version>${spring-cloud-contract-wiremock.version}</version>
 			<scope>test</scope>
 		</dependency>
+        <!-- For JSON logs -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
+        </dependency>
 		<!-- WireMock for mocking HTTP requests -->
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
 			<artifactId>wiremock-jre8</artifactId>
-			<version>2.35.0</version>
+            <version>${wiremock-jre8.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- Testcontainers -->
@@ -169,7 +187,7 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
-			<version>6.5.2</version>
+            <version>${spring-security-test.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

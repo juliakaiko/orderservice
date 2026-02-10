@@ -5,11 +5,16 @@ import com.mymicroservice.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mymicroservices.common.events.PaymentEventDto;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
+
+import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
@@ -17,13 +22,32 @@ import org.springframework.stereotype.Component;
 public class PaymentEventListener {
 
     private final OrderService orderService;
+    private static final String REQUEST_ID_HEADER = "X-Request-Id";
+    private static final String SOURCE_SERVICE_HEADER = "X-Source-Service";
 
-    @KafkaListener(topics = "create-payment", groupId = "order-service-group")
+    @Value("${spring.application.name}")
+    private String serviceName;
+
+    @KafkaListener(
+            topics = "${kafka.consumer.topics.create-payment}",
+            groupId = "${kafka.consumer.group-id}"
+    )
     public void onCreatePayment(
             @Payload PaymentEventDto event,
             @Header(KafkaHeaders.RECEIVED_KEY) String key,
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
-            @Header(KafkaHeaders.OFFSET) long offset) {
+            @Header(KafkaHeaders.OFFSET) long offset,
+            @Header(REQUEST_ID_HEADER) String requestId,
+            @Header(SOURCE_SERVICE_HEADER) String sourceService,
+            Acknowledgment ack) {
+
+        if (requestId != null) {
+            MDC.put("requestId", requestId);
+        }
+        if (sourceService != null) {
+            MDC.put("sourceService", sourceService);
+        }
+        MDC.put("serviceName", serviceName);
 
         try {
             log.info("Received CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
@@ -68,11 +92,17 @@ public class PaymentEventListener {
             }
 
             orderService.updateOrderStatus(orderId, enumStatus);
+            ack.acknowledge(); // commit offset
+
             log.info("Successfully updated order {} status to {}", orderId, enumStatus);
 
         } catch (Exception e) {
             log.error("Error processing CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
                     key, partition, offset, e.getMessage(), e);
+            ack.nack(Duration.ofMillis(100)); // sleep and try again
+        }
+        finally {
+            MDC.clear();
         }
     }
 }

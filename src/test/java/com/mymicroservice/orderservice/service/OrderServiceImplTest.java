@@ -127,8 +127,9 @@ public class OrderServiceImplTest {
         orderService.updateOrderStatus(TEST_ORDER_ID, OrderStatus.PROCESSING);
 
         assertEquals(OrderStatus.PROCESSING, testOrder.getStatus());
-        verify(orderRepository, times(1)).findById(TEST_ORDER_ID);
-        verify(orderRepository, times(1)).save(testOrder);
+
+        verify(orderRepository).findById(TEST_ORDER_ID);
+        verify(orderRepository).save(testOrder);
     }
 
     @Test
@@ -174,18 +175,32 @@ public class OrderServiceImplTest {
         updatedOrderDto.setStatus(OrderStatus.CANCELLED);
         updatedOrderDto.setCreationDate(LocalDate.of(2023, 3, 3));
 
+        Order updatedOrder = OrderMapper.INSTANCE.toEntity(updatedOrderDto);
+        updatedOrder.setId(TEST_ORDER_ID);
+        updatedOrder.setOrderItems(testOrder.getOrderItems()); //Saving the order items to create an event
+
         when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(testOrder));
-        when(orderRepository.save(any(Order.class))).thenReturn(testOrder);
+        when(orderRepository.save(any(Order.class))).thenReturn(updatedOrder);
         when(userClient.getUserById(updatedOrderDto.getUserId())).thenReturn(testUserDto);
+
+        // Mock for orderEventProducer
+        doAnswer(invocation -> {
+            Runnable callback = invocation.getArgument(1);
+            callback.run(); // Performing a callback to update the status
+            return null;
+        }).when(orderEventProducer).sendCreateOrder(any(), any());
+
+        when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(updatedOrder));
 
         OrderWithUserResponse result = orderService.updateOrder(TEST_ORDER_ID, updatedOrderDto);
 
         assertNotNull(result);
         assertEquals(updatedOrderDto.getStatus(), result.getOrder().getStatus());
 
-        verify(orderRepository, times(1)).findById(TEST_ORDER_ID);
-        verify(orderRepository, times(1)).save(any(Order.class));
+        verify(orderRepository, times(2)).findById(TEST_ORDER_ID); // Один раз в updateOrder, один раз в callback
+        verify(orderRepository, times(2)).save(any(Order.class));
         verify(userClient, times(1)).getUserById(updatedOrderDto.getUserId());
+        verify(orderEventProducer, times(1)).sendCreateOrder(any(), any());
     }
 
     @Test
@@ -197,6 +212,7 @@ public class OrderServiceImplTest {
         verify(orderRepository, times(1)).findById(TEST_ORDER_ID);
         verify(orderRepository, never()).save(any(Order.class));
         verifyNoInteractions(userClient);
+        verifyNoInteractions(orderEventProducer); // checking that the event is not being sent
     }
 
     @Test
