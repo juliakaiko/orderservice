@@ -110,7 +110,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.TOKEN_FOR_ORDERSERVICE }}
 
       # 11. Build and push Docker image (using local Docker socket)
       - name: Build and Push Docker Image
