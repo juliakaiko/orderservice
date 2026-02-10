@@ -1,0 +1,282 @@
+{"@timestamp":"2026-02-10T14:13:11.591282+03:00","thread_name":"main","message":"Starting ItemControllerTest using Java 21.0.6 with PID 5764 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:13:11.6063854+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:13:15.2220869+03:00","thread_name":"main","message":"Started ItemControllerTest in 4.526 seconds (process running for 6.379)"}
+{"@timestamp":"2026-02-10T14:13:15.2840388+03:00","thread_name":"main","message":"▶ Running test: deleteItem_ShouldReturnNotFound, ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:13:15.4433141+03:00","thread_name":"main","message":"Request to delete the Item by id: 1"}
+{"@timestamp":"2026-02-10T14:13:15.5045951+03:00","thread_name":"main","message":"▶ Running test: getItemsIdIn_ShouldReturnItemsForGivenIds, ids=[1]"}
+{"@timestamp":"2026-02-10T14:13:15.5191655+03:00","thread_name":"main","message":"Request to find Items by IDs: [1]"}
+{"@timestamp":"2026-02-10T14:13:15.6476861+03:00","thread_name":"main","message":"▶ Running test: updateItem_ShouldReturnNotFound, UPDATED_ITEM=ItemDto(id=1, name=UpdatedName, price=101)"}
+{"@timestamp":"2026-02-10T14:13:15.7484779+03:00","thread_name":"main","message":"Request to update the Item: ItemDto(id=1, name=UpdatedName, price=101)"}
+{"@timestamp":"2026-02-10T14:13:15.7655624+03:00","thread_name":"main","message":"▶ Running test: getItemsIdIn_ShouldReturnEmptyListWhenNoMatches, ids=[999]"}
+{"@timestamp":"2026-02-10T14:13:15.7675713+03:00","thread_name":"main","message":"Request to find Items by IDs: [999]"}
+{"@timestamp":"2026-02-10T14:13:15.7832842+03:00","thread_name":"main","message":"▶ Running test: getAllItems_ShouldReturnAllItems"}
+{"@timestamp":"2026-02-10T14:13:15.784272+03:00","thread_name":"main","message":"Request to find all Items"}
+{"@timestamp":"2026-02-10T14:13:15.7943159+03:00","thread_name":"main","message":"▶ Running test: getItemById_ShouldReturnNotFound(), _ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:13:15.7973098+03:00","thread_name":"main","message":"Request to find the Item by id: 1"}
+{"@timestamp":"2026-02-10T14:13:15.8068432+03:00","thread_name":"main","message":"▶ Running test: createItem_ShouldReturnCreatedItemDto, Item=ItemDto(id=1, name=TestItem, price=100)"}
+{"@timestamp":"2026-02-10T14:13:15.8118444+03:00","thread_name":"main","message":"Request to create a new Item: ItemDto(id=1, name=TestItem, price=100)"}
+{"@timestamp":"2026-02-10T14:13:15.8234104+03:00","thread_name":"main","message":"▶ Running test: getItemById_ShouldReturnItemDto(), ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:13:15.8249594+03:00","thread_name":"main","message":"Request to find the Item by id: 1"}
+{"@timestamp":"2026-02-10T14:13:15.834999+03:00","thread_name":"main","message":"▶ Running test: updateItem_ShouldReturnUpdatedItemDto, UPDATED_ITEM=ItemDto(id=1, name=UpdatedName, price=101)"}
+{"@timestamp":"2026-02-10T14:13:15.8370065+03:00","thread_name":"main","message":"Request to update the Item: ItemDto(id=1, name=UpdatedName, price=101)"}
+{"@timestamp":"2026-02-10T14:13:15.8485228+03:00","thread_name":"main","message":"▶ Running test: deleteItem_ShouldReturnDeletedItemDto, _ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:13:15.8502144+03:00","thread_name":"main","message":"Request to delete the Item by id: 1"}
+{"@timestamp":"2026-02-10T14:13:15.8594563+03:00","thread_name":"main","message":"▶ Running test: getAllItemsWithPagination_ShouldReturnPaginatedItems, page=0, size=10"}
+{"@timestamp":"2026-02-10T14:13:15.8669737+03:00","thread_name":"main","message":"Request to find all Items with pagination"}
+{"@timestamp":"2026-02-10T14:13:16.0046497+03:00","thread_name":"main","message":"Starting OrderControllerTest using Java 21.0.6 with PID 5764 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:13:16.0056508+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:13:16.5430624+03:00","thread_name":"main","message":"Started OrderControllerTest in 0.604 seconds (process running for 7.701)"}
+{"@timestamp":"2026-02-10T14:13:16.557124+03:00","thread_name":"main","message":"▶ Running test: updateOrder_ShouldReturnUpdatedOrderWithUserResponse, UPDATED_ORDER=OrderDto(id=1, userId=10, status=CANCELLED, creationDate=2026-02-10, orderItems=[OrderItemDto(id=100, orderId=1, itemId=2, quantity=3)])"}
+{"@timestamp":"2026-02-10T14:13:16.5882673+03:00","thread_name":"main","message":"Request to update the Order: OrderDto(id=1, userId=10, status=null, creationDate=null, orderItems=[OrderItemDto(id=100, orderId=1, itemId=2, quantity=3)])"}
+{"@timestamp":"2026-02-10T14:13:16.6063371+03:00","thread_name":"main","message":"▶ Running test: getOrderById_ShouldReturnOrderWithUserResponse, ORDER_ID=1"}
+{"@timestamp":"2026-02-10T14:13:16.6088418+03:00","thread_name":"main","message":"Request to find the Order by id: 1"}
+{"@timestamp":"2026-02-10T14:13:16.6168617+03:00","thread_name":"main","message":"▶ Running test: getAllOrders_ShouldReturnAllOrders"}
+{"@timestamp":"2026-02-10T14:13:16.6178579+03:00","thread_name":"main","message":"Request to find all Orders"}
+{"@timestamp":"2026-02-10T14:13:16.6267198+03:00","thread_name":"main","message":"▶ Running test: updateOrder_ShouldReturnNotFound, UPDATED_ORDER=OrderDto(id=1, userId=10, status=CANCELLED, creationDate=2026-02-10, orderItems=[OrderItemDto(id=100, orderId=1, itemId=2, quantity=3)])"}
+{"@timestamp":"2026-02-10T14:13:16.6297219+03:00","thread_name":"main","message":"Request to update the Order: OrderDto(id=1, userId=10, status=null, creationDate=null, orderItems=[OrderItemDto(id=100, orderId=1, itemId=2, quantity=3)])"}
+{"@timestamp":"2026-02-10T14:13:16.6402434+03:00","thread_name":"main","message":"▶ Running test: getAllOrdersWithPagination_ShouldReturnPaginatedOrders, page=0, size=10"}
+{"@timestamp":"2026-02-10T14:13:16.643478+03:00","thread_name":"main","message":"Request to find all Orders with pagination"}
+{"@timestamp":"2026-02-10T14:13:16.6560039+03:00","thread_name":"main","message":"▶ Running test: getByStatusIn_ShouldReturnOrdersWithGivenStatuses, statuses=[CREATED]"}
+{"@timestamp":"2026-02-10T14:13:16.6595087+03:00","thread_name":"main","message":"Request to find Orders by statuses: [CREATED]"}
+{"@timestamp":"2026-02-10T14:13:16.6680429+03:00","thread_name":"main","message":"▶ Running test: getOrdersByUserEmail_ShouldReturnEmptyList, email=nonexistent@example.com"}
+{"@timestamp":"2026-02-10T14:13:16.6755542+03:00","thread_name":"main","message":"Request to find all Orders of the User with email: nonexistent@example.com"}
+{"@timestamp":"2026-02-10T14:13:16.6840879+03:00","thread_name":"main","message":"▶ Running test: deleteOrder_ShouldReturnDeletedOrderDto, ORDER_ID=1"}
+{"@timestamp":"2026-02-10T14:13:16.6860812+03:00","thread_name":"main","message":"Request to delete the Order by id: 1"}
+{"@timestamp":"2026-02-10T14:13:16.6956239+03:00","thread_name":"main","message":"▶ Running test: createOrder_ShouldReturnCreatedOrderWithUserResponse, ORDER=OrderDto(id=1, userId=1, status=CREATED, creationDate=2026-02-10, orderItems=[OrderItemDto(id=1, orderId=1, itemId=2, quantity=5)])"}
+{"@timestamp":"2026-02-10T14:13:16.6986406+03:00","thread_name":"main","message":"Request to create a new Order: OrderDto(id=1, userId=1, status=null, creationDate=null, orderItems=[OrderItemDto(id=1, orderId=1, itemId=2, quantity=5)])"}
+{"@timestamp":"2026-02-10T14:13:16.7071496+03:00","thread_name":"main","message":"▶ Running test: getOrdersByUserEmail_ShouldReturnListOfOrders, email=test@example.com"}
+{"@timestamp":"2026-02-10T14:13:16.7081515+03:00","thread_name":"main","message":"Request to find all Orders of the User with email: test@example.com"}
+{"@timestamp":"2026-02-10T14:13:16.7156786+03:00","thread_name":"main","message":"▶ Running test: deleteOrder_ShouldReturnNotFound, ORDER_ID=1"}
+{"@timestamp":"2026-02-10T14:13:16.7176754+03:00","thread_name":"main","message":"Request to delete the Order by id: 1"}
+{"@timestamp":"2026-02-10T14:13:16.7230246+03:00","thread_name":"main","message":"▶ Running test: getOrderById_ShouldReturnNotFound, ORDER_ID=1"}
+{"@timestamp":"2026-02-10T14:13:16.7255447+03:00","thread_name":"main","message":"Request to find the Order by id: 1"}
+{"@timestamp":"2026-02-10T14:13:16.7320853+03:00","thread_name":"main","message":"▶ Running test: getOrdersIdIn_ShouldReturnEmptyListWhenNoMatches, ids=[999]"}
+{"@timestamp":"2026-02-10T14:13:16.7345939+03:00","thread_name":"main","message":"Request to find Orders by IDs: [999]"}
+{"@timestamp":"2026-02-10T14:13:16.7426042+03:00","thread_name":"main","message":"▶ Running test: getOrdersIdIn_ShouldReturnOrdersForGivenIds, ids=[1]"}
+{"@timestamp":"2026-02-10T14:13:16.7449703+03:00","thread_name":"main","message":"Request to find Orders by IDs: [1]"}
+{"@timestamp":"2026-02-10T14:13:16.8254242+03:00","thread_name":"main","message":"Starting OrderItemControllerTest using Java 21.0.6 with PID 5764 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:13:16.8254242+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:13:17.2720374+03:00","thread_name":"main","message":"Started OrderItemControllerTest in 0.49 seconds (process running for 8.429)"}
+{"@timestamp":"2026-02-10T14:13:17.2807671+03:00","thread_name":"main","message":"▶ Running test: getAllOrderItemsWithPagination_ShouldReturnPaginatedOrderItems, page=0, size=10"}
+{"@timestamp":"2026-02-10T14:13:17.2873126+03:00","thread_name":"main","message":"Request to find all OrderItems with pagination"}
+{"@timestamp":"2026-02-10T14:13:17.300551+03:00","thread_name":"main","message":"▶ Running test: getOrderItemsIdIn_ShouldReturnEmptyListWhenNoMatches, ids=[999]"}
+{"@timestamp":"2026-02-10T14:13:17.3035418+03:00","thread_name":"main","message":"Request to find OrderItems by IDs: [999]"}
+{"@timestamp":"2026-02-10T14:13:17.3108009+03:00","thread_name":"main","message":"▶ Running test: getOrderItemById_ShouldReturnOrderItemDto(), ORDER_ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:13:17.3128205+03:00","thread_name":"main","message":"Request to find the OrderItem by id: 1"}
+{"@timestamp":"2026-02-10T14:13:17.3203542+03:00","thread_name":"main","message":"▶ Running test: updateOrderItem_ShouldReturnUpdatedOrderItemDto, UPDATED_ORDER_ITEM=OrderItemDto(id=1, orderId=1, itemId=1, quantity=11)"}
+{"@timestamp":"2026-02-10T14:13:17.3284047+03:00","thread_name":"main","message":"Request to update the OrderItem: OrderItemDto(id=1, orderId=1, itemId=1, quantity=11)"}
+{"@timestamp":"2026-02-10T14:13:17.3354116+03:00","thread_name":"main","message":"▶ Running test: deleteOrderItem_ShouldReturnDeletedOrderItemDto, ORDER_ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:13:17.3364109+03:00","thread_name":"main","message":"Request to delete the OrderItem by id: 1"}
+{"@timestamp":"2026-02-10T14:13:17.3423978+03:00","thread_name":"main","message":"▶ Running test: updateOrderItem_ShouldReturnNotFound, UPDATED_ORDER_ITEM=OrderItemDto(id=1, orderId=1, itemId=1, quantity=11)"}
+{"@timestamp":"2026-02-10T14:13:17.3459375+03:00","thread_name":"main","message":"Request to update the OrderItem: OrderItemDto(id=1, orderId=1, itemId=1, quantity=11)"}
+{"@timestamp":"2026-02-10T14:13:17.3550945+03:00","thread_name":"main","message":"▶ Running test: getOrderItemsIdIn_ShouldReturnOrderItemsForGivenIds, ids=[1]"}
+{"@timestamp":"2026-02-10T14:13:17.3575952+03:00","thread_name":"main","message":"Request to find OrderItems by IDs: [1]"}
+{"@timestamp":"2026-02-10T14:13:17.364611+03:00","thread_name":"main","message":"▶ Running test: getOrderItemById_ShouldReturnNotFound(), ORDER_ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:13:17.366608+03:00","thread_name":"main","message":"Request to find the OrderItem by id: 1"}
+{"@timestamp":"2026-02-10T14:13:17.3721302+03:00","thread_name":"main","message":"▶ Running test: getAllOrderItems_ShouldReturnAllOrderItems"}
+{"@timestamp":"2026-02-10T14:13:17.3737389+03:00","thread_name":"main","message":"Request to find all OrderItems"}
+{"@timestamp":"2026-02-10T14:13:17.3808593+03:00","thread_name":"main","message":"▶ Running test: createOrderItem_ShouldReturnCreatedOrderItemDto, OrderItem=OrderItemDto(id=1, orderId=1, itemId=1, quantity=10)"}
+{"@timestamp":"2026-02-10T14:13:17.3838543+03:00","thread_name":"main","message":"Request to create a new OrderItem: OrderItemDto(id=1, orderId=1, itemId=1, quantity=10)"}
+{"@timestamp":"2026-02-10T14:13:17.3901296+03:00","thread_name":"main","message":"▶ Running test: deleteOrderItem_ShouldReturnNotFound, ORDER_ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:13:17.3921214+03:00","thread_name":"main","message":"Request to delete the OrderItem by id: 1"}
+{"@timestamp":"2026-02-10T14:13:21.9467364+03:00","thread_name":"main","message":"PostgreSQL URL: jdbc:postgresql://localhost:61266/testdb?loggerLevel=OFF"}
+{"@timestamp":"2026-02-10T14:13:21.9517398+03:00","thread_name":"main","message":"Starting OrderserviceApplicationTests using Java 21.0.6 with PID 5764 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:13:21.9523412+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:13:26.7690556+03:00","thread_name":"main","message":"PostgreSQL URL: jdbc:postgresql://localhost:61266/testdb?loggerLevel=OFF"}
+{"@timestamp":"2026-02-10T14:13:26.7710557+03:00","thread_name":"main","message":"Starting ItemRepositoryTest using Java 21.0.6 with PID 5764 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:13:26.7710557+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:13:27.2498719+03:00","thread_name":"main","message":"Started ItemRepositoryTest in 0.523 seconds (process running for 18.408)"}
+{"@timestamp":"2026-02-10T14:13:27.4323045+03:00","thread_name":"main","message":"Test findAllItemsNative - should return paged results"}
+{"@timestamp":"2026-02-10T14:13:27.5794938+03:00","thread_name":"main","message":"Test findAllItemsByIdIn - should return Items with specified IDs"}
+{"@timestamp":"2026-02-10T14:13:27.6175627+03:00","thread_name":"main","message":"Test findAllOrdersNative - should return empty page when no orders exist"}
+{"@timestamp":"2026-02-10T14:13:27.6471461+03:00","thread_name":"main","message":"Test findAllItemsByIdIn - should return empty list for non-existent IDs"}
+{"@timestamp":"2026-02-10T14:13:27.686068+03:00","thread_name":"main","message":"Test findAllOrdersNative - should return empty page when no orders exist"}
+{"@timestamp":"2026-02-10T14:13:27.7138405+03:00","thread_name":"main","message":"Test findAllOrderItemsNative - should return paged results"}
+{"@timestamp":"2026-02-10T14:13:27.7338109+03:00","thread_name":"main","message":"Test findAllOrderItemsByIdIn - should return empty list for non-existent IDs"}
+{"@timestamp":"2026-02-10T14:13:27.7531841+03:00","thread_name":"main","message":"Test findAllOrderItemsByIdIn - should return OrderItems with specified IDs"}
+{"@timestamp":"2026-02-10T14:13:27.7933036+03:00","thread_name":"main","message":"Test findByStatusIn - should return orders with specified statuses"}
+{"@timestamp":"2026-02-10T14:13:27.8142715+03:00","thread_name":"main","message":"Test findAllOrdersByIdIn - should return empty list for non-existent IDs"}
+{"@timestamp":"2026-02-10T14:13:27.8328905+03:00","thread_name":"main","message":"Test findOrdersByUserId - should return orders for specified user"}
+{"@timestamp":"2026-02-10T14:13:27.8584074+03:00","thread_name":"main","message":"Test findAllOrdersNative - should return paged results"}
+{"@timestamp":"2026-02-10T14:13:27.8783144+03:00","thread_name":"main","message":"Test findAllOrdersNative - should return empty page when no orders exist"}
+{"@timestamp":"2026-02-10T14:13:27.902259+03:00","thread_name":"main","message":"Test findByStatusIn - should return empty list for non-matching statuses"}
+{"@timestamp":"2026-02-10T14:13:27.9220726+03:00","thread_name":"main","message":"Test findOrdersByUserId - should return empty list for non-existent user"}
+{"@timestamp":"2026-02-10T14:13:27.9420042+03:00","thread_name":"main","message":"Test findAllOrdersByIdIn - should return orders with specified IDs"}
+{"@timestamp":"2026-02-10T14:13:28.1249064+03:00","thread_name":"main","message":"findAllItemsNativeWithPagination()"}
+{"@timestamp":"2026-02-10T14:13:28.132039+03:00","thread_name":"main","message":"getAllItems()"}
+{"@timestamp":"2026-02-10T14:13:28.1365671+03:00","thread_name":"main","message":"createItem(): Item(id=1, name=TestItem, price=100)"}
+{"@timestamp":"2026-02-10T14:13:28.1395674+03:00","thread_name":"main","message":"updateItem(): Item(id=1, name=updated_item, price=101)"}
+{"@timestamp":"2026-02-10T14:13:28.1446582+03:00","thread_name":"main","message":"deleteItem(): 1"}
+{"@timestamp":"2026-02-10T14:13:28.1466542+03:00","thread_name":"main","message":"getItemsIdIn()"}
+{"@timestamp":"2026-02-10T14:13:28.1537183+03:00","thread_name":"main","message":"getItemsById(): 1"}
+{"@timestamp":"2026-02-10T14:13:28.3374079+03:00","thread_name":"main","message":"findAllOrderItemsNativeWithPagination()"}
+{"@timestamp":"2026-02-10T14:13:28.3485594+03:00","thread_name":"main","message":"getOrderItemsById(): 1"}
+{"@timestamp":"2026-02-10T14:13:28.351553+03:00","thread_name":"main","message":"deleteOrderItem(): 1"}
+{"@timestamp":"2026-02-10T14:13:28.35556+03:00","thread_name":"main","message":"createOrderItem(): com.mymicroservice.orderservice.model.OrderItem@1e709a4e"}
+{"@timestamp":"2026-02-10T14:13:28.3627357+03:00","thread_name":"main","message":"getOrderItemsIdIn()"}
+{"@timestamp":"2026-02-10T14:13:28.3693915+03:00","thread_name":"main","message":"updateOrderItem(): com.mymicroservice.orderservice.model.OrderItem@5f7b4703"}
+{"@timestamp":"2026-02-10T14:13:28.3733954+03:00","thread_name":"main","message":"getAllOrderItems()"}
+{"@timestamp":"2026-02-10T14:13:28.5780146+03:00","thread_name":"main","message":"deleteOrder(): Optional[Order(id=1, userId=1, status=CREATED, creationDate=2026-02-10)]"}
+{"@timestamp":"2026-02-10T14:13:28.5943093+03:00","thread_name":"main","message":"updateOrder(): Order(id=1, userId=1, status=CANCELLED, creationDate=2023-03-03)"}
+{"@timestamp":"2026-02-10T14:13:28.5983213+03:00","thread_name":"main","message":"Order with id 1 was updated with status PROCESSING"}
+{"@timestamp":"2026-02-10T14:13:28.6045005+03:00","thread_name":"main","message":"getOrdersById(): 1"}
+{"@timestamp":"2026-02-10T14:13:28.6113663+03:00","thread_name":"main","message":"getOrdersIdIn()"}
+{"@timestamp":"2026-02-10T14:13:28.6169089+03:00","thread_name":"main","message":"getOrdersByUserEmail: test@example.com"}
+{"@timestamp":"2026-02-10T14:13:28.6270663+03:00","thread_name":"main","message":"Order with id 1 was updated with status PROCESSING"}
+{"@timestamp":"2026-02-10T14:13:28.6320624+03:00","thread_name":"main","message":"findAllOrdersNativeWithPagination()"}
+{"@timestamp":"2026-02-10T14:13:28.6472563+03:00","thread_name":"main","message":"findByStatusIn()"}
+{"@timestamp":"2026-02-10T14:13:28.6522587+03:00","thread_name":"main","message":"createOrder(): Order(id=1, userId=1, status=CREATED, creationDate=2026-02-10)"}
+{"@timestamp":"2026-02-10T14:13:28.6539276+03:00","thread_name":"main","message":"BEFORE calling userClient.getUserById(1)"}
+{"@timestamp":"2026-02-10T14:13:28.6549473+03:00","thread_name":"main","message":"AFTER calling userClient.getUserById(1)"}
+{"@timestamp":"2026-02-10T14:13:28.6559485+03:00","thread_name":"main","message":"Order with id 1 was updated with status PROCESSING"}
+{"@timestamp":"2026-02-10T14:13:28.6610759+03:00","thread_name":"main","message":"getAllOrders()"}
+{"@timestamp":"2026-02-10T14:13:28.7726193+03:00","thread_name":"main","message":"Starting OrderServiceImplWireMockTest using Java 21.0.6 with PID 5764 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:13:28.7726193+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:15:23.9190472+03:00","thread_name":"main","message":"Starting ItemControllerTest using Java 21.0.6 with PID 26480 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:15:23.9322554+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:15:27.3955288+03:00","thread_name":"main","message":"Started ItemControllerTest in 4.336 seconds (process running for 5.779)"}
+{"@timestamp":"2026-02-10T14:15:27.4531504+03:00","thread_name":"main","message":"▶ Running test: deleteItem_ShouldReturnNotFound, ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:15:27.6153887+03:00","thread_name":"main","message":"Request to delete the Item by id: 1"}
+{"@timestamp":"2026-02-10T14:15:27.6706435+03:00","thread_name":"main","message":"▶ Running test: getItemsIdIn_ShouldReturnItemsForGivenIds, ids=[1]"}
+{"@timestamp":"2026-02-10T14:15:27.6866682+03:00","thread_name":"main","message":"Request to find Items by IDs: [1]"}
+{"@timestamp":"2026-02-10T14:15:27.8363718+03:00","thread_name":"main","message":"▶ Running test: updateItem_ShouldReturnNotFound, UPDATED_ITEM=ItemDto(id=1, name=UpdatedName, price=101)"}
+{"@timestamp":"2026-02-10T14:15:27.9563922+03:00","thread_name":"main","message":"Request to update the Item: ItemDto(id=1, name=UpdatedName, price=101)"}
+{"@timestamp":"2026-02-10T14:15:27.975964+03:00","thread_name":"main","message":"▶ Running test: getItemsIdIn_ShouldReturnEmptyListWhenNoMatches, ids=[999]"}
+{"@timestamp":"2026-02-10T14:15:27.9779638+03:00","thread_name":"main","message":"Request to find Items by IDs: [999]"}
+{"@timestamp":"2026-02-10T14:15:27.9960131+03:00","thread_name":"main","message":"▶ Running test: getAllItems_ShouldReturnAllItems"}
+{"@timestamp":"2026-02-10T14:15:27.9980166+03:00","thread_name":"main","message":"Request to find all Items"}
+{"@timestamp":"2026-02-10T14:15:28.0115298+03:00","thread_name":"main","message":"▶ Running test: getItemById_ShouldReturnNotFound(), _ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:15:28.0140637+03:00","thread_name":"main","message":"Request to find the Item by id: 1"}
+{"@timestamp":"2026-02-10T14:15:28.024583+03:00","thread_name":"main","message":"▶ Running test: createItem_ShouldReturnCreatedItemDto, Item=ItemDto(id=1, name=TestItem, price=100)"}
+{"@timestamp":"2026-02-10T14:15:28.0295843+03:00","thread_name":"main","message":"Request to create a new Item: ItemDto(id=1, name=TestItem, price=100)"}
+{"@timestamp":"2026-02-10T14:15:28.0421167+03:00","thread_name":"main","message":"▶ Running test: getItemById_ShouldReturnItemDto(), ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:15:28.0431202+03:00","thread_name":"main","message":"Request to find the Item by id: 1"}
+{"@timestamp":"2026-02-10T14:15:28.0536665+03:00","thread_name":"main","message":"▶ Running test: updateItem_ShouldReturnUpdatedItemDto, UPDATED_ITEM=ItemDto(id=1, name=UpdatedName, price=101)"}
+{"@timestamp":"2026-02-10T14:15:28.0581856+03:00","thread_name":"main","message":"Request to update the Item: ItemDto(id=1, name=UpdatedName, price=101)"}
+{"@timestamp":"2026-02-10T14:15:28.0682965+03:00","thread_name":"main","message":"▶ Running test: deleteItem_ShouldReturnDeletedItemDto, _ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:15:28.0712972+03:00","thread_name":"main","message":"Request to delete the Item by id: 1"}
+{"@timestamp":"2026-02-10T14:15:28.0808294+03:00","thread_name":"main","message":"▶ Running test: getAllItemsWithPagination_ShouldReturnPaginatedItems, page=0, size=10"}
+{"@timestamp":"2026-02-10T14:15:28.0893495+03:00","thread_name":"main","message":"Request to find all Items with pagination"}
+{"@timestamp":"2026-02-10T14:15:28.2658665+03:00","thread_name":"main","message":"Starting OrderControllerTest using Java 21.0.6 with PID 26480 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:15:28.2658665+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:15:29.1034379+03:00","thread_name":"main","message":"Started OrderControllerTest in 0.923 seconds (process running for 7.486)"}
+{"@timestamp":"2026-02-10T14:15:29.1271306+03:00","thread_name":"main","message":"▶ Running test: updateOrder_ShouldReturnUpdatedOrderWithUserResponse, UPDATED_ORDER=OrderDto(id=1, userId=10, status=CANCELLED, creationDate=2026-02-10, orderItems=[OrderItemDto(id=100, orderId=1, itemId=2, quantity=3)])"}
+{"@timestamp":"2026-02-10T14:15:29.1765509+03:00","thread_name":"main","message":"Request to update the Order: OrderDto(id=1, userId=10, status=null, creationDate=null, orderItems=[OrderItemDto(id=100, orderId=1, itemId=2, quantity=3)])"}
+{"@timestamp":"2026-02-10T14:15:29.2057351+03:00","thread_name":"main","message":"▶ Running test: getOrderById_ShouldReturnOrderWithUserResponse, ORDER_ID=1"}
+{"@timestamp":"2026-02-10T14:15:29.2097549+03:00","thread_name":"main","message":"Request to find the Order by id: 1"}
+{"@timestamp":"2026-02-10T14:15:29.2221311+03:00","thread_name":"main","message":"▶ Running test: getAllOrders_ShouldReturnAllOrders"}
+{"@timestamp":"2026-02-10T14:15:29.2251233+03:00","thread_name":"main","message":"Request to find all Orders"}
+{"@timestamp":"2026-02-10T14:15:29.2390842+03:00","thread_name":"main","message":"▶ Running test: updateOrder_ShouldReturnNotFound, UPDATED_ORDER=OrderDto(id=1, userId=10, status=CANCELLED, creationDate=2026-02-10, orderItems=[OrderItemDto(id=100, orderId=1, itemId=2, quantity=3)])"}
+{"@timestamp":"2026-02-10T14:15:29.2442697+03:00","thread_name":"main","message":"Request to update the Order: OrderDto(id=1, userId=10, status=null, creationDate=null, orderItems=[OrderItemDto(id=100, orderId=1, itemId=2, quantity=3)])"}
+{"@timestamp":"2026-02-10T14:15:29.2619666+03:00","thread_name":"main","message":"▶ Running test: getAllOrdersWithPagination_ShouldReturnPaginatedOrders, page=0, size=10"}
+{"@timestamp":"2026-02-10T14:15:29.2661093+03:00","thread_name":"main","message":"Request to find all Orders with pagination"}
+{"@timestamp":"2026-02-10T14:15:29.285788+03:00","thread_name":"main","message":"▶ Running test: getByStatusIn_ShouldReturnOrdersWithGivenStatuses, statuses=[CREATED]"}
+{"@timestamp":"2026-02-10T14:15:29.2905817+03:00","thread_name":"main","message":"Request to find Orders by statuses: [CREATED]"}
+{"@timestamp":"2026-02-10T14:15:29.3056906+03:00","thread_name":"main","message":"▶ Running test: getOrdersByUserEmail_ShouldReturnEmptyList, email=nonexistent@example.com"}
+{"@timestamp":"2026-02-10T14:15:29.3162518+03:00","thread_name":"main","message":"Request to find all Orders of the User with email: nonexistent@example.com"}
+{"@timestamp":"2026-02-10T14:15:29.3293099+03:00","thread_name":"main","message":"▶ Running test: deleteOrder_ShouldReturnDeletedOrderDto, ORDER_ID=1"}
+{"@timestamp":"2026-02-10T14:15:29.3334604+03:00","thread_name":"main","message":"Request to delete the Order by id: 1"}
+{"@timestamp":"2026-02-10T14:15:29.3485464+03:00","thread_name":"main","message":"▶ Running test: createOrder_ShouldReturnCreatedOrderWithUserResponse, ORDER=OrderDto(id=1, userId=1, status=CREATED, creationDate=2026-02-10, orderItems=[OrderItemDto(id=1, orderId=1, itemId=2, quantity=5)])"}
+{"@timestamp":"2026-02-10T14:15:29.353603+03:00","thread_name":"main","message":"Request to create a new Order: OrderDto(id=1, userId=1, status=null, creationDate=null, orderItems=[OrderItemDto(id=1, orderId=1, itemId=2, quantity=5)])"}
+{"@timestamp":"2026-02-10T14:15:29.3665658+03:00","thread_name":"main","message":"▶ Running test: getOrdersByUserEmail_ShouldReturnListOfOrders, email=test@example.com"}
+{"@timestamp":"2026-02-10T14:15:29.3695669+03:00","thread_name":"main","message":"Request to find all Orders of the User with email: test@example.com"}
+{"@timestamp":"2026-02-10T14:15:29.381469+03:00","thread_name":"main","message":"▶ Running test: deleteOrder_ShouldReturnNotFound, ORDER_ID=1"}
+{"@timestamp":"2026-02-10T14:15:29.3837772+03:00","thread_name":"main","message":"Request to delete the Order by id: 1"}
+{"@timestamp":"2026-02-10T14:15:29.3950262+03:00","thread_name":"main","message":"▶ Running test: getOrderById_ShouldReturnNotFound, ORDER_ID=1"}
+{"@timestamp":"2026-02-10T14:15:29.397031+03:00","thread_name":"main","message":"Request to find the Order by id: 1"}
+{"@timestamp":"2026-02-10T14:15:29.4070972+03:00","thread_name":"main","message":"▶ Running test: getOrdersIdIn_ShouldReturnEmptyListWhenNoMatches, ids=[999]"}
+{"@timestamp":"2026-02-10T14:15:29.4120852+03:00","thread_name":"main","message":"Request to find Orders by IDs: [999]"}
+{"@timestamp":"2026-02-10T14:15:29.4319399+03:00","thread_name":"main","message":"▶ Running test: getOrdersIdIn_ShouldReturnOrdersForGivenIds, ids=[1]"}
+{"@timestamp":"2026-02-10T14:15:29.4364711+03:00","thread_name":"main","message":"Request to find Orders by IDs: [1]"}
+{"@timestamp":"2026-02-10T14:15:29.870387+03:00","thread_name":"main","message":"Starting OrderItemControllerTest using Java 21.0.6 with PID 26480 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:15:29.8714898+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:15:30.5928003+03:00","thread_name":"main","message":"Started OrderItemControllerTest in 1.061 seconds (process running for 8.976)"}
+{"@timestamp":"2026-02-10T14:15:30.6067341+03:00","thread_name":"main","message":"▶ Running test: getAllOrderItemsWithPagination_ShouldReturnPaginatedOrderItems, page=0, size=10"}
+{"@timestamp":"2026-02-10T14:15:30.6202799+03:00","thread_name":"main","message":"Request to find all OrderItems with pagination"}
+{"@timestamp":"2026-02-10T14:15:30.641354+03:00","thread_name":"main","message":"▶ Running test: getOrderItemsIdIn_ShouldReturnEmptyListWhenNoMatches, ids=[999]"}
+{"@timestamp":"2026-02-10T14:15:30.646352+03:00","thread_name":"main","message":"Request to find OrderItems by IDs: [999]"}
+{"@timestamp":"2026-02-10T14:15:30.6585895+03:00","thread_name":"main","message":"▶ Running test: getOrderItemById_ShouldReturnOrderItemDto(), ORDER_ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:15:30.6626533+03:00","thread_name":"main","message":"Request to find the OrderItem by id: 1"}
+{"@timestamp":"2026-02-10T14:15:30.6764409+03:00","thread_name":"main","message":"▶ Running test: updateOrderItem_ShouldReturnUpdatedOrderItemDto, UPDATED_ORDER_ITEM=OrderItemDto(id=1, orderId=1, itemId=1, quantity=11)"}
+{"@timestamp":"2026-02-10T14:15:30.6924506+03:00","thread_name":"main","message":"Request to update the OrderItem: OrderItemDto(id=1, orderId=1, itemId=1, quantity=11)"}
+{"@timestamp":"2026-02-10T14:15:30.7067864+03:00","thread_name":"main","message":"▶ Running test: deleteOrderItem_ShouldReturnDeletedOrderItemDto, ORDER_ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:15:30.7132909+03:00","thread_name":"main","message":"Request to delete the OrderItem by id: 1"}
+{"@timestamp":"2026-02-10T14:15:30.7223044+03:00","thread_name":"main","message":"▶ Running test: updateOrderItem_ShouldReturnNotFound, UPDATED_ORDER_ITEM=OrderItemDto(id=1, orderId=1, itemId=1, quantity=11)"}
+{"@timestamp":"2026-02-10T14:15:30.7254477+03:00","thread_name":"main","message":"Request to update the OrderItem: OrderItemDto(id=1, orderId=1, itemId=1, quantity=11)"}
+{"@timestamp":"2026-02-10T14:15:30.7388833+03:00","thread_name":"main","message":"▶ Running test: getOrderItemsIdIn_ShouldReturnOrderItemsForGivenIds, ids=[1]"}
+{"@timestamp":"2026-02-10T14:15:30.7408813+03:00","thread_name":"main","message":"Request to find OrderItems by IDs: [1]"}
+{"@timestamp":"2026-02-10T14:15:30.7509321+03:00","thread_name":"main","message":"▶ Running test: getOrderItemById_ShouldReturnNotFound(), ORDER_ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:15:30.7529354+03:00","thread_name":"main","message":"Request to find the OrderItem by id: 1"}
+{"@timestamp":"2026-02-10T14:15:30.7604529+03:00","thread_name":"main","message":"▶ Running test: getAllOrderItems_ShouldReturnAllOrderItems"}
+{"@timestamp":"2026-02-10T14:15:30.7626761+03:00","thread_name":"main","message":"Request to find all OrderItems"}
+{"@timestamp":"2026-02-10T14:15:30.7711952+03:00","thread_name":"main","message":"▶ Running test: createOrderItem_ShouldReturnCreatedOrderItemDto, OrderItem=OrderItemDto(id=1, orderId=1, itemId=1, quantity=10)"}
+{"@timestamp":"2026-02-10T14:15:30.7741955+03:00","thread_name":"main","message":"Request to create a new OrderItem: OrderItemDto(id=1, orderId=1, itemId=1, quantity=10)"}
+{"@timestamp":"2026-02-10T14:15:30.7833469+03:00","thread_name":"main","message":"▶ Running test: deleteOrderItem_ShouldReturnNotFound, ORDER_ITEM_ID=1"}
+{"@timestamp":"2026-02-10T14:15:30.7853441+03:00","thread_name":"main","message":"Request to delete the OrderItem by id: 1"}
+{"@timestamp":"2026-02-10T14:15:35.5079693+03:00","thread_name":"main","message":"PostgreSQL URL: jdbc:postgresql://localhost:52063/testdb?loggerLevel=OFF"}
+{"@timestamp":"2026-02-10T14:15:35.5119777+03:00","thread_name":"main","message":"Starting OrderserviceApplicationTests using Java 21.0.6 with PID 26480 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:15:35.5134907+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:15:43.1707207+03:00","thread_name":"main","message":"Started OrderserviceApplicationTests in 7.703 seconds (process running for 21.553)"}
+{"@timestamp":"2026-02-10T14:15:43.3071099+03:00","thread_name":"main","message":"PostgreSQL URL: jdbc:postgresql://localhost:52063/testdb?loggerLevel=OFF"}
+{"@timestamp":"2026-02-10T14:15:43.3218953+03:00","thread_name":"main","message":"Starting ItemRepositoryTest using Java 21.0.6 with PID 26480 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:15:43.3218953+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:15:43.8023126+03:00","thread_name":"main","message":"Started ItemRepositoryTest in 0.548 seconds (process running for 22.185)"}
+{"@timestamp":"2026-02-10T14:15:44.0135233+03:00","thread_name":"main","message":"Test findAllItemsNative - should return paged results"}
+{"@timestamp":"2026-02-10T14:15:44.1695189+03:00","thread_name":"main","message":"Test findAllItemsByIdIn - should return Items with specified IDs"}
+{"@timestamp":"2026-02-10T14:15:44.2093088+03:00","thread_name":"main","message":"Test findAllOrdersNative - should return empty page when no orders exist"}
+{"@timestamp":"2026-02-10T14:15:44.2414534+03:00","thread_name":"main","message":"Test findAllItemsByIdIn - should return empty list for non-existent IDs"}
+{"@timestamp":"2026-02-10T14:15:44.2805794+03:00","thread_name":"main","message":"Test findAllOrdersNative - should return empty page when no orders exist"}
+{"@timestamp":"2026-02-10T14:15:44.3072116+03:00","thread_name":"main","message":"Test findAllOrderItemsNative - should return paged results"}
+{"@timestamp":"2026-02-10T14:15:44.3286843+03:00","thread_name":"main","message":"Test findAllOrderItemsByIdIn - should return empty list for non-existent IDs"}
+{"@timestamp":"2026-02-10T14:15:44.3472644+03:00","thread_name":"main","message":"Test findAllOrderItemsByIdIn - should return OrderItems with specified IDs"}
+{"@timestamp":"2026-02-10T14:15:44.3977984+03:00","thread_name":"main","message":"Test findByStatusIn - should return orders with specified statuses"}
+{"@timestamp":"2026-02-10T14:15:44.4266576+03:00","thread_name":"main","message":"Test findAllOrdersByIdIn - should return empty list for non-existent IDs"}
+{"@timestamp":"2026-02-10T14:15:44.4465182+03:00","thread_name":"main","message":"Test findOrdersByUserId - should return orders for specified user"}
+{"@timestamp":"2026-02-10T14:15:44.4735751+03:00","thread_name":"main","message":"Test findAllOrdersNative - should return paged results"}
+{"@timestamp":"2026-02-10T14:15:44.4958601+03:00","thread_name":"main","message":"Test findAllOrdersNative - should return empty page when no orders exist"}
+{"@timestamp":"2026-02-10T14:15:44.5223384+03:00","thread_name":"main","message":"Test findByStatusIn - should return empty list for non-matching statuses"}
+{"@timestamp":"2026-02-10T14:15:44.5411433+03:00","thread_name":"main","message":"Test findOrdersByUserId - should return empty list for non-existent user"}
+{"@timestamp":"2026-02-10T14:15:44.5602476+03:00","thread_name":"main","message":"Test findAllOrdersByIdIn - should return orders with specified IDs"}
+{"@timestamp":"2026-02-10T14:15:44.7488504+03:00","thread_name":"main","message":"findAllItemsNativeWithPagination()"}
+{"@timestamp":"2026-02-10T14:15:44.756927+03:00","thread_name":"main","message":"getAllItems()"}
+{"@timestamp":"2026-02-10T14:15:44.7629456+03:00","thread_name":"main","message":"createItem(): Item(id=1, name=TestItem, price=100)"}
+{"@timestamp":"2026-02-10T14:15:44.7680775+03:00","thread_name":"main","message":"updateItem(): Item(id=1, name=updated_item, price=101)"}
+{"@timestamp":"2026-02-10T14:15:44.7730168+03:00","thread_name":"main","message":"deleteItem(): 1"}
+{"@timestamp":"2026-02-10T14:15:44.7762822+03:00","thread_name":"main","message":"getItemsIdIn()"}
+{"@timestamp":"2026-02-10T14:15:44.7837781+03:00","thread_name":"main","message":"getItemsById(): 1"}
+{"@timestamp":"2026-02-10T14:15:44.9629002+03:00","thread_name":"main","message":"findAllOrderItemsNativeWithPagination()"}
+{"@timestamp":"2026-02-10T14:15:44.9743328+03:00","thread_name":"main","message":"getOrderItemsById(): 1"}
+{"@timestamp":"2026-02-10T14:15:44.9778557+03:00","thread_name":"main","message":"deleteOrderItem(): 1"}
+{"@timestamp":"2026-02-10T14:15:44.9818764+03:00","thread_name":"main","message":"createOrderItem(): com.mymicroservice.orderservice.model.OrderItem@4844ce38"}
+{"@timestamp":"2026-02-10T14:15:44.9888467+03:00","thread_name":"main","message":"getOrderItemsIdIn()"}
+{"@timestamp":"2026-02-10T14:15:44.9958492+03:00","thread_name":"main","message":"updateOrderItem(): com.mymicroservice.orderservice.model.OrderItem@12888eb5"}
+{"@timestamp":"2026-02-10T14:15:45.0003805+03:00","thread_name":"main","message":"getAllOrderItems()"}
+{"@timestamp":"2026-02-10T14:15:45.2625457+03:00","thread_name":"main","message":"deleteOrder(): Optional[Order(id=1, userId=1, status=CREATED, creationDate=2026-02-10)]"}
+{"@timestamp":"2026-02-10T14:15:45.2859071+03:00","thread_name":"main","message":"updateOrder(): Order(id=1, userId=1, status=CANCELLED, creationDate=2023-03-03)"}
+{"@timestamp":"2026-02-10T14:15:45.2904496+03:00","thread_name":"main","message":"Order with id 1 was updated with status PROCESSING"}
+{"@timestamp":"2026-02-10T14:15:45.3032236+03:00","thread_name":"main","message":"getOrdersById(): 1"}
+{"@timestamp":"2026-02-10T14:15:45.3138742+03:00","thread_name":"main","message":"getOrdersIdIn()"}
+{"@timestamp":"2026-02-10T14:15:45.3264012+03:00","thread_name":"main","message":"getOrdersByUserEmail: test@example.com"}
+{"@timestamp":"2026-02-10T14:15:45.3519722+03:00","thread_name":"main","message":"Order with id 1 was updated with status PROCESSING"}
+{"@timestamp":"2026-02-10T14:15:45.3651085+03:00","thread_name":"main","message":"findAllOrdersNativeWithPagination()"}
+{"@timestamp":"2026-02-10T14:15:45.3916017+03:00","thread_name":"main","message":"findByStatusIn()"}
+{"@timestamp":"2026-02-10T14:15:45.4006255+03:00","thread_name":"main","message":"createOrder(): Order(id=1, userId=1, status=CREATED, creationDate=2026-02-10)"}
+{"@timestamp":"2026-02-10T14:15:45.4021383+03:00","thread_name":"main","message":"BEFORE calling userClient.getUserById(1)"}
+{"@timestamp":"2026-02-10T14:15:45.4031552+03:00","thread_name":"main","message":"AFTER calling userClient.getUserById(1)"}
+{"@timestamp":"2026-02-10T14:15:45.4041508+03:00","thread_name":"main","message":"Order with id 1 was updated with status PROCESSING"}
+{"@timestamp":"2026-02-10T14:15:45.4107643+03:00","thread_name":"main","message":"getAllOrders()"}
+{"@timestamp":"2026-02-10T14:15:45.635661+03:00","thread_name":"main","message":"Starting OrderServiceImplWireMockTest using Java 21.0.6 with PID 26480 (started by pugac in D:\\Julia\\INNOWICE\\rootproject\\orderservice)"}
+{"@timestamp":"2026-02-10T14:15:45.6366629+03:00","thread_name":"main","message":"The following 1 profile is active: \"test\""}
+{"@timestamp":"2026-02-10T14:15:56.9976404+03:00","thread_name":"main","message":"Started OrderServiceImplWireMockTest in 11.509 seconds (process running for 35.38)"}
+{"@timestamp":"2026-02-10T14:15:57.1149837+03:00","thread_name":"main","message":"findAllOrdersNativeWithPagination()"}
+{"@timestamp":"2026-02-10T14:15:57.1383436+03:00","thread_name":"main","message":"getOrdersIdIn()"}
+{"@timestamp":"2026-02-10T14:15:57.4632459+03:00","thread_name":"main","message":"createOrder(): Order(id=1, userId=1, status=CREATED, creationDate=2026-02-10)"}
+{"@timestamp":"2026-02-10T14:15:57.4642304+03:00","thread_name":"main","message":"BEFORE calling userClient.getUserById(1)"}
+{"@timestamp":"2026-02-10T14:15:57.468338+03:00","thread_name":"main","message":"AFTER calling userClient.getUserById(1)"}
+{"@timestamp":"2026-02-10T14:15:57.4794606+03:00","thread_name":"main","message":"getAllOrders()"}
+{"@timestamp":"2026-02-10T14:15:57.4921854+03:00","thread_name":"main","message":"findByStatusIn()"}
+{"@timestamp":"2026-02-10T14:15:57.5203007+03:00","thread_name":"main","message":"getOrdersById(): 1"}
+{"@timestamp":"2026-02-10T14:15:57.535421+03:00","thread_name":"main","message":"deleteOrder(): Optional[Order(id=1, userId=1, status=CREATED, creationDate=2026-02-10)]"}
+{"@timestamp":"2026-02-10T14:15:57.582056+03:00","thread_name":"main","message":"getOrdersByUserEmail: test@test.by"}
+{"@timestamp":"2026-02-10T14:15:57.5915683+03:00","thread_name":"main","message":"updateOrder(): Order(id=1, userId=1, status=PROCESSING, creationDate=2026-02-10)"}
+{"@timestamp":"2026-02-10T14:15:57.5952148+03:00","thread_name":"main","message":"Order with id 1 was updated with status PROCESSING"}
