@@ -1,6 +1,5 @@
 package com.mymicroservice.orderservice.config;
 
-import feign.Logger;
 import feign.RequestInterceptor;
 import org.slf4j.MDC;
 import org.springframework.context.annotation.Bean;
@@ -19,10 +18,5 @@ public class FeignConfig {
                 requestTemplate.header("X-Request-Id", requestId);
             }
         };
-    }
-
-    @Bean
-    Logger.Level feignLoggerLevel() {
-        return Logger.Level.FULL;
     }
 }

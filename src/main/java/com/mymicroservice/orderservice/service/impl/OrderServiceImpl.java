@@ -65,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("BEFORE calling userClient.getUserById({})", orderDto.getUserId());
         UserDto userDtoFromUserService = userClient.getUserById(orderDto.getUserId());
-        log.info("BEFORE calling userClient.getUserById({})", userDtoFromUserService.getUserId());
+        log.info("AFTER calling userClient.getUserById({})", userDtoFromUserService.getUserId());
 
         // Send event to PaymentService
         OrderEventDto event = createOrderEvent(order);

@@ -4,6 +4,7 @@ import com.mymicroservice.orderservice.util.KafkaMdcUtil;
 import org.mymicroservices.common.events.OrderEventDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.messaging.Message;
@@ -17,8 +18,9 @@ import java.util.concurrent.CompletableFuture;
 public class OrderEventProducer {
 
     private final KafkaTemplate<String, OrderEventDto> kafkaTemplate;
-    private final String topic = "create-order";
 
+    @Value("${kafka.producer.topics.create-order}")
+    private String orderTopic;
 
     public void sendCreateOrder(OrderEventDto event, Runnable onSuccess) {
 
@@ -30,7 +32,7 @@ public class OrderEventProducer {
         Message<OrderEventDto> message = KafkaMdcUtil.addMdcToMessage(
                 event,
                 event.getOrderId(),
-                topic
+                orderTopic
         );
 
         CompletableFuture<SendResult<String, OrderEventDto>> future =

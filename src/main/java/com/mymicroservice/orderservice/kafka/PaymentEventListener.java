@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mymicroservices.common.events.PaymentEventDto;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -21,16 +22,23 @@ import java.time.Duration;
 public class PaymentEventListener {
 
     private final OrderService orderService;
-    private final String SERVICE_NAME = "orderservice";
+    private static final String REQUEST_ID_HEADER = "X-Request-Id";
+    private static final String SOURCE_SERVICE_HEADER = "X-Source-Service";
 
-    @KafkaListener(topics = "create-payment", groupId = "order-service-group")
+    @Value("${spring.application.name}")
+    private String serviceName;
+
+    @KafkaListener(
+            topics = "${kafka.consumer.topics.create-payment}",
+            groupId = "${kafka.consumer.group-id}"
+    )
     public void onCreatePayment(
             @Payload PaymentEventDto event,
             @Header(KafkaHeaders.RECEIVED_KEY) String key,
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset,
-            @Header("X-Request-Id") String requestId,
-            @Header("X-Source-Service") String sourceService,
+            @Header(REQUEST_ID_HEADER) String requestId,
+            @Header(SOURCE_SERVICE_HEADER) String sourceService,
             Acknowledgment ack) {
 
         if (requestId != null) {
@@ -39,7 +47,7 @@ public class PaymentEventListener {
         if (sourceService != null) {
             MDC.put("sourceService", sourceService);
         }
-        MDC.put("serviceName", SERVICE_NAME);
+        MDC.put("serviceName", serviceName);
 
         try {
             log.info("Received CREATE_PAYMENT event [key: {}, partition: {}, offset: {}]: {}",
