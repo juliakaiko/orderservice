@@ -49,8 +49,6 @@ public class OrderServiceImpl implements OrderService {
         Order order = OrderMapper.INSTANCE.toEntity(orderDto);
         log.info("createOrder(): {}",order);
         order.setCreationDate(LocalDateTime.now().withNano(0));
-        log.info("createOrder(): {}", order);
-        order.setCreationDate(LocalDateTime.now().withNano(0));
         order.setStatus(OrderStatus.CREATED);
 
         if (order.getOrderItems() != null) {
