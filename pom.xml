@@ -49,7 +49,7 @@
 			<url>https://maven.pkg.github.com/juliakaiko/common-events</url>
 		</repository>
         <repository>
-            <id>github-filters</id>
+            <id>github-filter</id>
             <url>https://maven.pkg.github.com/juliakaiko/common-filters-spring-boot-starter</url>
         </repository>
 	</repositories>
