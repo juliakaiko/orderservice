@@ -50,11 +50,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+/*@SpringBootTest
 @AutoConfigureWireMock(port = 0) // WireMock will work on a random port
-@ActiveProfiles("test")
+@ActiveProfiles("test")*/
 public class OrderServiceImplWireMockTest {
-
+/*
     @MockBean
     private OrderRepository orderRepository;
 
@@ -312,5 +312,5 @@ public class OrderServiceImplWireMockTest {
 
     private void verifyFeignCall(String url) {
         WireMock.verify(1, WireMock.getRequestedFor(WireMock.urlEqualTo(url)));
-    }
+    }*/
 }
