@@ -50,6 +50,7 @@
 		</repository>
         <repository>
             <id>github-filter</id>
+            <name>GitHub Packages</name>
             <url>https://maven.pkg.github.com/juliakaiko/common-filters-spring-boot-starter</url>
         </repository>
 	</repositories>
