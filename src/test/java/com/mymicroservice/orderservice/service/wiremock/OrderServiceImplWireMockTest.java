@@ -49,7 +49,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@AutoConfigureWireMock(port = 0) // WireMock will work on a random port
+//@AutoConfigureWireMock(port = 0) // WireMock will work on a random port
+@AutoConfigureWireMock(port = 8089)
 @ActiveProfiles("test")
 public class OrderServiceImplWireMockTest {
 
@@ -73,7 +74,8 @@ public class OrderServiceImplWireMockTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("user-service.url", () -> "http://localhost:${wiremock.server.port}");
+       // registry.add("user-service.url", () -> "http://localhost:${wiremock.server.port}");
+        registry.add("user-service.url", () -> "http://localhost:8089");
     }
 
     private final static UUID TEST_ORDER_ID = UUID.randomUUID();
