@@ -27,10 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -46,8 +47,13 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderWithUserResponse createOrder(OrderDto orderDto) {
         Order order = OrderMapper.INSTANCE.toEntity(orderDto);
+<<<<<<< HEAD
         log.info("createOrder(): {}",order);
         order.setCreationDate(LocalDate.now());
+=======
+        log.info("createOrder(): {}", order);
+        order.setCreationDate(LocalDateTime.now().withNano(0));
+>>>>>>> 56cc8f2 (added cron job and partioning)
         order.setStatus(OrderStatus.CREATED);
 
         if (order.getOrderItems() != null) {
@@ -74,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void updateOrderStatus(Long orderId, OrderStatus status) {
+    public void updateOrderStatus(UUID orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order wasn't found with id " + orderId));
         order.setStatus(status);
@@ -98,7 +104,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional(readOnly = true)
-    public OrderWithUserResponse getOrderById(Long orderId) {
+    public OrderWithUserResponse getOrderById(UUID orderId) {
         Optional<Order> orderFromDb = Optional.ofNullable(orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order wasn't found with id " + orderId)));
         log.info("getOrdersById(): {}",orderId);
@@ -109,7 +115,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderWithUserResponse updateOrder(Long orderId, OrderDto orderDetails) {
+    public OrderWithUserResponse updateOrder(UUID orderId, OrderDto orderDetails) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order wasn't found with id " + orderId));
 
@@ -154,7 +160,7 @@ public class OrderServiceImpl implements OrderService {
     
     @Override
     @Transactional
-    public OrderDto deleteOrder(Long orderId) {
+    public OrderDto deleteOrder(UUID orderId) {
         Optional<Order> orderFromDb = Optional.ofNullable(orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException("Order wasn't found with id " + orderId)));
         orderRepository.deleteById(orderId);
@@ -177,7 +183,7 @@ public class OrderServiceImpl implements OrderService {
     
     @Override
     @Transactional(readOnly = true)
-    public List<OrderWithUserResponse> getOrdersIdIn(Set<Long> ids) {
+    public List<OrderWithUserResponse> getOrdersIdIn(Set<UUID> ids) {
         List <Order> orderList = orderRepository.findAllByIdIn(ids);
         log.info("getOrdersIdIn()");
         return toOrderWithUserResponseList(orderList);

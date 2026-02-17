@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -22,7 +23,7 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true) // ignore unknown fields
 public class OrderDto {
 
-    private Long id;
+    private UUID id;
 
     @NotNull(message = "User ID cannot be null")
     private Long userId;

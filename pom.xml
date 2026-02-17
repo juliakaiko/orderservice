@@ -29,6 +29,18 @@
 		<sonar.java.binaries>target/classes</sonar.java.binaries>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+<<<<<<< HEAD
+=======
+        <spring-cloud-starter-openfeign.version>4.1.5</spring-cloud-starter-openfeign.version>
+        <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
+        <jackson-databind.version>2.17.0</jackson-databind.version>
+        <spring-cloud-contract-wiremock.version>4.1.1</spring-cloud-contract-wiremock.version>
+        <wiremock-jre8.version>2.35.0</wiremock-jre8.version>
+        <spring-security-test.version>6.5.2</spring-security-test.version>
+        <common-events.version>1.0.0</common-events.version>
+        <postgresql.version>42.7.4</postgresql.version>
+        <common-filters-starter.version>1.0.0</common-filters-starter.version>
+>>>>>>> 56cc8f2 (added cron job and partioning)
 	</properties>
 	<repositories>
 		<repository>
@@ -36,8 +48,18 @@
 			<name>GitHub Packages</name>
 			<url>https://maven.pkg.github.com/juliakaiko/common-events</url>
 		</repository>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/juliakaiko/common-filters-spring-boot-starter</url>
+        </repository>
 	</repositories>
+
 	<dependencies>
+        <dependency>
+            <groupId>com.mymicroservice</groupId>
+            <artifactId>common-filters-starter</artifactId>
+            <version>${common-filters-starter.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -50,7 +72,35 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+<<<<<<< HEAD
 		<!-- Spring Security + JWT (OAuth2 Resource Server) -->
+=======
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- for cron job (partitioning) -->
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>4.45.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-jdbc-template</artifactId>
+            <version>4.45.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.f4b6a3</groupId>
+            <artifactId>uuid-creator</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+
+        <!-- Spring Security + JWT (OAuth2 Resource Server) -->
+>>>>>>> 56cc8f2 (added cron job and partioning)
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
@@ -172,7 +222,16 @@
 			<version>6.5.2</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
 
 	<dependencyManagement>
 		<dependencies>

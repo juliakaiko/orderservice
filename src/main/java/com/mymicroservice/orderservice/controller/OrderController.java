@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOrderById (@PathVariable("id") Long id) {
+    public ResponseEntity<?> getOrderById (@PathVariable("id") UUID id) {
         log.info("Request to find the Order by id: {}", id);
         OrderWithUserResponse orderWithUserResponse = orderService.getOrderById(id);
         return ObjectUtils.isEmpty(orderWithUserResponse)
@@ -55,7 +56,7 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity <?> updateOrder (@PathVariable("id") Long id,
+    public ResponseEntity <?> updateOrder (@PathVariable("id") UUID id,
                                            @RequestBody @Valid OrderDto orderDto){
         log.info("Request to update the Order: {}", orderDto);
 
@@ -67,7 +68,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity <?> deleteOrder (@PathVariable("id") Long id){
+    public ResponseEntity <?> deleteOrder (@PathVariable("id") UUID id){
         log.info("Request to delete the Order by id: {}", id);
 
         OrderDto deletedOrderDto = orderService.deleteOrder(id);
@@ -84,7 +85,7 @@ public class OrderController {
     }
 
     @GetMapping("/find-by-ids")
-    public ResponseEntity<List<OrderWithUserResponse>> getOrdersIdIn(@RequestParam @NotEmpty Set<Long> ids) {
+    public ResponseEntity<List<OrderWithUserResponse>> getOrdersIdIn(@RequestParam @NotEmpty Set<UUID> ids) {
         log.info("Request to find Orders by IDs: {}", ids);
         List<OrderWithUserResponse> orderWithUserResponses = orderService.getOrdersIdIn(ids);
         return ResponseEntity.ok(orderWithUserResponses);

@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +21,7 @@ public class OrderItemDto {
 
     @JsonProperty("orderId")
     @NotNull(message = "Order ID cannot be null")
-    private Long orderId;
+    private UUID orderId;
 
     /**
      * Unique identifier of the Item associated with the OrderItem.

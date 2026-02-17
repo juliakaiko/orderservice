@@ -22,7 +22,7 @@
             <column name="quantity" type="BIGSERIAL">
                 <constraints nullable="false"/>
             </column>
-            <column name="order_id" type="BIGINT">
+            <column name="order_id" type="UUID">
                 <constraints nullable="true"/>
             </column>
             <column name="item_id" type="BIGINT">
