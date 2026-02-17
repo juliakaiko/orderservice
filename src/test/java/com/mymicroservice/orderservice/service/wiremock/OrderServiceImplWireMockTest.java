@@ -2,7 +2,9 @@ package com.mymicroservice.orderservice.service.wiremock;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.mymicroservice.orderservice.client.UserClient;
 import com.mymicroservice.orderservice.dto.OrderDto;
 import com.mymicroservice.orderservice.dto.OrderItemDto;
@@ -50,7 +52,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureWireMock(port = 0) // WireMock will work on a random port
-//@AutoConfigureWireMock(port = 8089)
 @ActiveProfiles("test")
 public class OrderServiceImplWireMockTest {
 
@@ -75,7 +76,6 @@ public class OrderServiceImplWireMockTest {
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("user-service.url", () -> "http://localhost:${wiremock.server.port}");
-        //registry.add("user-service.url", () -> "http://localhost:8089");
     }
 
     //private final static UUID TEST_ORDER_ID = UUID.randomUUID();
@@ -87,7 +87,7 @@ public class OrderServiceImplWireMockTest {
     private OrderWithUserResponse testOrderWithUserResponse;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void start() throws JsonProcessingException {
         TEST_ORDER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
         testOrder = OrderGenerator.generateOrder();
         testOrder.setId(TEST_ORDER_ID);
@@ -119,7 +119,8 @@ public class OrderServiceImplWireMockTest {
 
     @AfterEach
     void tearDown() {
-        WireMock.reset(); // Resetting WireMock state after each test
+        //WireMock.reset(); // Resetting WireMock state after each test
+        WireMock.resetAllRequests();
     }
 
     @Test
