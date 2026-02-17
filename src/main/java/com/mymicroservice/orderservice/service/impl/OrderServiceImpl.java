@@ -47,13 +47,10 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderWithUserResponse createOrder(OrderDto orderDto) {
         Order order = OrderMapper.INSTANCE.toEntity(orderDto);
-<<<<<<< HEAD
         log.info("createOrder(): {}",order);
-        order.setCreationDate(LocalDate.now());
-=======
+        order.setCreationDate(LocalDateTime.now().withNano(0));
         log.info("createOrder(): {}", order);
         order.setCreationDate(LocalDateTime.now().withNano(0));
->>>>>>> 56cc8f2 (added cron job and partioning)
         order.setStatus(OrderStatus.CREATED);
 
         if (order.getOrderItems() != null) {

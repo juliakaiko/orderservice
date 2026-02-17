@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -52,6 +53,7 @@ public class OrderItemControllerTest {
     private ObjectMapper objectMapper;
 
     private final static Long ORDER_ITEM_ID = 1L;
+    private final static UUID ORDER_ID = UUID.randomUUID();
     private OrderItem testOrderItem;
     private OrderItemDto testOrderItemDto;
 
@@ -60,8 +62,8 @@ public class OrderItemControllerTest {
         testOrderItem = OrderItemGenerator.generateOrderItem();
         testOrderItem.setId(ORDER_ITEM_ID);
         testOrderItemDto = OrderItemMapper.INSTANCE.toDto(testOrderItem);
-        testOrderItemDto.setOrderId(1l);
-        testOrderItemDto.setItemId(1l);
+        testOrderItemDto.setOrderId(ORDER_ID);
+        testOrderItemDto.setItemId(1L);
     }
 
     @Test
@@ -106,8 +108,8 @@ public class OrderItemControllerTest {
         OrderItemDto updatedDto = OrderItemMapper.INSTANCE.toDto(OrderItemGenerator.generateOrderItem());
         updatedDto.setId(1L);
         updatedDto.setItemId(1L);
-        updatedDto.setOrderId(1L);
-        updatedDto.setQuantity(11l);
+        updatedDto.setOrderId(ORDER_ID);
+        updatedDto.setQuantity(11L);
         log.info("▶ Running test: updateOrderItem_ShouldReturnUpdatedOrderItemDto, UPDATED_ORDER_ITEM={}", updatedDto);
 
         when(orderItemService.updateOrderItem(ORDER_ITEM_ID, updatedDto)).thenReturn(updatedDto);
@@ -127,8 +129,8 @@ public class OrderItemControllerTest {
         OrderItemDto updatedDto = OrderItemMapper.INSTANCE.toDto(OrderItemGenerator.generateOrderItem());
         updatedDto.setId(1L);
         updatedDto.setItemId(1L);
-        updatedDto.setOrderId(1L);
-        updatedDto.setQuantity(11l);
+        updatedDto.setOrderId(ORDER_ID);
+        updatedDto.setQuantity(11L);
         log.info("▶ Running test: updateOrderItem_ShouldReturnNotFound, UPDATED_ORDER_ITEM={}", updatedDto);
 
         when(orderItemService.updateOrderItem(ORDER_ITEM_ID, updatedDto))

@@ -10,12 +10,15 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class OrderMapperTest {
+
+    private final static UUID ORDER_ID = UUID.randomUUID();
 
     @Test
     public void itemToDto_whenOk_thenMapFieldsCorrectly() {
@@ -41,10 +44,10 @@ public class OrderMapperTest {
     @Test
     public void orderItemsMapping_shouldMapCorrectly() {
         Order order = OrderGenerator.generateOrder();
-        Item orderItem = Item.builder().id(1l).name("Item").price(BigDecimal.valueOf(100l)).build();
-        OrderItem orderItems = OrderItem.builder().id(1l).order(order).item(orderItem).quantity(3l).build();
+        Item orderItem = Item.builder().id(1L).name("Item").price(BigDecimal.valueOf(100L)).build();
+        OrderItem orderItems = OrderItem.builder().id(1L).order(order).item(orderItem).quantity(3L).build();
         orderItem.setOrderItems(Set.of(orderItems));
-        order.setId(1l);
+        order.setId(ORDER_ID);
         order.setOrderItems(Set.of(orderItems));
 
         OrderDto orderDto = OrderMapper.INSTANCE.toDto(order);

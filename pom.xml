@@ -29,8 +29,6 @@
 		<sonar.java.binaries>target/classes</sonar.java.binaries>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-<<<<<<< HEAD
-=======
         <spring-cloud-starter-openfeign.version>4.1.5</spring-cloud-starter-openfeign.version>
         <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
         <jackson-databind.version>2.17.0</jackson-databind.version>
@@ -40,16 +38,18 @@
         <common-events.version>1.0.0</common-events.version>
         <postgresql.version>42.7.4</postgresql.version>
         <common-filters-starter.version>1.0.0</common-filters-starter.version>
->>>>>>> 56cc8f2 (added cron job and partioning)
+        <uuid-creator.version>5.3.0</uuid-creator.version>
+        <shedlock-provider-jdbc-template.version>4.45.0</shedlock-provider-jdbc-template.version>
+        <shedlock-spring.version>4.45.0</shedlock-spring.version>
 	</properties>
 	<repositories>
 		<repository>
-			<id>github</id>
+			<id>github-event</id>
 			<name>GitHub Packages</name>
 			<url>https://maven.pkg.github.com/juliakaiko/common-events</url>
 		</repository>
         <repository>
-            <id>github</id>
+            <id>github-filters</id>
             <url>https://maven.pkg.github.com/juliakaiko/common-filters-spring-boot-starter</url>
         </repository>
 	</repositories>
@@ -72,9 +72,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-<<<<<<< HEAD
 		<!-- Spring Security + JWT (OAuth2 Resource Server) -->
-=======
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -84,23 +82,22 @@
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
             <artifactId>shedlock-spring</artifactId>
-            <version>4.45.0</version>
+            <version>${shedlock-spring.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
             <artifactId>shedlock-provider-jdbc-template</artifactId>
-            <version>4.45.0</version>
+            <version>${shedlock-provider-jdbc-template.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.github.f4b6a3</groupId>
             <artifactId>uuid-creator</artifactId>
-            <version>5.3.0</version>
+            <version>${uuid-creator.version}</version>
         </dependency>
 
         <!-- Spring Security + JWT (OAuth2 Resource Server) -->
->>>>>>> 56cc8f2 (added cron job and partioning)
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
@@ -109,23 +106,24 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
-			<version>4.1.5</version>
+			<version>${spring-cloud-starter-openfeign.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.7.4</version>
+            <version>${postgresql.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${org.projectlombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
 		<!-- Mapstruct for creating DTO-->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -141,7 +139,7 @@
 		<dependency>
 			<groupId>com.mymicroservices</groupId>
 			<artifactId>common-events</artifactId>
-			<version>1.0.0</version>
+			<version>${common-events.version}</version>
 		</dependency>
 		<!--  Swagger -->
 		<dependency>
@@ -152,7 +150,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.17.0</version>
+			<version>${jackson-databind.version}</version>
 		</dependency>
 		<!-- Testing -->
 		<dependency>
@@ -164,14 +162,14 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
-			<version>4.1.1</version>
+            <version>${spring-cloud-contract-wiremock.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- WireMock for mocking HTTP requests -->
 		<dependency>
 			<groupId>com.github.tomakehurst</groupId>
 			<artifactId>wiremock-jre8</artifactId>
-			<version>2.35.0</version>
+			<version>${wiremock-jre8.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<!-- Testcontainers -->
@@ -219,18 +217,9 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
-			<version>6.5.2</version>
+			<version>${spring-security-test.version}</version>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 
 	<dependencyManagement>

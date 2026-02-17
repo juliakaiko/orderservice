@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -31,9 +32,9 @@ public class OrderDto {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private OrderStatus status;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private LocalDate creationDate;
+    private LocalDateTime creationDate;
 
     @NotEmpty(message = "OrderItems cannot be empty")
     private Set<OrderItemDto> orderItems = new HashSet<>();

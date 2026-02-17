@@ -11,12 +11,8 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
-<<<<<<< HEAD
-=======
-import java.time.Duration;
 import java.util.UUID;
 
->>>>>>> 56cc8f2 (added cron job and partioning)
 @Component
 @RequiredArgsConstructor
 @Slf4j

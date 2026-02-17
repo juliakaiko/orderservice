@@ -58,7 +58,7 @@ public class OrderControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private final static Long ORDER_ID = 1L;
+    private final static UUID ORDER_ID = UUID.randomUUID();
     private Order testOrder;
     private OrderDto testOrderDto;
     private UserDto testUserDto;
@@ -70,7 +70,7 @@ public class OrderControllerTest {
         testOrder.setId(ORDER_ID);
 
         testOrderDto = OrderMapper.INSTANCE.toDto(testOrder);
-        testOrderDto.setOrderItems(Set.of(new OrderItemDto(1L,1L,2L,5L)));
+        testOrderDto.setOrderItems(Set.of(new OrderItemDto(1L,ORDER_ID,2L,5L)));
 
         testUserDto = UserGenerator.generateUserResponse();
 
@@ -84,7 +84,7 @@ public class OrderControllerTest {
 
         mockMvc.perform(get("/api/orders/{id}", ORDER_ID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.order.id").value(ORDER_ID));
+                .andExpect(jsonPath("$.order.id").value(ORDER_ID.toString()));
 
         verify(orderService).getOrderById(ORDER_ID);
     }
@@ -109,7 +109,7 @@ public class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testOrderDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.order.id").value(ORDER_ID));
+                .andExpect(jsonPath("$.order.id").value(ORDER_ID.toString()));
 
         verify(orderService).createOrder(any(OrderDto.class));
     }
@@ -117,11 +117,11 @@ public class OrderControllerTest {
     @Test
     public void updateOrder_ShouldReturnUpdatedOrderWithUserResponse() throws Exception {
         OrderDto updatedDto = OrderMapper.INSTANCE.toDto(OrderGenerator.generateOrder());
-        updatedDto.setId(1L);
+        updatedDto.setId(ORDER_ID);
         updatedDto.setUserId(10L);
         updatedDto.setStatus(OrderStatus.CANCELLED);
         updatedDto.setOrderItems(Set.of(
-                new OrderItemDto(100L, 1L, 2L, 3L)
+                new OrderItemDto(100L, ORDER_ID, 2L, 3L)
         ));
         log.info("▶ Running test: updateOrder_ShouldReturnUpdatedOrderWithUserResponse, UPDATED_ORDER={}", updatedDto);
 
@@ -134,7 +134,7 @@ public class OrderControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.order.id").value(ORDER_ID))
+                .andExpect(jsonPath("$.order.id").value(ORDER_ID.toString()))
                 .andExpect(jsonPath("$.order.status").value(OrderStatus.CANCELLED.name()));
 
         verify(orderService).updateOrder(eq(ORDER_ID), any(OrderDto.class));
@@ -143,11 +143,11 @@ public class OrderControllerTest {
     @Test
     public void updateOrder_ShouldReturnNotFound() throws Exception {
         OrderDto updatedDto = OrderMapper.INSTANCE.toDto(OrderGenerator.generateOrder());
-        updatedDto.setId(1L);
+        updatedDto.setId(ORDER_ID);
         updatedDto.setUserId(10L);
         updatedDto.setStatus(OrderStatus.CANCELLED);
         updatedDto.setOrderItems(Set.of(
-                new OrderItemDto(100L, 1L, 2L, 3L)
+                new OrderItemDto(100L, ORDER_ID, 2L, 3L)
         ));
         log.info("▶ Running test: updateOrder_ShouldReturnNotFound, UPDATED_ORDER={}", updatedDto);
 
@@ -169,7 +169,7 @@ public class OrderControllerTest {
 
         mockMvc.perform(delete("/api/orders/{id}", ORDER_ID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(ORDER_ID))
+                .andExpect(jsonPath("$.id").value(ORDER_ID.toString()))
                 .andExpect(jsonPath("$.status").value(OrderStatus.CREATED.name()));
 
         verify(orderService).deleteOrder(ORDER_ID);
@@ -195,7 +195,7 @@ public class OrderControllerTest {
         mockMvc.perform(get("/api/orders/by-email")
                         .param("email", email))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].order.id").value(ORDER_ID));
+                .andExpect(jsonPath("$[0].order.id").value(ORDER_ID.toString()));
 
         verify(orderService).getOrdersByUserEmail(email);
     }
@@ -217,26 +217,26 @@ public class OrderControllerTest {
 
     @Test
     public void getOrdersIdIn_ShouldReturnOrdersForGivenIds() throws Exception {
-        Set<Long> ids = Set.of(ORDER_ID);
+        Set<UUID> ids = Set.of(ORDER_ID);
         log.info("▶ Running test: getOrdersIdIn_ShouldReturnOrdersForGivenIds, ids={}", ids);
         when(orderService.getOrdersIdIn(ids)).thenReturn(List.of(testOrderWithUserResponse));
 
         mockMvc.perform(get("/api/orders/find-by-ids")
                         .param("ids", ORDER_ID.toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].order.id").value(ORDER_ID));
+                .andExpect(jsonPath("$[0].order.id").value(ORDER_ID.toString()));
 
         verify(orderService).getOrdersIdIn(ids);
     }
 
     @Test
     public void getOrdersIdIn_ShouldReturnEmptyListWhenNoMatches() throws Exception {
-        Set<Long> ids = Set.of(999L);
+        Set<UUID> ids = Set.of(ORDER_ID);
         log.info("▶ Running test: getOrdersIdIn_ShouldReturnEmptyListWhenNoMatches, ids={}", ids);
         when(orderService.getOrdersIdIn(ids)).thenReturn(List.of());
 
         mockMvc.perform(get("/api/orders/find-by-ids")
-                        .param("ids", "999"))
+                        .param("ids", ORDER_ID.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$").isEmpty());
@@ -253,7 +253,7 @@ public class OrderControllerTest {
         mockMvc.perform(get("/api/orders/find-by-statuses")
                         .param("statuses", OrderStatus.CREATED.name()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].order.id").value(ORDER_ID));
+                .andExpect(jsonPath("$[0].order.id").value(ORDER_ID.toString()));
 
         verify(orderService).findByStatusIn(statuses);
     }
@@ -265,7 +265,7 @@ public class OrderControllerTest {
 
         mockMvc.perform(get("/api/orders/all"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].order.id").value(ORDER_ID));
+                .andExpect(jsonPath("$[0].order.id").value(ORDER_ID.toString()));
 
         verify(orderService).getAllOrders();
     }
@@ -280,7 +280,7 @@ public class OrderControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(ORDER_ID));
+                .andExpect(jsonPath("$.content[0].id").value(ORDER_ID.toString()));
 
         verify(orderService).getAllOrdersNativeWithPagination(0, 10);
     }

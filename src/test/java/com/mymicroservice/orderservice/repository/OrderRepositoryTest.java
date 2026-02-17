@@ -17,6 +17,7 @@ import com.mymicroservice.orderservice.model.OrderStatus;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -28,6 +29,7 @@ public class OrderRepositoryTest extends AbstractContainerTest{
 
     @Autowired
     private OrderRepository orderRepository;
+    private final static UUID ORDER_ID = UUID.randomUUID();
 
     private static Order expectedOrder;
 
@@ -56,7 +58,7 @@ public class OrderRepositoryTest extends AbstractContainerTest{
     @Test
     void findAllOrdersByIdIn_shouldReturnEmptyListWhenNoMatches() {
         log.info("Test findAllOrdersByIdIn - should return empty list for non-existent IDs");
-        List<Order> result = orderRepository.findAllByIdIn(Set.of(999L));
+        List<Order> result = orderRepository.findAllByIdIn(Set.of(ORDER_ID));
         assertThat(result).isEmpty();
     }
 

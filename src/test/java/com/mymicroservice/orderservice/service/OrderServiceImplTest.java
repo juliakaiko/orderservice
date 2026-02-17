@@ -29,9 +29,11 @@ import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
@@ -65,7 +67,7 @@ public class OrderServiceImplTest {
     @Mock
     private UserClient userClient;
 
-    private final static Long TEST_ORDER_ID = 1L;
+    private final static UUID TEST_ORDER_ID = UUID.randomUUID();;
     private Order testOrder;
     private OrderDto testOrderDto;
     private UserDto testUserDto;
@@ -116,7 +118,7 @@ public class OrderServiceImplTest {
 
         verify(itemRepository, times(1)).findById(2L);
         verify(orderRepository, times(2)).save(any(Order.class));
-        verify(userClient, times(1)).getUserById(TEST_ORDER_ID);
+        verify(userClient, times(1)).getUserById(1L);
         verify(orderEventProducer, times(1)).sendCreateOrder(any(), any());
     }
 
@@ -172,7 +174,7 @@ public class OrderServiceImplTest {
         OrderDto updatedOrderDto = new OrderDto();
         updatedOrderDto.setUserId(testOrderDto.getUserId());
         updatedOrderDto.setStatus(OrderStatus.CANCELLED);
-        updatedOrderDto.setCreationDate(LocalDate.of(2023, 3, 3));
+        updatedOrderDto.setCreationDate(LocalDateTime.of(2023, 3, 3, 0, 0));
 
         Order updatedOrder = OrderMapper.INSTANCE.toEntity(updatedOrderDto);
         updatedOrder.setId(TEST_ORDER_ID);
@@ -234,7 +236,7 @@ public class OrderServiceImplTest {
         assertThrows(OrderNotFoundException.class, () -> orderService.deleteOrder(TEST_ORDER_ID));
 
         verify(orderRepository, times(1)).findById(TEST_ORDER_ID);
-        verify(orderRepository, never()).deleteById(anyLong());
+        verify(orderRepository, never()).deleteById(TEST_ORDER_ID);
     }
 
     @Test
@@ -254,7 +256,7 @@ public class OrderServiceImplTest {
 
     @Test
     void getOrdersIdIn_whenIdsExists_thenReturnsOrdersWithUsers() {
-        Set<Long> ids = Set.of(TEST_ORDER_ID);
+        Set<UUID> ids = Set.of(TEST_ORDER_ID);
         when(orderRepository.findAllByIdIn(ids)).thenReturn(List.of(testOrder));
         when(userClient.getUserById(testOrderDto.getUserId())).thenReturn(testUserDto);
 

@@ -37,10 +37,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -79,7 +76,7 @@ public class OrderServiceImplWireMockTest {
         registry.add("user-service.url", () -> "http://localhost:${wiremock.server.port}");
     }
 
-    private static final Long TEST_ORDER_ID = 1L;
+    private final static UUID TEST_ORDER_ID = UUID.randomUUID();
     private static final String TEST_USER_EMAIL = "test@test.by";
     private Order testOrder;
     private OrderDto testOrderDto;
@@ -256,7 +253,7 @@ public class OrderServiceImplWireMockTest {
 
     @Test
     void testGetOrdersIdIn_whenIdsExists_thenReturnsOrdersWithUsers() {
-        Set<Long> ids = Set.of(TEST_ORDER_ID);
+        Set<UUID> ids = Set.of(TEST_ORDER_ID);
         when(orderRepository.findAllByIdIn(ids)).thenReturn(List.of(testOrder));
 
         List<OrderWithUserResponse> result = orderService.getOrdersIdIn(ids);
