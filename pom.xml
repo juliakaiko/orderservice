@@ -309,13 +309,21 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
 				<configuration>
-					<systemPropertyVariables>
+					<!--<systemPropertyVariables>
                         <spring.profiles.active>test</spring.profiles.active>
 					</systemPropertyVariables>
 					<forkCount>1</forkCount>
 					<reuseForks>true</reuseForks>
 					<parallel>none</parallel>
-					<runOrder>filesystem</runOrder>
+					<runOrder>filesystem</runOrder>-->
+                    <systemPropertyVariables>
+                        <spring.profiles.active>test</spring.profiles.active>
+                    </systemPropertyVariables>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>  <!-- ТОЛЬКО ЭТО ПОМЕНЯЙ -->
+                    <parallel>none</parallel>
+                    <runOrder>filesystem</runOrder>
+                    <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>  <!-- ЭТО ДОБАВЬ -->
 				</configuration>
 			</plugin>
 		</plugins>

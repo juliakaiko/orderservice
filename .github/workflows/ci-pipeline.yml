@@ -34,6 +34,12 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      - name: Update Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+          docker --version
+
       # 4. Verify Docker is available
       - name: Check Docker status
         run: docker info
@@ -64,8 +70,8 @@ jobs:
       # 6.2. Build and test with Maven + Testcontainers
       - name: Build and test
         env:
-          #SPRING_PROFILES_ACTIVE: test
-          #TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
+          SPRING_PROFILES_ACTIVE: test
+          TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
           #DOCKER_HOST: tcp://localhost:2375
           #TESTCONTAINERS_HOST_OVERRIDE: localhost
