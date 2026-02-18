@@ -71,11 +71,13 @@ jobs:
           </settings>' > ~/.m2/settings.xml
 
       # 6.2. Build and test with Maven + Testcontainers
-      - name: Build and test with Maven (Testcontainers)
+      - name: Build and test
         env:
           SPRING_PROFILES_ACTIVE: test
           #TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
+          DOCKER_HOST: unix:///var/run/docker.sock
+          TESTCONTAINERS_HOST_OVERRIDE: localhost
         run: |
           mvn -B clean verify -e -X -Dspring.test.constructor.autowire.mode=all
 
