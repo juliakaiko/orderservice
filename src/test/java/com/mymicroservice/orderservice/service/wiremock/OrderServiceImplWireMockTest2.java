@@ -1,7 +1,6 @@
 package com.mymicroservice.orderservice.service.wiremock;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.mymicroservice.orderservice.client.UserClient;
 import com.mymicroservice.orderservice.dto.*;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
@@ -15,7 +14,6 @@ import com.mymicroservice.orderservice.service.OrderService;
 import com.mymicroservice.orderservice.util.OrderGenerator;
 import com.mymicroservice.orderservice.util.UserGenerator;
 import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.jupiter.api.*;
 import org.mymicroservices.common.events.OrderEventDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -35,50 +31,23 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureWireMock(port = 0)
-public class OrderServiceImplWireMockTest {
-    @MockBean
-    private OrderRepository orderRepository;
+@AutoConfigureWireMock(port = 8089)
+public class OrderServiceImplWireMockTest2 {
 
-    @MockBean
-    private ItemRepository itemRepository;
+    @MockBean private OrderRepository orderRepository;
+    @MockBean private ItemRepository itemRepository;
+    @MockBean private OrderEventProducer orderEventProducer;
 
-    @MockBean
-    private OrderEventProducer orderEventProducer;
-
-    @Autowired
-    private OrderService orderService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private UserClient userClient;
+    @Autowired private OrderService orderService;
+    @Autowired private ObjectMapper objectMapper;
+    @Autowired private WireMockServer wireMockServer;
+    @Autowired private UserClient userClient;
 
     private UUID TEST_ORDER_ID;
     private static final String TEST_USER_EMAIL = "test@test.by";
     private Order testOrder;
     private OrderDto testOrderDto;
     private UserDto testUserDto;
-
-    private static WireMockServer wireMockServer;
-
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("user-service.url", () -> "http://localhost:" + wireMockServer.port());
-    }
-
-    @BeforeAll
-    static void setupWireMock() {
-        wireMockServer = new WireMockServer(0);
-        wireMockServer.start();
-        WireMock.configureFor("localhost", wireMockServer.port());
-    }
-
-    @AfterAll
-    static void stopWireMock() {
-        wireMockServer.stop();
-    }
 
     @BeforeEach
     void setup() throws Exception {
@@ -98,14 +67,15 @@ public class OrderServiceImplWireMockTest {
 
         testOrder.setOrderItems(new HashSet<>(Set.of(orderItem)));
         testOrderDto = OrderMapper.INSTANCE.toDto(testOrder);
-
         testUserDto = UserGenerator.generateUserResponse();
 
+        // WireMock for /users/1
         wireMockServer.stubFor(get(urlEqualTo("/api/internal/users/1"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(objectMapper.writeValueAsString(testUserDto))));
 
+        // WireMock for /users/find-by-email
         wireMockServer.stubFor(get(urlPathEqualTo("/api/internal/users/find-by-email"))
                 .withQueryParam("email", equalTo(TEST_USER_EMAIL))
                 .willReturn(aResponse()
@@ -115,8 +85,7 @@ public class OrderServiceImplWireMockTest {
 
     @AfterEach
     void tearDown() {
-        //wireMockServer.resetAll();
-        resetAllRequests();
+        wireMockServer.resetAll();
     }
 
     @Test
@@ -182,7 +151,7 @@ public class OrderServiceImplWireMockTest {
         item.setId(2L);
         item.setPrice(BigDecimal.valueOf(100));
         orderItem.setItem(item);
-        orderItem.setOrder(testOrder);
+        orderItem.setOrder(updatedOrder);
 
         updatedOrder.setOrderItems(new HashSet<>(Set.of(orderItem)));
         testOrder.setOrderItems(new HashSet<>(Set.of(orderItem)));

@@ -16,7 +16,7 @@ import java.time.Duration;
 @Slf4j
 public class AbstractContainerTest {
 
-   /* public static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15-alpine") //postgres:15
+    public static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:15-alpine") //postgres:15
             .withDatabaseName("testdb")
             .withUsername("user")
             .withPassword("password")
@@ -26,15 +26,7 @@ public class AbstractContainerTest {
 
     static {
         postgreSQLContainer.start();
-    }*/
-
-    @Container
-    public static PostgreSQLContainer<?> postgreSQLContainer =
-            new PostgreSQLContainer<>("postgres:15-alpine")
-                    .withDatabaseName("testdb")
-                    .withUsername("user")
-                    .withPassword("password")
-                    .waitingFor(Wait.forListeningPort().withStartupTimeout(Duration.ofSeconds(120)));
+    }
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
