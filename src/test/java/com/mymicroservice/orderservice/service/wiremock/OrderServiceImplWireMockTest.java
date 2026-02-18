@@ -68,13 +68,13 @@ public class OrderServiceImplWireMockTest {
         testOrderDto = OrderMapper.INSTANCE.toDto(testOrder);
         testUserDto = UserGenerator.generateUserResponse();
 
-        // WireMock for /users/1
+        // WireMock for /api/internal/users/1
         wireMockServer.stubFor(get(urlEqualTo("/api/internal/users/1"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
                         .withBody(objectMapper.writeValueAsString(testUserDto))));
 
-        // WireMock for /users/find-by-email
+        // WireMock for /api/internal/users/find-by-email
         wireMockServer.stubFor(get(urlPathEqualTo("/api/internal/users/find-by-email"))
                 .withQueryParam("email", equalTo(TEST_USER_EMAIL))
                 .willReturn(aResponse()
