@@ -7,15 +7,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     services:
-      #postgres:  # Required for Testcontainers and database tests
-        #image: postgres:latest
-        #env:
-          #POSTGRES_USER: test
-          #POSTGRES_PASSWORD: test
-          #POSTGRES_DB: test
-        #ports:
-          #- 5432:5432
-        #options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
      docker:
         image: docker:dind
         options: --privileged
@@ -76,13 +67,11 @@ jobs:
           SPRING_PROFILES_ACTIVE: test
           TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
-          #DOCKER_HOST: unix:///var/run/docker.sock
-          DOCKER_HOST: tcp://localhost:2375
-          TESTCONTAINERS_HOST_OVERRIDE: localhost
+          #DOCKER_HOST: tcp://localhost:2375
+          #TESTCONTAINERS_HOST_OVERRIDE: localhost
         run: |
           mvn -B clean verify -e -X -Dspring.test.constructor.autowire.mode=all
 
-      #pkill -f surefirebooter || true           # Kill any stuck test processes
       # 7. Upload test reports if tests fail
       - name: Upload Surefire Reports
         if: failure()
