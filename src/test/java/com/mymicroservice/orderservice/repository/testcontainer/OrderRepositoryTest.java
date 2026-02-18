@@ -1,6 +1,7 @@
-package com.mymicroservice.orderservice.repository;
+package com.mymicroservice.orderservice.repository.testcontainer;
 
 import com.mymicroservice.orderservice.model.Order;
+import com.mymicroservice.orderservice.repository.OrderRepository;
 import com.mymicroservice.orderservice.util.OrderGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;

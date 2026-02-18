@@ -43,15 +43,14 @@ public class OrderServiceImplWireMockTest2 {
     @Autowired private WireMockServer wireMockServer;
     @Autowired private UserClient userClient;
 
-    private UUID TEST_ORDER_ID;
-    private static final String TEST_USER_EMAIL = "test@test.by";
+    private final UUID TEST_ORDER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");;
+    private final String TEST_USER_EMAIL = "test@test.by";
     private Order testOrder;
     private OrderDto testOrderDto;
     private UserDto testUserDto;
 
     @BeforeEach
     void setup() throws Exception {
-        TEST_ORDER_ID = UUID.fromString("00000000-0000-0000-0000-000000000001");
         testOrder = OrderGenerator.generateOrder();
         testOrder.setId(TEST_ORDER_ID);
 
