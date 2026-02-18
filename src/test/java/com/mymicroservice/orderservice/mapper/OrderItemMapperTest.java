@@ -8,9 +8,11 @@ import com.mymicroservice.orderservice.util.ItemGenerator;
 import com.mymicroservice.orderservice.util.OrderGenerator;
 import com.mymicroservice.orderservice.util.OrderItemGenerator;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.Assert.assertEquals;
 
+@ActiveProfiles("test")
 public class OrderItemMapperTest {
 
     @Test

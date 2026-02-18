@@ -4,9 +4,11 @@ import com.mymicroservice.orderservice.dto.ItemDto;
 import com.mymicroservice.orderservice.model.Item;
 import com.mymicroservice.orderservice.util.ItemGenerator;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.Assert.assertEquals;
 
+@ActiveProfiles("test")
 public class ItemMapperTest {
 
     @Test

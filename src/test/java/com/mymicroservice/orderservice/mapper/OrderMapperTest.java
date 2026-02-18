@@ -7,6 +7,7 @@ import com.mymicroservice.orderservice.model.Order;
 import com.mymicroservice.orderservice.model.OrderItem;
 import com.mymicroservice.orderservice.util.OrderGenerator;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.Set;
@@ -16,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@ActiveProfiles("test")
 public class OrderMapperTest {
 
     private final static UUID ORDER_ID = UUID.randomUUID();

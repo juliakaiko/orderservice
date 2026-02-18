@@ -64,7 +64,7 @@ jobs:
       # 6.2. Build and test with Maven + Testcontainers
       - name: Build and test
         env:
-          SPRING_PROFILES_ACTIVE: test
+          #SPRING_PROFILES_ACTIVE: test
           #TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
           #DOCKER_HOST: tcp://localhost:2375

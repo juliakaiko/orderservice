@@ -25,6 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -46,6 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(SecurityConfig.class)
 @WithMockUser(roles = {"ADMIN", "USER"})
 @WebMvcTest(OrderController.class)
+@ActiveProfiles("test")
 @Slf4j
 public class OrderControllerTest {
 

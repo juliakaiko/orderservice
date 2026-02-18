@@ -11,7 +11,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.time.Duration;
 
 @Testcontainers(disabledWithoutDocker = true)
-@ActiveProfiles("testcontainer")
+@ActiveProfiles("test")
 @Slf4j
 public class AbstractContainerTest {
 
