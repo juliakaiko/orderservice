@@ -6,10 +6,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    services:
-     docker:
-        image: docker:dind
-        options: --privileged
+    #services:
+     #docker:
+        #image: docker:dind
+        #options: --privileged
 
     steps:
       # 1. Clone the repository
@@ -61,25 +61,18 @@ jobs:
             </servers>
           </settings>' > ~/.m2/settings.xml
 
-      - name: Free port 8089
-        run: |
-          echo "Checking if port 8089 is in use..."
-          if lsof -i :8089; then
-            echo "Port 8089 is in use. Killing process..."
-            sudo fuser -k 8089/tcp
-          else
-            echo "Port 8089 is free"
-          fi
-          
       # 6.2. Build and test with Maven + Testcontainers
       - name: Build and test
         env:
           SPRING_PROFILES_ACTIVE: test
           TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
-          DOCKER_HOST: tcp://localhost:2375
+          #DOCKER_HOST: tcp://localhost:2375
           TESTCONTAINERS_HOST_OVERRIDE: localhost
+          DOCKER_HOST: unix:///var/run/docker.sock
         run: |
+          sleep 5 # подождать Docker
+          sudo fuser -k 8089/tcp || echo "Port 8089 was already free"
           mvn -B clean verify -e -X -Dspring.test.constructor.autowire.mode=all
 
       # 7. Upload test reports if tests fail
