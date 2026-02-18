@@ -40,11 +40,20 @@ jobs:
           sudo apt-get remove -y docker docker-engine docker.io containerd runc || true
           sudo apt-get purge -y docker-ce docker-ce-cli containerd.io || true
 
-      # 4.2. Set up Docker from official repo
+      # 4.2. Set up Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # 4.3. Verify Docker is available
+      # 4.3. Start Docker daemon  <-- ДОБАВЬ ЭТОТ ШАГ!
+      - name: Start Docker daemon
+        run: |
+          sudo systemctl start docker
+          sudo systemctl status docker
+          sleep 5
+          docker version
+          docker info
+
+      # 4.4. Verify Docker is available
       - name: Check Docker status
         run: docker info
 
