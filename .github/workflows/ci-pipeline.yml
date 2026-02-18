@@ -61,6 +61,16 @@ jobs:
             </servers>
           </settings>' > ~/.m2/settings.xml
 
+      - name: Free port 8089
+        run: |
+          echo "Checking if port 8089 is in use..."
+          if lsof -i :8089; then
+            echo "Port 8089 is in use. Killing process..."
+            sudo fuser -k 8089/tcp
+          else
+            echo "Port 8089 is free"
+          fi
+          
       # 6.2. Build and test with Maven + Testcontainers
       - name: Build and test
         env:
