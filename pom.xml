@@ -211,6 +211,7 @@
 			<artifactId>spring-boot-testcontainers</artifactId>
 			<scope>test</scope>
 		</dependency>
+        
 		<!-- JWT -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -323,7 +324,7 @@
                     <reuseForks>false</reuseForks>
                     <parallel>none</parallel>
                     <runOrder>filesystem</runOrder>
-                    <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>  
+                    <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
 				</configuration>
 			</plugin>
 		</plugins>
