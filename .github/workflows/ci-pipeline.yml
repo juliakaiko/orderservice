@@ -48,8 +48,8 @@ jobs:
         run: docker info
 
       # 5. Wait for PostgreSQL to initialize
-      #- name: Wait for PostgreSQL
-        #run: sleep 10
+      - name: Wait for PostgreSQL
+        run: sleep 15
 
       # 6.1. Maven downloads common-events from GitHub Packages to Actions
       - name: Set up Maven settings.xml for GitHub Packages
@@ -74,9 +74,10 @@ jobs:
       - name: Build and test
         env:
           SPRING_PROFILES_ACTIVE: test
-          #TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
+          TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
-          DOCKER_HOST: unix:///var/run/docker.sock
+          #DOCKER_HOST: unix:///var/run/docker.sock
+          DOCKER_HOST: tcp://localhost:2375
           TESTCONTAINERS_HOST_OVERRIDE: localhost
         run: |
           mvn -B clean verify -e -X -Dspring.test.constructor.autowire.mode=all
