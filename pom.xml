@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.3.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.mymicroservice</groupId>
 	<artifactId>orderservice</artifactId>
@@ -44,11 +44,6 @@
         <wiremock.version>3.5.4</wiremock.version>
 	</properties>
 	<repositories>
-        <!--<repository>
-            <id>central</id>
-            <name>Maven Central Repository</name>
-            <url>https://repo.maven.apache.org/maven2</url>
-        </repository>-->
         <repository>
 			<id>github-event</id>
 			<name>GitHub Packages</name>
@@ -83,7 +78,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <!-- for cron job (partitioning) -->
+
+        <!-- For cron job (partitioning) -->
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
             <artifactId>shedlock-spring</artifactId>
@@ -99,17 +95,20 @@
             <artifactId>uuid-creator</artifactId>
             <version>${uuid-creator.version}</version>
         </dependency>
+
         <!-- Spring Security + JWT (OAuth2 Resource Server) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
+
 		<!-- Feign Client -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 			<version>${spring-cloud-starter-openfeign.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -126,23 +125,27 @@
             <version>${org.projectlombok.version}</version>
             <scope>provided</scope>
         </dependency>
+
 		<!-- Mapstruct for creating DTO-->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>${mapstruct.version}</version>
 		</dependency>
+
 		<!-- Kafka -->
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
+
 		<!-- Own library for DTO in Kafka -->
 		<dependency>
 			<groupId>com.mymicroservices</groupId>
 			<artifactId>common-events</artifactId>
 			<version>${common-events.version}</version>
 		</dependency>
+
 		<!--  Swagger -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -155,6 +158,7 @@
 			<version>${jackson-databind.version}</version>
 		</dependency>
 
+        <!-- For encoding logs in JSON -->
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
@@ -167,6 +171,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<!-- For integration Feign and WireMock -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -174,6 +179,8 @@
             <version>${spring-cloud-contract-wiremock.version}</version>
 			<scope>test</scope>
 		</dependency>
+
+        <!-- WireMock for mocking HTTP requests -->
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
@@ -181,13 +188,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- WireMock for mocking HTTP requests -->
-		<!--<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
-			<version>${wiremock-jre8.version}</version>
-			<scope>test</scope>
-		</dependency>-->
 		<!-- Testcontainers -->
 		<dependency>
 			<groupId>org.testcontainers</groupId>
@@ -311,18 +311,10 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
 				<configuration>
-					<!--<systemPropertyVariables>
-                        <spring.profiles.active>test</spring.profiles.active>
-					</systemPropertyVariables>
-					<forkCount>1</forkCount>
-					<reuseForks>true</reuseForks>
-					<parallel>none</parallel>
-					<runOrder>filesystem</runOrder>-->
                     <systemPropertyVariables>
                         <spring.profiles.active>test</spring.profiles.active>
                         <testcontainers.dockerclient.version>1.44</testcontainers.dockerclient.version>
                     </systemPropertyVariables>
-                    <argLine>-Dtestcontainers.dockerclient.version=1.44</argLine>
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
                     <parallel>none</parallel>

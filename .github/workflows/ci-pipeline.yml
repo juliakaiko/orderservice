@@ -6,10 +6,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    #services:
-      #docker:
-        #image: docker:dind
-        #options: --privileged
 
     steps:
       # 1. Clone the repository
@@ -69,20 +65,8 @@ jobs:
         env:
           TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
-          #MAVEN_OPTS: -Dtestcontainers.dockerclient.version=1.44
-          #TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
-          #MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
-          #DOCKER_HOST: tcp://localhost:2375
-          #TESTCONTAINERS_HOST_OVERRIDE: localhost
-          #DOCKER_HOST: unix:///var/run/docker.sock
-          #SPRING_PROFILES_ACTIVE: test
         run: |
           mvn -B clean install  -Dspring.test.constructor.autowire.mode=all
-#        run: |
-#          sleep 5
-#          sudo fuser -k 8089/tcp || echo "Port 8089 was already free"
-#          mvn -B clean verify \
-#            -Dspring.test.constructor.autowire.mode=all
 
       # 7. Upload test reports if tests fail
       - name: Upload Surefire Reports
