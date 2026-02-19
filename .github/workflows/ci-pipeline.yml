@@ -67,6 +67,7 @@ jobs:
       - name: Build and test
         env:
           SPRING_PROFILES_ACTIVE: test
+          TESTCONTAINERS_DOCKER_CLIENT_VERSION: 1.44
           #TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           #MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
           #DOCKER_HOST: tcp://localhost:2375
@@ -76,8 +77,7 @@ jobs:
           sleep 5
           sudo fuser -k 8089/tcp || echo "Port 8089 was already free"
           mvn -B clean verify \
-            -Dspring.test.constructor.autowire.mode=all \
-            -Dtestcontainers.dockerclient.version=1.44
+            -Dspring.test.constructor.autowire.mode=all
 
       # 7. Upload test reports if tests fail
       - name: Upload Surefire Reports
