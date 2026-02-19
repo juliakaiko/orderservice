@@ -322,6 +322,7 @@
                         <spring.profiles.active>test</spring.profiles.active>
                         <testcontainers.dockerclient.version>1.44</testcontainers.dockerclient.version>
                     </systemPropertyVariables>
+                    <argLine>-Dtestcontainers.dockerclient.version=1.44</argLine>
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
                     <parallel>none</parallel>

@@ -38,13 +38,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureWireMock(port = 8089)
-/*@EnableAutoConfiguration(exclude = {
-        DataSourceAutoConfiguration.class,
-        HibernateJpaAutoConfiguration.class,
-        DataSourceTransactionManagerAutoConfiguration.class,
-        JpaRepositoriesAutoConfiguration.class,
-        SpringDataWebAutoConfiguration.class
-})*/
 public class OrderServiceImplWireMockTest {
 
     @MockBean private OrderRepository orderRepository;
