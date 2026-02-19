@@ -10,10 +10,14 @@ import com.mymicroservice.orderservice.model.*;
 import com.mymicroservice.orderservice.model.Order;
 import com.mymicroservice.orderservice.repository.ItemRepository;
 import com.mymicroservice.orderservice.repository.OrderRepository;
+import com.mymicroservice.orderservice.scheduler.PartitionScheduler;
+import com.mymicroservice.orderservice.service.ItemService;
+import com.mymicroservice.orderservice.service.OrderItemService;
 import com.mymicroservice.orderservice.service.OrderService;
 import com.mymicroservice.orderservice.util.OrderGenerator;
 import com.mymicroservice.orderservice.util.UserGenerator;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import net.javacrumbs.shedlock.core.LockProvider;
 import org.junit.jupiter.api.*;
 import org.mymicroservices.common.events.OrderEventDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +42,22 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureWireMock(port = 8089)
+@EnableAutoConfiguration(exclude = {
+        DataSourceAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class,
+        JpaRepositoriesAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class
+})
 public class OrderServiceImplWireMockTest {
 
     @MockBean private OrderRepository orderRepository;
     @MockBean private ItemRepository itemRepository;
     @MockBean private OrderEventProducer orderEventProducer;
+
+    @MockBean private ItemService itemService;
+    @MockBean private OrderItemService orderItemService;
+    @MockBean private PartitionScheduler partitionScheduler;
+    @MockBean private LockProvider lockProvider;
 
     @Autowired private OrderService orderService;
     @Autowired private ObjectMapper objectMapper;
