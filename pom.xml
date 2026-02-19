@@ -320,6 +320,7 @@
 					<runOrder>filesystem</runOrder>-->
                     <systemPropertyVariables>
                         <spring.profiles.active>test</spring.profiles.active>
+                        <testcontainers.dockerclient.version>1.44</testcontainers.dockerclient.version>
                     </systemPropertyVariables>
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>

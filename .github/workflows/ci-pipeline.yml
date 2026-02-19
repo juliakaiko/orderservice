@@ -67,7 +67,7 @@ jobs:
       - name: Build and test
         env:
           SPRING_PROFILES_ACTIVE: test
-          MAVEN_OPTS: -Dtestcontainers.dockerclient.version=1.44
+          #MAVEN_OPTS: -Dtestcontainers.dockerclient.version=1.44
           #TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           #MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
           #DOCKER_HOST: tcp://localhost:2375
