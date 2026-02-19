@@ -73,9 +73,11 @@ jobs:
           #TESTCONTAINERS_HOST_OVERRIDE: localhost
           #DOCKER_HOST: unix:///var/run/docker.sock
         run: |
-          sleep 5 # подождать Docker
+          sleep 5
           sudo fuser -k 8089/tcp || echo "Port 8089 was already free"
-          mvn -B clean verify -Dspring.test.constructor.autowire.mode=all
+          mvn -B clean verify \
+            -Dspring.test.constructor.autowire.mode=all \
+            -Dtestcontainers.dockerclient.version=1.44
 
       # 7. Upload test reports if tests fail
       - name: Upload Surefire Reports
