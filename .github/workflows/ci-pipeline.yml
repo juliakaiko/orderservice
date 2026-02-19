@@ -34,15 +34,16 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      # 4. Verify Docker
       - name: Check Docker
         run: docker version
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Check Docker status
+        run: docker info
 
       # 5. Wait for PostgreSQL to initialize
-      #- name: Wait for PostgreSQL
-        #run: sleep 15
+      - name: Wait for PostgreSQL
+        run: sleep 15
 
       # 6.1. Maven downloads common-events from GitHub Packages to Actions
       - name: Set up Maven settings.xml for GitHub Packages
@@ -66,18 +67,22 @@ jobs:
       # 6.2. Build and test with Maven + Testcontainers
       - name: Build and test
         env:
-          SPRING_PROFILES_ACTIVE: test
+          TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
+          MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
           #MAVEN_OPTS: -Dtestcontainers.dockerclient.version=1.44
           #TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
           #MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
           #DOCKER_HOST: tcp://localhost:2375
           #TESTCONTAINERS_HOST_OVERRIDE: localhost
           #DOCKER_HOST: unix:///var/run/docker.sock
+          #SPRING_PROFILES_ACTIVE: test
         run: |
-          sleep 5
-          sudo fuser -k 8089/tcp || echo "Port 8089 was already free"
-          mvn -B clean verify \
-            -Dspring.test.constructor.autowire.mode=all
+          mvn -B clean install  -Dspring.test.constructor.autowire.mode=all
+#        run: |
+#          sleep 5
+#          sudo fuser -k 8089/tcp || echo "Port 8089 was already free"
+#          mvn -B clean verify \
+#            -Dspring.test.constructor.autowire.mode=all
 
       # 7. Upload test reports if tests fail
       - name: Upload Surefire Reports
