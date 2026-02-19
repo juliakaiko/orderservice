@@ -6,10 +6,10 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    services:
-     docker:
-        image: docker:dind
-        options: --privileged
+    #services:
+     #docker:
+        #image: docker:dind
+        #options: --privileged
 
     steps:
       # 1. Clone the repository
@@ -33,6 +33,9 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+
+      - name: Check Docker
+        run: docker version
 
       # 5. Wait for PostgreSQL to initialize
       #- name: Wait for PostgreSQL
@@ -61,15 +64,15 @@ jobs:
       - name: Build and test
         env:
           SPRING_PROFILES_ACTIVE: test
-          TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
-          MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
+          #TESTCONTAINERS_RYUK_DISABLED: "true"      # Disable Ryuk for better stability
+          #MAVEN_OPTS: "-Dmaven.repo.local=.m2"      # Use local Maven cache
           #DOCKER_HOST: tcp://localhost:2375
           #TESTCONTAINERS_HOST_OVERRIDE: localhost
           #DOCKER_HOST: unix:///var/run/docker.sock
         run: |
           sleep 5 # подождать Docker
           sudo fuser -k 8089/tcp || echo "Port 8089 was already free"
-          mvn -B clean verify -e -X -Dspring.test.constructor.autowire.mode=all
+          mvn -B clean verify -Dspring.test.constructor.autowire.mode=all
 
       # 7. Upload test reports if tests fail
       - name: Upload Surefire Reports
