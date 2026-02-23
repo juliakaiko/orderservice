@@ -11,9 +11,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, Long> {
+public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     /**
      * Finds all orders with specified IDs using "named method".
@@ -22,7 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
      * @return a list of orders matching the provided IDs (may be empty)
      * @throws IllegalArgumentException if ids set is null
      */
-    List<Order> findAllByIdIn(Set<Long> ids);
+    List<Order> findAllByIdIn(Set<UUID> ids);
 
 
     /**

@@ -11,5 +11,6 @@
     <include file="01-create-table-orders.xml" relativeToChangelogFile="true"/>
     <include file="02-create-table-items.xml" relativeToChangelogFile="true"/>
     <include file="03-create-table-order_items.xml" relativeToChangelogFile="true"/>
+    <include file="04-create-shedlock-table.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

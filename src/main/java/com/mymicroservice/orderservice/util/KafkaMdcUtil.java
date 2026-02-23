@@ -1,10 +1,12 @@
 package com.mymicroservice.orderservice.util;
 
+import lombok.experimental.UtilityClass;
 import org.slf4j.MDC;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
+@UtilityClass
 public class KafkaMdcUtil {
 
     /**
@@ -15,13 +17,17 @@ public class KafkaMdcUtil {
                 .setHeader(KafkaHeaders.TOPIC, topic)
                 .setHeader(KafkaHeaders.KEY, key);
 
-        // take the requestId from MDC and add it to the header.
+        /**
+         *  Take the requestId from MDC and add it to the header.
+         */
         String requestId = MDC.get("requestId");
         if (requestId != null && !requestId.isEmpty()) {
             builder.setHeader("X-Request-Id", requestId);
         }
 
-        // add serviceName
+        /**
+         *  Add serviceName to the header.
+         */
         String serviceName = MDC.get("serviceName");
         if (serviceName != null && !serviceName.isEmpty()) {
             builder.setHeader("X-Source-Service", serviceName);
@@ -29,21 +35,4 @@ public class KafkaMdcUtil {
 
         return builder.build();
     }
-
-    /**
-     * Recover MDC from Kafka headers
-     */
-    /*public static void restoreMdcFromMessage(Message<?> message) {
-        // Берем requestId из заголовков
-        Object requestId = message.getHeaders().get("X-Request-Id");
-        if (requestId != null) {
-            MDC.put("requestId", requestId.toString());
-        }
-
-        // Берем sourceService
-        Object sourceService = message.getHeaders().get("X-Source-Service");
-        if (sourceService != null) {
-            MDC.put("sourceService", sourceService.toString());
-        }
-    }*/
 }

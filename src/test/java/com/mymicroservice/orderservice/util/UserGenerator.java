@@ -8,7 +8,7 @@ public class UserGenerator {
     public static UserDto generateUserResponse() {
 
         return  UserDto.builder()
-                .userId(1l)
+                .userId(1L)
                 .name("test_name")
                 .surname("test_surname")
                 .birthDate(LocalDate.of(2000, 2, 2))

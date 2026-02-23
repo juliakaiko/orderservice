@@ -40,7 +40,7 @@
     </appender>
 
     <!-- Логгер для трассировки -->
-    <!-- В файл trace-mdc.log  добавлятся только MDC логи / additivity="true" — логи также пойдут в корневой логгер (в консоль)-->
+    <!-- В файл orderservice.log  добавлятся только MDC логи / additivity="true" — логи также пойдут в корневой логгер (в консоль)-->
     <logger name="com.mymicroservice" level="INFO" additivity="true">
         <appender-ref ref="TRACE_MDC"/>
     </logger>

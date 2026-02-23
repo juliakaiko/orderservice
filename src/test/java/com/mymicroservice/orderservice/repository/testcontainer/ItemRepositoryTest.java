@@ -1,7 +1,8 @@
-package com.mymicroservice.orderservice.repository;
+package com.mymicroservice.orderservice.repository.testcontainer;
 
 import com.mymicroservice.orderservice.config.AbstractContainerTest;
 import com.mymicroservice.orderservice.model.Item;
+import com.mymicroservice.orderservice.repository.ItemRepository;
 import com.mymicroservice.orderservice.util.ItemGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Set;

@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.3.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>com.mymicroservice</groupId>
 	<artifactId>orderservice</artifactId>
@@ -37,15 +37,31 @@
         <spring-security-test.version>6.5.2</spring-security-test.version>
         <common-events.version>1.0.0</common-events.version>
         <postgresql.version>42.7.4</postgresql.version>
+        <common-filters-starter.version>1.0.0</common-filters-starter.version>
+        <uuid-creator.version>5.3.0</uuid-creator.version>
+        <shedlock-provider-jdbc-template.version>4.45.0</shedlock-provider-jdbc-template.version>
+        <shedlock-spring.version>4.45.0</shedlock-spring.version>
+        <wiremock.version>3.5.4</wiremock.version>
 	</properties>
 	<repositories>
-		<repository>
-			<id>github</id>
+        <repository>
+			<id>github-event</id>
 			<name>GitHub Packages</name>
 			<url>https://maven.pkg.github.com/juliakaiko/common-events</url>
 		</repository>
+        <repository>
+            <id>github-filter</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/juliakaiko/common-filters-spring-boot-starter</url>
+        </repository>
 	</repositories>
+
 	<dependencies>
+        <dependency>
+            <groupId>com.mymicroservice</groupId>
+            <artifactId>common-filters-starter</artifactId>
+            <version>${common-filters-starter.version}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -62,49 +78,74 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-		<!-- Spring Security + JWT (OAuth2 Resource Server) -->
+
+        <!-- For cron job (partitioning) -->
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>${shedlock-spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-jdbc-template</artifactId>
+            <version>${shedlock-provider-jdbc-template.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.f4b6a3</groupId>
+            <artifactId>uuid-creator</artifactId>
+            <version>${uuid-creator.version}</version>
+        </dependency>
+
+        <!-- Spring Security + JWT (OAuth2 Resource Server) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
+
 		<!-- Feign Client -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
-            <version>${spring-cloud-starter-openfeign.version}</version>
+			<version>${spring-cloud-starter-openfeign.version}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>${postgresql.version}</version>
+            <version>${postgresql.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${org.projectlombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
 		<!-- Mapstruct for creating DTO-->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>${mapstruct.version}</version>
 		</dependency>
+
 		<!-- Kafka -->
 		<dependency>
 			<groupId>org.springframework.kafka</groupId>
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
+
 		<!-- Own library for DTO in Kafka -->
 		<dependency>
 			<groupId>com.mymicroservices</groupId>
 			<artifactId>common-events</artifactId>
-            <version>${common-events.version}</version>
+			<version>${common-events.version}</version>
 		</dependency>
+
 		<!--  Swagger -->
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -114,14 +155,23 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind.version}</version>
+			<version>${jackson-databind.version}</version>
 		</dependency>
+
+        <!-- For encoding logs in JSON -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
+        </dependency>
+
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<!-- For integration Feign and WireMock -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -129,19 +179,15 @@
             <version>${spring-cloud-contract-wiremock.version}</version>
 			<scope>test</scope>
 		</dependency>
-        <!-- For JSON logs -->
+
+        <!-- WireMock for mocking HTTP requests -->
         <dependency>
-            <groupId>net.logstash.logback</groupId>
-            <artifactId>logstash-logback-encoder</artifactId>
-            <version>${logstash-logback-encoder.version}</version>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>${wiremock.version}</version>
+            <scope>test</scope>
         </dependency>
-		<!-- WireMock for mocking HTTP requests -->
-		<dependency>
-			<groupId>com.github.tomakehurst</groupId>
-			<artifactId>wiremock-jre8</artifactId>
-            <version>${wiremock-jre8.version}</version>
-			<scope>test</scope>
-		</dependency>
+
 		<!-- Testcontainers -->
 		<dependency>
 			<groupId>org.testcontainers</groupId>
@@ -166,6 +212,7 @@
 			<artifactId>spring-boot-testcontainers</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<!-- JWT -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -187,10 +234,10 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
-            <version>${spring-security-test.version}</version>
+			<version>${spring-security-test.version}</version>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+    </dependencies>
 
 	<dependencyManagement>
 		<dependencies>
@@ -264,13 +311,15 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
 				<configuration>
-					<systemPropertyVariables>
-						<spring.profiles.active>test</spring.profiles.active>
-					</systemPropertyVariables>
-					<forkCount>1</forkCount>
-					<reuseForks>true</reuseForks>
-					<parallel>none</parallel>
-					<runOrder>filesystem</runOrder>
+                    <systemPropertyVariables>
+                        <spring.profiles.active>test</spring.profiles.active>
+                        <testcontainers.dockerclient.version>1.44</testcontainers.dockerclient.version>
+                    </systemPropertyVariables>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <parallel>none</parallel>
+                    <runOrder>filesystem</runOrder>
+                    <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
 				</configuration>
 			</plugin>
 		</plugins>

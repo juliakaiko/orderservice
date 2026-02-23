@@ -13,32 +13,42 @@
             <tableExists tableName="orders"/>
         </preConditions>
         <sql>
-            INSERT INTO orders (user_id, status, creation_date) VALUES (1, 'CREATED', '2025-05-15');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (3, 'PAID', '2025-01-12');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (7, 'FAILED', '2025-02-28');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (10, 'PROCESSING', '2025-03-05');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (5, 'CANCELLED', '2025-04-10');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (12, 'CREATED', '2025-05-02');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (1, 'PAID', '2025-05-18');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (8, 'FAILED', '2025-06-01');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (14, 'CREATED', '2025-06-19');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (19, 'PROCESSING', '2025-07-07');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (1, 'FAILED', '2025-07-22');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (16, 'PAID', '2025-08-01');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (9, 'CREATED', '2025-08-06');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (4, 'PROCESSING', '2025-08-08');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (6, 'PAID', '2025-09-10');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (1, 'CANCELLED', '2025-09-30');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (2, 'CREATED', '2025-10-05');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (11, 'PAID', '2025-10-22');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (13, 'FAILED', '2025-11-11');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (1, 'PROCESSING', '2025-11-28');
-            INSERT INTO orders (user_id, status, creation_date) VALUES (20, 'CANCELLED', '2025-12-15');
-
+            CREATE TABLE IF NOT EXISTS orders_default PARTITION OF orders DEFAULT;
         </sql>
+
+        <!-- Вставляем данные -->
+        <sql>
+            INSERT INTO orders (id, user_id, status, creation_date) VALUES
+            ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', 1, 'CREATED', '2025-05-15'),
+            ('b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a12', 3, 'PAID', '2025-01-12'),
+            ('c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a13', 7, 'FAILED', '2025-02-28'),
+            ('d0eebc99-9c0b-4ef8-bb6d-6bb9bd380a14', 10, 'PROCESSING', '2025-03-05'),
+            ('e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a15', 5, 'CANCELLED', '2025-04-10'),
+            ('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380a16', 12, 'CREATED', '2025-05-02'),
+            ('a1eebc99-9c0b-4ef8-bb6d-6bb9bd380a17', 1, 'PAID', '2025-05-18'),
+            ('b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a18', 8, 'FAILED', '2025-06-01'),
+            ('c1eebc99-9c0b-4ef8-bb6d-6bb9bd380a19', 14, 'CREATED', '2025-06-19'),
+            ('d1eebc99-9c0b-4ef8-bb6d-6bb9bd380a1a', 19, 'PROCESSING', '2025-07-07'),
+            ('e1eebc99-9c0b-4ef8-bb6d-6bb9bd380a1b', 1, 'FAILED', '2025-07-22'),
+            ('f1eebc99-9c0b-4ef8-bb6d-6bb9bd380a1c', 16, 'PAID', '2025-08-01'),
+            ('a2eebc99-9c0b-4ef8-bb6d-6bb9bd380a1d', 9, 'CREATED', '2025-08-06'),
+            ('b2eebc99-9c0b-4ef8-bb6d-6bb9bd380a1e', 4, 'PROCESSING', '2025-08-08'),
+            ('c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a1f', 6, 'PAID', '2025-09-10'),
+            ('d2eebc99-9c0b-4ef8-bb6d-6bb9bd380a20', 1, 'CANCELLED', '2025-09-30'),
+            ('e2eebc99-9c0b-4ef8-bb6d-6bb9bd380a21', 2, 'CREATED', '2025-10-05'),
+            ('f2eebc99-9c0b-4ef8-bb6d-6bb9bd380a22', 11, 'PAID', '2025-10-22'),
+            ('a3eebc99-9c0b-4ef8-bb6d-6bb9bd380a23', 13, 'FAILED', '2025-11-11'),
+            ('b3eebc99-9c0b-4ef8-bb6d-6bb9bd380a24', 1, 'PROCESSING', '2025-11-28'),
+            ('c3eebc99-9c0b-4ef8-bb6d-6bb9bd380a25', 20, 'CANCELLED', '2025-12-15');
+        </sql>
+
         <rollback>
-            DELETE FROM orders WHERE id IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21);
+            <sql>
+                DELETE FROM orders WHERE creation_date &gt;= '2025-01-01' AND creation_date &lt;= '2025-12-31';
+                DROP TABLE IF EXISTS orders_default;
+            </sql>
         </rollback>
+
     </changeSet>
 
 </databaseChangeLog>

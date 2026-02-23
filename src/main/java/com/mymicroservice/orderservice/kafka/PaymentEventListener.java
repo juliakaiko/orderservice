@@ -15,6 +15,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -63,9 +64,9 @@ public class PaymentEventListener {
                 return;
             }
 
-            Long orderId;
+            UUID orderId;
             try {
-                orderId = Long.valueOf(event.getOrderId());
+                orderId = UUID.fromString(event.getOrderId());
             } catch (NumberFormatException e) {
                 log.error("Invalid order ID format: {}", event.getOrderId());
                 return;

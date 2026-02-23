@@ -25,10 +25,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
@@ -42,6 +44,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class OrderItemServiceImplTest {
 
     @InjectMocks
@@ -57,6 +60,7 @@ public class OrderItemServiceImplTest {
     private OrderRepository orderRepository;
 
     private final static Long TEST_ORDER_ITEM_ID = 1L;
+    private final static UUID TEST_ORDER_ID = UUID.randomUUID();
     private OrderItem testOrderItem;
     private OrderItemDto testOrderItemDto;
 
@@ -104,18 +108,18 @@ public class OrderItemServiceImplTest {
     @Test
     void updateOrderItem_whenIdExists_thenReturnsOrderItemDto() {
         OrderItemDto updatedOrderItemDto = new OrderItemDto();
-        updatedOrderItemDto.setQuantity(101l);
-        updatedOrderItemDto.setOrderId(1l);
-        updatedOrderItemDto.setItemId(1l);
+        updatedOrderItemDto.setQuantity(101L);
+        updatedOrderItemDto.setOrderId(TEST_ORDER_ID);
+        updatedOrderItemDto.setItemId(1L);
 
         Order order = OrderGenerator.generateOrder();
-        order.setId(1l);
+        order.setId(TEST_ORDER_ID);
 
         Item item = ItemGenerator.generateItem();
-        item.setId(1l);
+        item.setId(1L);
 
         when(orderItemRepository.findById(TEST_ORDER_ITEM_ID)).thenReturn(Optional.of(testOrderItem));
-        when(orderRepository.findById(TEST_ORDER_ITEM_ID)).thenReturn(Optional.of(order));
+        when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(order));
         when(itemRepository.findById(TEST_ORDER_ITEM_ID)).thenReturn(Optional.of(item));
         when(orderItemRepository.save(any(OrderItem.class))).thenReturn(testOrderItem);
 
@@ -127,7 +131,7 @@ public class OrderItemServiceImplTest {
         assertEquals(result.getItemId(), updatedOrderItemDto.getItemId());
 
         verify(orderItemRepository, times(1)).findById(TEST_ORDER_ITEM_ID);
-        verify(orderRepository, times(1)).findById(TEST_ORDER_ITEM_ID);
+        verify(orderRepository, times(1)).findById(TEST_ORDER_ID);
         verify(itemRepository, times(1)).findById(TEST_ORDER_ITEM_ID);
         verify(orderItemRepository, times(1)).save(any(OrderItem.class));
     }
@@ -135,9 +139,9 @@ public class OrderItemServiceImplTest {
     @Test
     void updateOrderItem_whenIdNotExist_thenThrowsException() {
         OrderItemDto updatedOrderItemDto = new OrderItemDto();
-        updatedOrderItemDto.setQuantity(101l);
-        updatedOrderItemDto.setOrderId(1l);
-        updatedOrderItemDto.setItemId(1l);
+        updatedOrderItemDto.setQuantity(101L);
+        updatedOrderItemDto.setOrderId(TEST_ORDER_ID);
+        updatedOrderItemDto.setItemId(1L);
 
         when(orderItemRepository.findById(TEST_ORDER_ITEM_ID)).thenReturn(Optional.empty());
 
@@ -150,9 +154,9 @@ public class OrderItemServiceImplTest {
     @Test
     void updateOrderItem_whenOrderIdNotExist_thenThrowsException() {
         OrderItemDto updatedOrderItemDto = new OrderItemDto();
-        updatedOrderItemDto.setQuantity(101l);
-        updatedOrderItemDto.setOrderId(1l);
-        updatedOrderItemDto.setItemId(1l);
+        updatedOrderItemDto.setQuantity(101L);
+        updatedOrderItemDto.setOrderId(TEST_ORDER_ID);
+        updatedOrderItemDto.setItemId(1L);
 
         when(orderItemRepository.findById(TEST_ORDER_ITEM_ID)).thenReturn(Optional.of(testOrderItem));
         when(orderRepository.findById(updatedOrderItemDto.getOrderId())).thenReturn(Optional.empty());
@@ -167,21 +171,21 @@ public class OrderItemServiceImplTest {
     @Test
     void updateOrderItem_whenItemIdNotExist_thenThrowsException() {
         OrderItemDto updatedOrderItemDto = new OrderItemDto();
-        updatedOrderItemDto.setQuantity(101l);
-        updatedOrderItemDto.setOrderId(1l);
-        updatedOrderItemDto.setItemId(1l);
+        updatedOrderItemDto.setQuantity(101L);
+        updatedOrderItemDto.setOrderId(TEST_ORDER_ID);
+        updatedOrderItemDto.setItemId(1L);
 
         Order order = OrderGenerator.generateOrder();
-        order.setId(1l);
+        order.setId(TEST_ORDER_ID);
 
         when(orderItemRepository.findById(TEST_ORDER_ITEM_ID)).thenReturn(Optional.of(testOrderItem));
-        when(orderRepository.findById(updatedOrderItemDto.getOrderId())).thenReturn(Optional.of(order));
+        when(orderRepository.findById(TEST_ORDER_ID)).thenReturn(Optional.of(order));
         when(itemRepository.findById(updatedOrderItemDto.getItemId())).thenReturn(Optional.empty());
 
         assertThrows(ItemNotFoundException.class, () -> orderItemService.updateOrderItem(TEST_ORDER_ITEM_ID, updatedOrderItemDto));
 
         verify(orderItemRepository, times(1)).findById(TEST_ORDER_ITEM_ID);
-        verify(orderRepository, times(1)).findById(updatedOrderItemDto.getOrderId());
+        verify(orderRepository, times(1)).findById(TEST_ORDER_ID);
         verify(itemRepository, times(1)).findById(updatedOrderItemDto.getItemId());
         verify(orderItemRepository, never()).save(any(OrderItem.class));
     }

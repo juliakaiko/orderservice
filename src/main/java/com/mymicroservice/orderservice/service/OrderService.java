@@ -7,16 +7,17 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public interface OrderService {
 
     OrderWithUserResponse createOrder(OrderDto orderDto);
-    void updateOrderStatus(Long orderId, OrderStatus status);
-    OrderWithUserResponse getOrderById(Long orderId);
-    OrderWithUserResponse updateOrder(Long orderId, OrderDto orderDetails);
-    OrderDto deleteOrder(Long orderId);
+    void updateOrderStatus(UUID orderId, OrderStatus status);
+    OrderWithUserResponse getOrderById(UUID orderId);
+    OrderWithUserResponse updateOrder(UUID orderId, OrderDto orderDetails);
+    OrderDto deleteOrder(UUID orderId);
     List<OrderWithUserResponse> getOrdersByUserEmail(String email);
-    List<OrderWithUserResponse> getOrdersIdIn(Set<Long> ids);
+    List<OrderWithUserResponse> getOrdersIdIn(Set<UUID> ids);
     List<OrderWithUserResponse> findByStatusIn(Set<OrderStatus> statuses);
     List<OrderWithUserResponse> getAllOrders();
     Page<OrderDto> getAllOrdersNativeWithPagination(Integer page, Integer size);
