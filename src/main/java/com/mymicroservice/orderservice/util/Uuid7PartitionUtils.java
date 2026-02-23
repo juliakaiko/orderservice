@@ -1,12 +1,14 @@
 package com.mymicroservice.orderservice.util;
 
 import com.github.f4b6a3.uuid.UuidCreator;
+import lombok.experimental.UtilityClass;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.UUID;
 
+@UtilityClass
 public class Uuid7PartitionUtils {
 
     public static UUID getStartOfDayUuid(LocalDate date) {

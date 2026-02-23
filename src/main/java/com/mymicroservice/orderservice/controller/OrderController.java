@@ -38,7 +38,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOrderById (@PathVariable("id") UUID id) {
+    public ResponseEntity<?> getOrderById(@PathVariable("id") UUID id) {
         log.info("Request to find the Order by id: {}", id);
         OrderWithUserResponse orderWithUserResponse = orderService.getOrderById(id);
         return ObjectUtils.isEmpty(orderWithUserResponse)
@@ -47,7 +47,7 @@ public class OrderController {
     }
 
     @PostMapping({"", "/"})
-    public ResponseEntity<?> createOrder (@RequestBody @Valid OrderDto orderDto){
+    public ResponseEntity<?> createOrder(@RequestBody @Valid OrderDto orderDto){
         log.info("Request to create a new Order: {}", orderDto);
         OrderWithUserResponse orderWithUserResponse =  orderService.createOrder(orderDto);
         return ObjectUtils.isEmpty(orderWithUserResponse)
@@ -56,7 +56,7 @@ public class OrderController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity <?> updateOrder (@PathVariable("id") UUID id,
+    public ResponseEntity <?> updateOrder(@PathVariable("id") UUID id,
                                            @RequestBody @Valid OrderDto orderDto){
         log.info("Request to update the Order: {}", orderDto);
 
@@ -68,7 +68,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity <?> deleteOrder (@PathVariable("id") UUID id){
+    public ResponseEntity <?> deleteOrder(@PathVariable("id") UUID id){
         log.info("Request to delete the Order by id: {}", id);
 
         OrderDto deletedOrderDto = orderService.deleteOrder(id);

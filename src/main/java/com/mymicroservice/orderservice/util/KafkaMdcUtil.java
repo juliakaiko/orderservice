@@ -1,10 +1,12 @@
 package com.mymicroservice.orderservice.util;
 
+import lombok.experimental.UtilityClass;
 import org.slf4j.MDC;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
+@UtilityClass
 public class KafkaMdcUtil {
 
     /**

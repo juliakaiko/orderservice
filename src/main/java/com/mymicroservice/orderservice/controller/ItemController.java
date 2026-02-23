@@ -35,7 +35,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getItemById (@PathVariable("id") Long id) {
+    public ResponseEntity<?> getItemById(@PathVariable("id") Long id) {
         log.info("Request to find the Item by id: {}", id);
         ItemDto itemDto = itemService.getItemById(id);
         return ObjectUtils.isEmpty(itemDto)
@@ -44,7 +44,7 @@ public class ItemController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> createItem (@RequestBody @Valid ItemDto itemDto){
+    public ResponseEntity<?> createItem(@RequestBody @Valid ItemDto itemDto){
         log.info("Request to create a new Item: {}", itemDto);
         ItemDto savedItemDto =  itemService.createItem(itemDto);
         return ObjectUtils.isEmpty(savedItemDto)
@@ -53,7 +53,7 @@ public class ItemController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity <?> updateItem (@PathVariable("id") Long id,
+    public ResponseEntity <?> updateItem(@PathVariable("id") Long id,
                                           @RequestBody @Valid ItemDto itemDto){
         log.info("Request to update the Item: {}", itemDto);
 
@@ -65,7 +65,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity <?> deleteItem (@PathVariable("id") Long id){
+    public ResponseEntity <?> deleteItem(@PathVariable("id") Long id){
         log.info("Request to delete the Item by id: {}", id);
 
         ItemDto deletedItemDto = itemService.deleteItem(id);
