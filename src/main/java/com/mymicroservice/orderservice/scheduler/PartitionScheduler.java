@@ -1,6 +1,7 @@
 package com.mymicroservice.orderservice.scheduler;
 
-import com.mymicroservice.orderservice.service.impl.PartitionServiceImpl;
+import com.mymicroservice.orderservice.service.PartitionService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -14,7 +15,7 @@ import java.time.LocalDate;
 @Slf4j
 public class PartitionScheduler {
 
-    private final PartitionServiceImpl partitionService;
+    private final PartitionService partitionService;
 
     @Scheduled(cron = "0 29 12 * * ?")
     @SchedulerLock(name = "createPartitionTask",

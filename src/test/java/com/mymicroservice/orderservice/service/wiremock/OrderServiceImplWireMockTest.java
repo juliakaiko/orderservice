@@ -14,6 +14,7 @@ import com.mymicroservice.orderservice.scheduler.PartitionScheduler;
 import com.mymicroservice.orderservice.service.ItemService;
 import com.mymicroservice.orderservice.service.OrderItemService;
 import com.mymicroservice.orderservice.service.OrderService;
+import com.mymicroservice.orderservice.service.PartitionService;
 import com.mymicroservice.orderservice.util.OrderGenerator;
 import com.mymicroservice.orderservice.util.UserGenerator;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -58,6 +59,7 @@ public class OrderServiceImplWireMockTest {
     @MockBean private OrderItemService orderItemService;
     @MockBean private PartitionScheduler partitionScheduler;
     @MockBean private LockProvider lockProvider;
+    @MockBean private PartitionService partitionService;
 
     @Autowired private OrderService orderService;
     @Autowired private ObjectMapper objectMapper;

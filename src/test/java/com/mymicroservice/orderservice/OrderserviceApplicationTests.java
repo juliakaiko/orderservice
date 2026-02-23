@@ -6,6 +6,7 @@ import com.mymicroservice.orderservice.repository.OrderRepository;
 import com.mymicroservice.orderservice.scheduler.PartitionScheduler;
 import com.mymicroservice.orderservice.service.ItemService;
 import com.mymicroservice.orderservice.service.OrderItemService;
+import com.mymicroservice.orderservice.service.PartitionService;
 import net.javacrumbs.shedlock.core.LockProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,7 @@ class OrderserviceApplicationTests {
     @MockBean private ItemService itemService;
     @MockBean private OrderItemService orderItemService;
     @MockBean private PartitionScheduler partitionScheduler;
+    @MockBean private PartitionService partitionService;
     @MockBean private LockProvider lockProvider;
 
 	@Test
