@@ -20,6 +20,7 @@ public class OutboxScheduler {
     @Scheduled(fixedDelay = 1000)
     public void processOutbox() {
         Set<UUID> processedOrdersIds = outboxService.processPendingOutboxEvents();
+        /// /!!!! исправить
         orderService.updateOrdersListStatus(processedOrdersIds, OrderStatus.PROCESSING);
     }
 }

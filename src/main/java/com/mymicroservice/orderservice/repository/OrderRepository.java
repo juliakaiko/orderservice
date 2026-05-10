@@ -1,7 +1,7 @@
 package com.mymicroservice.orderservice.repository;
 
 import com.mymicroservice.orderservice.model.Order;
-import com.mymicroservice.orderservice.model.OrderStatus;
+import com.mymicroservice.orderservice.model.enums.OrderStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

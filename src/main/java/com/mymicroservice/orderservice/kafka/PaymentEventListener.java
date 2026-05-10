@@ -1,6 +1,6 @@
 package com.mymicroservice.orderservice.kafka;
 
-import com.mymicroservice.orderservice.model.OrderStatus;
+import com.mymicroservice.orderservice.model.enums.OrderStatus;
 import com.mymicroservice.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

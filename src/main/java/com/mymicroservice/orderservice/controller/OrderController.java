@@ -2,7 +2,7 @@ package com.mymicroservice.orderservice.controller;
 
 import com.mymicroservice.orderservice.dto.OrderDto;
 import com.mymicroservice.orderservice.dto.OrderWithUserResponse;
-import com.mymicroservice.orderservice.model.OrderStatus;
+import com.mymicroservice.orderservice.model.enums.OrderStatus;
 import com.mymicroservice.orderservice.service.OrderService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

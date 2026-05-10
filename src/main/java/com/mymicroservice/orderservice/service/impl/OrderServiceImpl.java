@@ -5,16 +5,16 @@ import com.mymicroservice.orderservice.dto.OrderDto;
 import com.mymicroservice.orderservice.dto.OrderItemDto;
 import com.mymicroservice.orderservice.dto.OrderWithUserResponse;
 import com.mymicroservice.orderservice.dto.UserDto;
+import com.mymicroservice.orderservice.service.OutboxService;
 import org.mymicroservices.common.events.OrderEventDto;
 import com.mymicroservice.orderservice.exception.ItemNotFoundException;
 import com.mymicroservice.orderservice.exception.OrderAlreadyPaidException;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
-import com.mymicroservice.orderservice.kafka.OrderEventProducer;
 import com.mymicroservice.orderservice.mapper.OrderMapper;
 import com.mymicroservice.orderservice.model.Item;
 import com.mymicroservice.orderservice.model.Order;
 import com.mymicroservice.orderservice.model.OrderItem;
-import com.mymicroservice.orderservice.model.OrderStatus;
+import com.mymicroservice.orderservice.model.enums.OrderStatus;
 import com.mymicroservice.orderservice.repository.ItemRepository;
 import com.mymicroservice.orderservice.repository.OrderRepository;
 import com.mymicroservice.orderservice.service.OrderService;
@@ -38,10 +38,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
+    private final OrderRepository orderRepository;
+    private final OutboxService outboxService;
     private final UserClient userClient;
-    private final OrderEventProducer orderEventProducer;
 
     @Override
     @Transactional
@@ -68,13 +68,24 @@ public class OrderServiceImpl implements OrderService {
         UserDto userDtoFromUserService = userClient.getUserById(orderDto.getUserId());
         log.info("AFTER calling userClient.getUserById({})", userDtoFromUserService.getUserId());
 
-        // Send event to PaymentService
         OrderEventDto event = createOrderEvent(order);
+        outboxService.saveOutboxEvent(event.getOrderId(), createEventType(order), event);
+
+        // Send event to PaymentService directly to Kafka (without outbox)
         // sending with a callback, the status update will be performed after successful sending
-        orderEventProducer.sendCreateOrder(event, () -> {
-            updateOrderStatus(orderDtoFromDb.getId(), OrderStatus.PROCESSING);
-        });
+        // /*orderEventProducer.sendCreateOrder(event, () -> {
+        // updateOrderStatus(orderDtoFromDb.getId(), OrderStatus.PROCESSING); });*/
         return new OrderWithUserResponse(orderDtoFromDb, userDtoFromUserService);
+    }
+
+    @Override
+    @Transactional public void updateOrdersListStatus(Set<UUID> ids, OrderStatus status) {
+        List<Order> orderList = orderRepository.findAllByIdIn(ids);
+        for (Order order : orderList) {
+            order.setStatus(status);
+        }
+        orderRepository.saveAll(orderList);
+        log.info("Orders with ids {} were updated with status {}", ids, status);
     }
 
     @Override
@@ -148,12 +159,13 @@ public class OrderServiceImpl implements OrderService {
         OrderDto orderDtoFromDb = OrderMapper.INSTANCE.toDto(updatedOrder);
         UserDto userDtoFromUserService = userClient.getUserById(orderDtoFromDb.getUserId());
 
-        // Send event to PaymentService
         OrderEventDto event = createOrderEvent(order);
+        outboxService.saveOutboxEvent(event.getOrderId(), createEventType(order), event);
+
+        // Send event to PaymentService directly to Kafka (without outbox)
         // sending with a callback, the status update will be performed after successful sending
-        orderEventProducer.sendCreateOrder(event, () -> {
-            updateOrderStatus(orderDtoFromDb.getId(), OrderStatus.PROCESSING);
-        });
+        /* orderEventProducer.sendCreateOrder(event, () -> {
+         updateOrderStatus(orderDtoFromDb.getId(), OrderStatus.PROCESSING); });*/
         return new OrderWithUserResponse(orderDtoFromDb, userDtoFromUserService);
     }
     
@@ -211,6 +223,13 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> orderList = orderRepository.findAllOrdersNative(pageable);
         log.info("findAllOrdersNativeWithPagination()");
         return orderList.map(OrderMapper.INSTANCE::toDto);
+    }
+
+    private String createEventType(Order order) {
+        String eventType = "";
+        String aggregateName = order.getClass().getSimpleName().toUpperCase();
+        String orderStatus = order.getStatus().toString();
+        return eventType + aggregateName + "_" + orderStatus;
     }
 
     private List<OrderWithUserResponse> toOrderWithUserResponseList (List <Order> orderList){

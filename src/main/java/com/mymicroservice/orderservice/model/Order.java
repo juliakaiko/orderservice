@@ -1,6 +1,7 @@
 package com.mymicroservice.orderservice.model;
 
 import com.github.f4b6a3.uuid.UuidCreator;
+import com.mymicroservice.orderservice.model.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

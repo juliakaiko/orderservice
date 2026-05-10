@@ -14,8 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import com.mymicroservice.orderservice.config.AbstractContainerTest;
-import com.mymicroservice.orderservice.model.OrderStatus;
-import org.springframework.test.context.ActiveProfiles;
+import com.mymicroservice.orderservice.model.enums.OrderStatus;
 
 import java.util.List;
 import java.util.Set;

@@ -4,8 +4,10 @@ import com.github.f4b6a3.uuid.UuidCreator;
 import com.mymicroservice.orderservice.kafka.outbox.OutboxEventPublisher;
 import com.mymicroservice.orderservice.mapper.JsonMapper;
 import com.mymicroservice.orderservice.model.OutboxEvent;
+import com.mymicroservice.orderservice.model.enums.OrderStatus;
 import com.mymicroservice.orderservice.model.enums.OutboxEventStatus;
 import com.mymicroservice.orderservice.repository.OutboxEventRepository;
+import com.mymicroservice.orderservice.service.OrderService;
 import com.mymicroservice.orderservice.service.OutboxService;
 
 import lombok.RequiredArgsConstructor;

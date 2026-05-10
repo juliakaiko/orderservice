@@ -9,7 +9,7 @@ import com.mymicroservice.orderservice.dto.UserDto;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
 import com.mymicroservice.orderservice.mapper.OrderMapper;
 import com.mymicroservice.orderservice.model.Order;
-import com.mymicroservice.orderservice.model.OrderStatus;
+import com.mymicroservice.orderservice.model.enums.OrderStatus;
 import com.mymicroservice.orderservice.service.OrderService;
 import com.mymicroservice.orderservice.util.OrderGenerator;
 import com.mymicroservice.orderservice.util.UserGenerator;

@@ -1,4 +1,4 @@
-package com.mymicroservice.orderservice.model;
+package com.mymicroservice.orderservice.model.enums;
 
 import lombok.RequiredArgsConstructor;
 

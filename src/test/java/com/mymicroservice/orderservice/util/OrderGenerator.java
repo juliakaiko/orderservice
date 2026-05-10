@@ -1,7 +1,7 @@
 package com.mymicroservice.orderservice.util;
 
 import com.mymicroservice.orderservice.model.Order;
-import com.mymicroservice.orderservice.model.OrderStatus;
+import com.mymicroservice.orderservice.model.enums.OrderStatus;
 
 import java.time.LocalDateTime;
 
