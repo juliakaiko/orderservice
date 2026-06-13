@@ -13,6 +13,7 @@ import com.mymicroservice.orderservice.model.OrderItem;
 import com.mymicroservice.orderservice.model.enums.OrderStatus;
 import com.mymicroservice.orderservice.repository.ItemRepository;
 import com.mymicroservice.orderservice.repository.OrderRepository;
+import com.mymicroservice.orderservice.security.OrderAuthorizationService;
 import com.mymicroservice.orderservice.service.OutboxService;
 import com.mymicroservice.orderservice.service.impl.OrderServiceImpl;
 import com.mymicroservice.orderservice.util.OrderGenerator;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -32,6 +34,7 @@ import org.springframework.data.domain.Sort;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,6 +43,7 @@ import java.util.UUID;
 import static com.mymicroservice.orderservice.util.data.TestConstants.ORDER_CREATED_EVENT_TYPE;
 import static com.mymicroservice.orderservice.util.data.TestConstants.TEST_ITEM_ID;
 import static com.mymicroservice.orderservice.util.data.TestConstants.TEST_ORDER_UUID;
+import static com.mymicroservice.orderservice.util.data.TestConstants.TEST_USER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,6 +51,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -70,6 +76,9 @@ class OrderServiceImplTest {
 
     @Mock
     private UserClient userClient;
+
+    @Mock
+    private OrderAuthorizationService orderAuthorizationService;
 
     private Order testOrder;
     private OrderDto testOrderDto;
@@ -95,6 +104,8 @@ class OrderServiceImplTest {
         testOrderDto = OrderMapper.INSTANCE.toDto(testOrder);
         testUserDto = UserGenerator.generateUserResponse();
         testOrderWithUserResponse = new OrderWithUserResponse(testOrderDto, testUserDto);
+
+        lenient().when(orderAuthorizationService.getCurrentUserIdIfNotAdmin()).thenReturn(Optional.empty());
     }
 
     @Test
@@ -109,13 +120,34 @@ class OrderServiceImplTest {
         assertEquals(testOrderWithUserResponse.getOrder(), result.getOrder());
         assertEquals(testOrderWithUserResponse.getUser(), result.getUser());
 
-        verify(itemRepository, times(1)).findById(TEST_ITEM_ID);
-        verify(orderRepository, times(1)).save(any(Order.class));
-        verify(userClient, times(1)).getUserById(testOrderDto.getUserId());
+        verify(orderAuthorizationService).verifyCanCreateOrderForUser(testOrderDto.getUserId());
+        InOrder inOrder = inOrder(userClient, orderRepository, outboxService);
+        inOrder.verify(userClient).getUserById(testOrderDto.getUserId());
+        inOrder.verify(orderRepository).save(any(Order.class));
+        inOrder.verify(outboxService).saveOutboxEvent(any(OrderEventDto.class), eq(ORDER_CREATED_EVENT_TYPE));
 
         ArgumentCaptor<OrderEventDto> eventCaptor = ArgumentCaptor.forClass(OrderEventDto.class);
         verify(outboxService).saveOutboxEvent(eventCaptor.capture(), eq(ORDER_CREATED_EVENT_TYPE));
         assertEquals(TEST_ORDER_UUID.toString(), eventCaptor.getValue().getOrderId());
+        assertEquals(BigDecimal.valueOf(500), eventCaptor.getValue().getPaymentAmount());
+    }
+
+    @Test
+    void createOrder_ShouldCalculateZeroAmount_WhenOrderItemsAreNull() {
+        Order orderWithoutItems = OrderGenerator.generateOrder();
+        orderWithoutItems.setId(TEST_ORDER_UUID);
+        orderWithoutItems.setOrderItems(null);
+        OrderDto orderDtoWithoutItems = OrderMapper.INSTANCE.toDto(orderWithoutItems);
+        orderDtoWithoutItems.setOrderItems(null);
+
+        when(orderRepository.save(any(Order.class))).thenReturn(orderWithoutItems);
+        when(userClient.getUserById(orderDtoWithoutItems.getUserId())).thenReturn(testUserDto);
+
+        orderService.createOrder(orderDtoWithoutItems);
+
+        ArgumentCaptor<OrderEventDto> eventCaptor = ArgumentCaptor.forClass(OrderEventDto.class);
+        verify(outboxService).saveOutboxEvent(eventCaptor.capture(), eq(ORDER_CREATED_EVENT_TYPE));
+        assertEquals(BigDecimal.ZERO, eventCaptor.getValue().getPaymentAmount());
     }
 
     @Test
@@ -129,6 +161,7 @@ class OrderServiceImplTest {
         assertEquals(testOrderDto, result.getOrder());
         assertEquals(testUserDto, result.getUser());
 
+        verify(orderAuthorizationService).verifyOrderOwnership(testOrder.getUserId());
         verify(orderRepository, times(1)).findById(TEST_ORDER_UUID);
         verify(userClient, times(1)).getUserById(testOrderDto.getUserId());
     }
@@ -141,6 +174,7 @@ class OrderServiceImplTest {
 
         verify(orderRepository, times(1)).findById(TEST_ORDER_UUID);
         verifyNoInteractions(userClient);
+        verify(orderAuthorizationService, never()).verifyOrderOwnership(any());
     }
 
     @Test
@@ -163,10 +197,11 @@ class OrderServiceImplTest {
         assertNotNull(result);
         assertEquals(updatedOrderDto.getStatus(), result.getOrder().getStatus());
 
+        verify(orderAuthorizationService).verifyOrderOwnership(testOrder.getUserId());
         verify(orderRepository, times(1)).findById(TEST_ORDER_UUID);
         verify(orderRepository, times(1)).save(any(Order.class));
         verify(userClient, times(1)).getUserById(updatedOrderDto.getUserId());
-        verify(outboxService, times(1)).saveOutboxEvent(any(OrderEventDto.class), anyString());
+        verifyNoInteractions(outboxService);
     }
 
     @Test
@@ -202,6 +237,7 @@ class OrderServiceImplTest {
         assertNotNull(result);
         assertEquals(testOrderDto, result);
 
+        verify(orderAuthorizationService).verifyOrderOwnership(testOrder.getUserId());
         verify(orderRepository, times(1)).findById(TEST_ORDER_UUID);
         verify(orderRepository, times(1)).deleteById(TEST_ORDER_UUID);
     }
@@ -226,6 +262,7 @@ class OrderServiceImplTest {
         assertFalse(results.isEmpty());
         assertEquals(testUserDto, results.get(0).getUser());
 
+        verify(orderAuthorizationService).verifyCanAccessUserData(testUserDto.getUserId());
         verify(userClient, times(1)).getUserByEmail(anyString());
         verify(orderRepository, times(1)).findOrdersByUserId(testUserDto.getUserId());
     }
@@ -246,6 +283,20 @@ class OrderServiceImplTest {
     }
 
     @Test
+    void getOrdersIdIn_ShouldFilterByCurrentUser_WhenUserIsNotAdmin() {
+        Set<UUID> ids = Set.of(TEST_ORDER_UUID);
+        when(orderAuthorizationService.getCurrentUserIdIfNotAdmin()).thenReturn(Optional.of(TEST_USER_ID));
+        when(orderRepository.findAllByIdInAndUserId(ids, TEST_USER_ID)).thenReturn(List.of(testOrder));
+        when(userClient.getUserById(testOrderDto.getUserId())).thenReturn(testUserDto);
+
+        List<OrderWithUserResponse> results = orderService.getOrdersIdIn(ids);
+
+        assertFalse(results.isEmpty());
+        verify(orderRepository).findAllByIdInAndUserId(ids, TEST_USER_ID);
+        verify(orderRepository, never()).findAllByIdIn(any());
+    }
+
+    @Test
     void findByStatusIn_ShouldReturnOrdersWithUsers_WhenStatusesExist() {
         Set<OrderStatus> statuses = Set.of(OrderStatus.CREATED);
         when(orderRepository.findByStatusIn(statuses)).thenReturn(List.of(testOrder));
@@ -258,6 +309,19 @@ class OrderServiceImplTest {
 
         verify(orderRepository, times(1)).findByStatusIn(statuses);
         verify(userClient, times(1)).getUserById(testOrderDto.getUserId());
+    }
+
+    @Test
+    void findByStatusIn_ShouldFilterByCurrentUser_WhenUserIsNotAdmin() {
+        Set<OrderStatus> statuses = Set.of(OrderStatus.CREATED);
+        when(orderAuthorizationService.getCurrentUserIdIfNotAdmin()).thenReturn(Optional.of(TEST_USER_ID));
+        when(orderRepository.findByStatusInAndUserId(statuses, TEST_USER_ID)).thenReturn(List.of(testOrder));
+        when(userClient.getUserById(testOrderDto.getUserId())).thenReturn(testUserDto);
+
+        orderService.findByStatusIn(statuses);
+
+        verify(orderRepository).findByStatusInAndUserId(statuses, TEST_USER_ID);
+        verify(orderRepository, never()).findByStatusIn(any());
     }
 
     @Test
@@ -275,6 +339,18 @@ class OrderServiceImplTest {
     }
 
     @Test
+    void getAllOrders_ShouldReturnOnlyCurrentUserOrders_WhenUserIsNotAdmin() {
+        when(orderAuthorizationService.getCurrentUserIdIfNotAdmin()).thenReturn(Optional.of(TEST_USER_ID));
+        when(orderRepository.findOrdersByUserId(TEST_USER_ID)).thenReturn(List.of(testOrder));
+        when(userClient.getUserById(testOrderDto.getUserId())).thenReturn(testUserDto);
+
+        orderService.getAllOrders();
+
+        verify(orderRepository).findOrdersByUserId(TEST_USER_ID);
+        verify(orderRepository, never()).findAll();
+    }
+
+    @Test
     void getAllOrdersNativeWithPagination_ShouldReturnPagedOrderDtos_WhenOrdersExist() {
         PageRequest pageable = PageRequest.of(0, 10, Sort.by("id"));
         Page<Order> page = new PageImpl<>(List.of(testOrder));
@@ -286,5 +362,18 @@ class OrderServiceImplTest {
         assertEquals(1, resultPage.getTotalElements());
 
         verify(orderRepository, times(1)).findAllOrdersNative(pageable);
+    }
+
+    @Test
+    void getAllOrdersNativeWithPagination_ShouldFilterByCurrentUser_WhenUserIsNotAdmin() {
+        PageRequest pageable = PageRequest.of(0, 10, Sort.by("id"));
+        Page<Order> page = new PageImpl<>(List.of(testOrder));
+        when(orderAuthorizationService.getCurrentUserIdIfNotAdmin()).thenReturn(Optional.of(TEST_USER_ID));
+        when(orderRepository.findAllOrdersNativeByUserId(TEST_USER_ID, pageable)).thenReturn(page);
+
+        orderService.getAllOrdersNativeWithPagination(0, 10);
+
+        verify(orderRepository).findAllOrdersNativeByUserId(TEST_USER_ID, pageable);
+        verify(orderRepository, never()).findAllOrdersNative(any());
     }
 }

@@ -16,45 +16,21 @@ import java.util.UUID;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
-    /**
-     * Finds all orders with specified IDs using "named method".
-     *
-     * @param ids set of order IDs to search for
-     * @return a list of orders matching the provided IDs (may be empty)
-     * @throws IllegalArgumentException if ids set is null
-     */
     List<Order> findAllByIdIn(Set<UUID> ids);
 
-
-    /**
-     * Retrieves a list of orders that have a status matching any of the specified statuses.
-     * and using "named method query"
-     *
-     * @param statuses a set of {@link OrderStatus} values to filter the orders by.
-     * @return a list of {@link Order} entities whose status matches any in the provided set.
-     */
     List<Order> findByStatusIn(Set<OrderStatus> statuses);
 
-    /**
-     * Finds all orders associated with the given user ID.
-     *
-     * @param userId the ID of the user to search orders for
-     * @return a list of orders belonging to the specified user
-     *         (empty list if no orders found)
-     */
+    List<Order> findByStatusInAndUserId(Set<OrderStatus> statuses, Long userId);
+
     @Query("SELECT o FROM Order o WHERE o.userId = :userId")
     List<Order> findOrdersByUserId(@Param("userId") Long userId);
 
-    /**
-     * Retrieves all orders with pagination support using native SQL.
-     * <p>
-     * Results are ordered by order ID in ascending order.
-     *
-     * @param pageable pagination configuration (page number, size, etc.)
-     * @return a {@link Page} of orders with pagination information
-     * @throws IllegalArgumentException if pageable is null
-     */
+    @Query("SELECT o FROM Order o WHERE o.id IN :ids AND o.userId = :userId")
+    List<Order> findAllByIdInAndUserId(@Param("ids") Set<UUID> ids, @Param("userId") Long userId);
+
     @Query(value = "select * from orders order by orders.id asc", nativeQuery = true)
     Page<Order> findAllOrdersNative(Pageable pageable);
 
+    @Query(value = "select * from orders where user_id = :userId order by orders.id asc", nativeQuery = true)
+    Page<Order> findAllOrdersNativeByUserId(@Param("userId") Long userId, Pageable pageable);
 }

@@ -25,8 +25,9 @@ import com.mymicroservice.orderservice.service.OrderItemService;
 import com.mymicroservice.orderservice.service.StateService;
 import com.mymicroservice.orderservice.scheduler.PartitionScheduler;
 import com.mymicroservice.orderservice.service.OrderService;
-import com.mymicroservice.orderservice.service.OutboxService;
 import com.mymicroservice.orderservice.service.PartitionService;
+import com.mymicroservice.orderservice.service.OutboxService;
+import com.mymicroservice.orderservice.security.OrderAuthorizationService;
 import com.mymicroservice.orderservice.util.OrderGenerator;
 import com.mymicroservice.orderservice.util.UserGenerator;
 import com.mymicroservice.orderservice.client.UserClient;
@@ -66,6 +67,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -85,6 +87,7 @@ class OrderServiceWireMockIT {
     @MockBean private ItemRepository itemRepository;
     @MockBean private OrderItemRepository orderItemRepository;
     @MockBean private OutboxService outboxService;
+    @MockBean private OrderAuthorizationService orderAuthorizationService;
     @MockBean private StateService stateService;
     @MockBean private OutboxEventRepository outboxEventRepository;
     @MockBean private OrderEventProducer orderEventProducer;
@@ -220,7 +223,7 @@ class OrderServiceWireMockIT {
 
         assertNotNull(result);
         assertEquals(updateDto.getUserId(), result.getOrder().getUserId());
-        verify(outboxService, times(1)).saveOutboxEvent(any(OrderEventDto.class), anyString());
+        verify(outboxService, never()).saveOutboxEvent(any(OrderEventDto.class), anyString());
         wireMockServer.verify(getRequestedFor(urlEqualTo("/api/internal/users/1")));
     }
 

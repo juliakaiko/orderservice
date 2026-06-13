@@ -54,8 +54,8 @@ sequenceDiagram
 
     GW->>OC: REST /api/orders
     OC->>OS: createOrder()
+    OS->>PG: Feign → User Service (validate user)
     OS->>PG: save Order + OutboxEvent (same TX)
-    OS->>PG: Feign → User Service
 
     loop каждые 1 сек
         OB->>PG: SELECT FOR UPDATE SKIP LOCKED
@@ -227,7 +227,21 @@ Swagger UI: `http://localhost:8080/swagger-ui.html`
 INITIAL → PROCESSING → SENT     (успех Kafka send)
 INITIAL → PROCESSING → FAILED   (ошибка send / deserialize)
 FAILED  → PROCESSING → SENT     (retry)
+PROCESSING → FAILED             (recovery: updated_at старше outbox.processing-timeout-minutes)
 ```
+
+Перед каждым циклом `OutboxScheduler` вызывает `resetStaleProcessingEvents`: «зависшие» события в статусе `PROCESSING` переводятся в `FAILED` и снова попадают в выборку вместе с `INITIAL`/`FAILED`. При ошибке публикации статус явно обновляется на `FAILED` (не остаётся в `PROCESSING`). То есть: если событие в PROCESSING и его updated_at старше now - 5 минут, оно становится FAILED и снова попадает в выборку (INITIAL / FAILED).
+
+### Когда создаётся outbox-событие
+
+Outbox-событие `ORDER_CREATED` создаётся **только при создании заказа** (`createOrder`). Обновление заказа (`updateOrder`) **не** порождает повторную публикацию в Kafka — это предотвращает дубли оплаты.
+
+### Конфигурация outbox
+
+| Свойство | По умолчанию | Описание |
+|----------|--------------|----------|
+| `outbox.processing-timeout-minutes` | `5` | Таймаут для recovery зависших `PROCESSING` |
+| `outbox.batch-size` | `100` | Размер batch при выборке событий |
 
 ---
 
@@ -245,6 +259,8 @@ FAILED  → PROCESSING → SENT     (retry)
 
 Миграции: `src/main/resources/db/changelog/`.
 
+**Схема БД:** `spring.jpa.hibernate.ddl-auto=validate` — Hibernate только проверяет соответствие entity и Liquibase-миграций, не изменяет схему автоматически (исключает расхождение `ddl-auto=update` + Liquibase).
+
 ---
 
 ## Партиционирование
@@ -259,8 +275,19 @@ FAILED  → PROCESSING → SENT     (retry)
 
 - **Spring Security** — все `/api/**` требуют аутентификации.
 - **GatewayAuthFilter** — парсит JWT из заголовка `Authorization` (запросы от Gateway с `X-Internal-Call` + `X-Source-Service`).
+- **OrderAuthorizationService** — проверка владельца заказа:
+  - обычный пользователь видит и изменяет **только свои** заказы;
+  - списки (`/`, `/by-statuses`, `/paginated`, …) фильтруются по `userId` из JWT (`sub`);
+  - пользователь с `ROLE_ADMIN` имеет доступ ко всем заказам;
+  - попытка доступа к чужому заказу → `403 Forbidden`.
 - **Публичные эндпоинты** — `/actuator/**`, Swagger (dev).
 - **Feign** — прокидывает `X-Trace-Id` и `X-Internal-Call` в User Service.
+
+### Бизнес-правила createOrder
+
+1. Проверка прав (`verifyCanCreateOrderForUser`).
+2. Валидация пользователя через Feign **до** сохранения заказа (исключает «осиротевшие» заказы при недоступном User Service).
+3. Сохранение заказа + outbox в одной транзакции.
 
 ---
 
@@ -268,7 +295,7 @@ FAILED  → PROCESSING → SENT     (retry)
 
 | Профиль | Файл | Назначение |
 |---------|------|------------|
-| *(default)* | `application.properties` | Общие настройки (Kafka, Actuator, Liquibase changelog) |
+| *(default)* | `application.properties` | Общие настройки (Kafka, Actuator, Liquibase, `ddl-auto=validate`, outbox) |
 | `dev` | `application-dev.properties` | Локальная разработка (localhost DB/Kafka, Swagger, verbose logs) |
 | `prod` | `application-prod.properties` | Production (env vars для DB, Docker hostnames) |
 | `test` | `application-test.properties` (test scope) | Unit/smoke тесты без БД/Kafka |
@@ -319,7 +346,10 @@ docker run -p 8082:8082 \
 
 ```bash
 mvn test
+mvn verify   # + JaCoCo report: target/site/jacoco/index.html
 ```
+
+Покрытие JaCoCo (instruction coverage) — ~85%+ по основному коду; unit-тесты покрывают сервисы, outbox, security, фильтры, advice, конфигурации и schedulers.
 
 ### Структура тестов
 
@@ -335,7 +365,12 @@ src/test/java/com/mymicroservice/orderservice/
 │   ├── service/            # Mockito
 │   ├── kafka/              # Mockito (consumer/producer)
 │   ├── scheduler/          # Mockito
-│   └── mapper/             # MapStruct
+│   ├── security/           # OrderAuthorizationService, 401/403 handlers
+│   ├── filter/             # GatewayAuthFilter
+│   ├── advice/             # GlobalAdvice
+│   ├── config/             # FeignConfig, OpenApiConfig
+│   ├── util/               # ErrorItem, MdcUtils
+│   └── mapper/             # MapStruct, JsonMapper
 └── util/
     ├── data/               # TestConstants
     └── *Generator.java     # Генераторы тестовых объектов
@@ -346,7 +381,12 @@ src/test/java/com/mymicroservice/orderservice/
 | Класс | Тип | Инфраструктура |
 |-------|-----|----------------|
 | `OrderServiceImplTest` | Unit | Mockito |
-| `OutboxServiceImplTest` | Unit | Mockito |
+| `OutboxServiceImplTest` | Unit | Mockito (recovery, FAILED on error) |
+| `OrderAuthorizationServiceTest` | Unit | SecurityContext |
+| `GatewayAuthFilterTest` | Unit | JWT parsing |
+| `GlobalAdviceTest` | Unit | Exception handlers |
+| `FeignConfigTest` / `OpenApiConfigTest` | Unit | Config beans |
+| `OutboxEventRepositoryTest` | Data | resetStaleProcessingEvents |
 | `PaymentEventConsumerTest` | Unit | Mockito |
 | `OutboxEventProducerTest` | Unit | Mockito + Awaitility |
 | `StateServiceImplTest` | Unit | Mockito |
@@ -419,7 +459,7 @@ orderservice/
 │   ├── model/            # JPA entities + enums
 │   ├── repository/       # Spring Data JPA
 │   ├── scheduler/        # OutboxScheduler, PartitionScheduler
-│   ├── security/         # 401/403 handlers
+│   ├── security/         # OrderAuthorizationService, 401/403 handlers
 │   └── service/          # Business logic
 ├── src/main/resources/
 │   ├── application.properties

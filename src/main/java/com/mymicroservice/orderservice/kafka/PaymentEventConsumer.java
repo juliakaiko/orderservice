@@ -66,8 +66,9 @@ public class PaymentEventConsumer {
             UUID orderId;
             try {
                 orderId = UUID.fromString(event.getOrderId());
-            } catch (NumberFormatException e) {
+            } catch (IllegalArgumentException e) {
                 log.error("Invalid order ID format: {}", event.getOrderId());
+                ack.acknowledge();
                 return;
             }
 
@@ -75,6 +76,7 @@ public class PaymentEventConsumer {
             String status = event.getStatus();
             if (status == null) {
                 log.error("Status is null in {} event: {}", eventType, event);
+                ack.acknowledge();
                 return;
             }
 

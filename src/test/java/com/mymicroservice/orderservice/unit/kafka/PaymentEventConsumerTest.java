@@ -83,7 +83,7 @@ class PaymentEventConsumerTest {
     }
 
     @Test
-    void onCreatePayment_ShouldNack_WhenOrderIdIsInvalid() {
+    void onCreatePayment_ShouldAcknowledge_WhenOrderIdIsInvalid() {
         PaymentEventDto event = PaymentEventDtoGenerator.generatePaidPaymentEventDto("invalid-uuid");
 
         paymentEventConsumer.onCreatePayment(
@@ -93,7 +93,8 @@ class PaymentEventConsumerTest {
         );
 
         verify(stateService, never()).updateOrderStatus(org.mockito.ArgumentMatchers.any(UUID.class), org.mockito.ArgumentMatchers.any());
-        verify(acknowledgment).nack(Duration.ofMillis(100));
+        verify(acknowledgment).acknowledge();
+        verify(acknowledgment, never()).nack(org.mockito.ArgumentMatchers.any());
     }
 
     @Test

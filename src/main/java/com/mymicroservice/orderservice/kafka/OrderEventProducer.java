@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 
 @Deprecated
-@Service
+//@Service
 @RequiredArgsConstructor
 @Slf4j
 public class OrderEventProducer {

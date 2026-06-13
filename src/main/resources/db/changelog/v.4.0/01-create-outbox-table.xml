@@ -10,11 +10,10 @@
 
     <changeSet id="create-outbox-table" author="julia_kaiko">
         <createTable tableName="outbox_table">
-
-            <column name="event_id" type="UUID">
+            <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="id" type="varchar(100)"/>
+            <column name="aggregate_id" type="varchar(50)"/>
             <column name="event_type" type="varchar(50)"/>
             <column name="payload" type="jsonb"/>
             <column name="status" type="varchar(20)"/>
@@ -23,13 +22,18 @@
             <column name="created_at" type="timestamp"/>
             <column name="updated_at" type="timestamp"/>
             <column name="processed_at" type="timestamp"/>
-
         </createTable>
 
         <createIndex tableName="outbox_table"
                      indexName="idx_outbox_status_created">
             <column name="status"/>
             <column name="created_at"/>
+        </createIndex>
+
+        <createIndex tableName="outbox_table"
+                     indexName="idx_outbox_status_updated">
+            <column name="status"/>
+            <column name="updated_at"/>
         </createIndex>
     </changeSet>
 
