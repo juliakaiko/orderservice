@@ -5,6 +5,7 @@ import com.mymicroservice.orderservice.exception.ItemNotFoundException;
 import com.mymicroservice.orderservice.exception.OrderAlreadyPaidException;
 import com.mymicroservice.orderservice.exception.OrderItemNotFoundException;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
+import com.mymicroservice.orderservice.exception.OutboxEventNotFoundException;
 import com.mymicroservice.orderservice.util.ErrorItem;
 import feign.FeignException;
 import jakarta.validation.ConstraintViolationException;
@@ -132,6 +133,12 @@ public class GlobalAdvice {
 
     @ExceptionHandler({OrderNotFoundException.class})
     public ResponseEntity<ErrorItem> handleOrderNotFoundException(OrderNotFoundException e) {
+        ErrorItem error = ErrorItem.generateMessage(e, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(error.getStatusCode()).body(error);
+    }
+
+    @ExceptionHandler({OutboxEventNotFoundException.class})
+    public ResponseEntity<ErrorItem> handleOutboxEventNotFoundException(OutboxEventNotFoundException e) {
         ErrorItem error = ErrorItem.generateMessage(e, HttpStatus.NOT_FOUND);
         return ResponseEntity.status(error.getStatusCode()).body(error);
     }

@@ -5,9 +5,8 @@ import com.mymicroservice.orderservice.model.OrderItem;
 public class OrderItemGenerator {
 
     public static OrderItem generateOrderItem() {
-
-        return  OrderItem.builder()
-                .quantity(10l)
+        return OrderItem.builder()
+                .quantity(10L)
                 .build();
     }
 }

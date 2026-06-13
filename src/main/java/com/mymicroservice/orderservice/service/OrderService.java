@@ -13,10 +13,6 @@ public interface OrderService {
 
     OrderWithUserResponse createOrder(OrderDto orderDto);
 
-    void updateOrderStatus(UUID orderId, OrderStatus status);
-
-    void updateOrdersListStatus(Set<UUID> ids, OrderStatus status);
-
     OrderWithUserResponse getOrderById(UUID orderId);
 
     OrderWithUserResponse updateOrder(UUID orderId, OrderDto orderDetails);

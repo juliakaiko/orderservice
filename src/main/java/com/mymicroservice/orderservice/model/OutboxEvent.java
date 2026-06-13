@@ -27,7 +27,7 @@ import java.util.UUID;
 public class OutboxEvent {
 
     @Id
-    private UUID eventId;
+    private UUID id;
     private String aggregateId;
     private String eventType;
 
@@ -39,7 +39,7 @@ public class OutboxEvent {
     private OutboxEventStatus status;
 
     // tracing
-    private String requestId;
+    private String traceId;
     private String sourceService;
 
     private LocalDateTime createdAt;

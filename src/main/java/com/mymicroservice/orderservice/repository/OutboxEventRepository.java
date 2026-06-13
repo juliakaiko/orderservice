@@ -13,7 +13,7 @@ public interface OutboxEventRepository extends JpaRepository<OutboxEvent, UUID> 
     /*
         FOR UPDATE - пессимистическая блокировка
         SKIP LOCKED - инстанс не будет ждать, пока освободится лок, а пойдет искать свободные строки в  таблице
-        Таким образом, таблица otbox будет вычитается несколькими инстансами
+        Таким образом, таблица outbox будет вычитается несколькими инстансами
      */
     @Query(value = "SELECT * FROM outbox_table " +
             "WHERE status IN (:statuses) " +

@@ -47,9 +47,9 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderWithUserResponse createOrder(OrderDto orderDto) {
         Order order = OrderMapper.INSTANCE.toEntity(orderDto);
-        log.info("createOrder(): {}",order);
         order.setCreationDate(LocalDateTime.now().withNano(0));
         order.setStatus(OrderStatus.CREATED);
+        log.info("createOrder(): {}", order);
 
         if (order.getOrderItems() != null) {
             for (OrderItem orderItem : order.getOrderItems()) {
@@ -63,39 +63,20 @@ public class OrderServiceImpl implements OrderService {
         order = orderRepository.save(order);
 
         OrderDto orderDtoFromDb = OrderMapper.INSTANCE.toDto(order);
-
-        log.info("BEFORE calling userClient.getUserById({})", orderDto.getUserId());
         UserDto userDtoFromUserService = userClient.getUserById(orderDto.getUserId());
-        log.info("AFTER calling userClient.getUserById({})", userDtoFromUserService.getUserId());
+        log.info("AFTER calling userClient.getUserById({}) - response: {}",
+                orderDto.getUserId(),
+                userDtoFromUserService.getName()
+        );
 
         OrderEventDto event = createOrderEvent(order);
-        outboxService.saveOutboxEvent(event.getOrderId(), createEventType(order), event);
+        outboxService.saveOutboxEvent(event, createEventType(order));
 
         // Send event to PaymentService directly to Kafka (without outbox)
         // sending with a callback, the status update will be performed after successful sending
         // /*orderEventProducer.sendCreateOrder(event, () -> {
         // updateOrderStatus(orderDtoFromDb.getId(), OrderStatus.PROCESSING); });*/
         return new OrderWithUserResponse(orderDtoFromDb, userDtoFromUserService);
-    }
-
-    @Override
-    @Transactional public void updateOrdersListStatus(Set<UUID> ids, OrderStatus status) {
-        List<Order> orderList = orderRepository.findAllByIdIn(ids);
-        for (Order order : orderList) {
-            order.setStatus(status);
-        }
-        orderRepository.saveAll(orderList);
-        log.info("Orders with ids {} were updated with status {}", ids, status);
-    }
-
-    @Override
-    @Transactional
-    public void updateOrderStatus(UUID orderId, OrderStatus status) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException("Order wasn't found with id " + orderId));
-        order.setStatus(status);
-        orderRepository.save(order);
-        log.info("Order with id {} was updated with status {}", orderId, status);
     }
 
     private OrderEventDto createOrderEvent(Order order) {
@@ -160,7 +141,7 @@ public class OrderServiceImpl implements OrderService {
         UserDto userDtoFromUserService = userClient.getUserById(orderDtoFromDb.getUserId());
 
         OrderEventDto event = createOrderEvent(order);
-        outboxService.saveOutboxEvent(event.getOrderId(), createEventType(order), event);
+        outboxService.saveOutboxEvent(event, createEventType(order));
 
         // Send event to PaymentService directly to Kafka (without outbox)
         // sending with a callback, the status update will be performed after successful sending

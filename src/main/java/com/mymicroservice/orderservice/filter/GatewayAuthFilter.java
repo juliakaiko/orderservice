@@ -18,22 +18,21 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import static com.mymicroservice.orderservice.util.CommonConstants.GATEWAY_SERVICE_NAME;
+import static com.mymicroservice.orderservice.util.CommonConstants.INTERNAL_CALL_HEADER;
+import static com.mymicroservice.orderservice.util.CommonConstants.SOURCE_SERVICE_HEADER;
+
 @Component
 @Slf4j
 public class GatewayAuthFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final String INTERNAL_CALL_HEADER = "X-Internal-Call";
-    private static final String SOURCE_SERVICE_HEADER = "X-Source-Service";
-    private static final String GATEWAY_SERVICE_NAME = "gateway";
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
-        String path = request.getRequestURI();
-
         try {
             if (isGatewayCall(request)) {
                 log.info("Request received from Gateway, processing JWT authentication");
