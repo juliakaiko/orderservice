@@ -1,4 +1,8 @@
+<<<<<<<< HEAD:src/test/java/com/mymicroservice/orderservice/integration/repository/OrderItemRepositoryTest.java
 package com.mymicroservice.orderservice.integration.repository;
+========
+package com.mymicroservice.orderservice.repository.testcontainer;
+>>>>>>>> main:src/test/java/com/mymicroservice/orderservice/repository/testcontainer/OrderItemRepositoryTest.java
 
 import com.mymicroservice.orderservice.configuration.AbstractContainerTest;
 import com.mymicroservice.orderservice.model.OrderItem;
@@ -14,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Set;
