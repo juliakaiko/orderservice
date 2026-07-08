@@ -1,6 +1,7 @@
 package com.mymicroservice.orderservice.unit.filter;
 
 import com.mymicroservice.orderservice.filter.GatewayAuthFilter;
+import com.mymicroservice.orderservice.security.AuthenticatedUser;
 import jakarta.servlet.FilterChain;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,8 +20,10 @@ import java.util.Base64;
 import static com.mymicroservice.orderservice.util.CommonConstants.GATEWAY_SERVICE_NAME;
 import static com.mymicroservice.orderservice.util.CommonConstants.INTERNAL_CALL_HEADER;
 import static com.mymicroservice.orderservice.util.CommonConstants.SOURCE_SERVICE_HEADER;
+import static com.mymicroservice.orderservice.util.data.TestConstants.TEST_USER_EMAIL;
 import static com.mymicroservice.orderservice.util.data.TestConstants.TEST_USER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -53,12 +56,28 @@ class GatewayAuthFilterTest {
     void doFilterInternal_ShouldAuthenticateUser_WhenGatewayHeadersAndJwtAreValid() throws Exception {
         request.addHeader(INTERNAL_CALL_HEADER, "true");
         request.addHeader(SOURCE_SERVICE_HEADER, GATEWAY_SERVICE_NAME);
-        request.addHeader("Authorization", "Bearer " + buildJwt(TEST_USER_ID.toString(), "USER"));
+        request.addHeader("Authorization", "Bearer " + buildJwt(TEST_USER_ID, TEST_USER_EMAIL, "USER"));
 
         gatewayAuthFilter.doFilter(request, response, filterChain);
 
-        assertNotNull(SecurityContextHolder.getContext().getAuthentication());
-        assertEquals(TEST_USER_ID.toString(), SecurityContextHolder.getContext().getAuthentication().getName());
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        assertNotNull(authentication);
+        assertInstanceOf(AuthenticatedUser.class, authentication.getPrincipal());
+        AuthenticatedUser principal = (AuthenticatedUser) authentication.getPrincipal();
+        assertEquals(TEST_USER_ID, principal.userId());
+        assertEquals(TEST_USER_EMAIL, principal.email());
+        verify(filterChain).doFilter(request, response);
+    }
+
+    @Test
+    void doFilterInternal_ShouldClearSecurityContext_WhenUserIdClaimMissing() throws Exception {
+        request.addHeader(INTERNAL_CALL_HEADER, "true");
+        request.addHeader(SOURCE_SERVICE_HEADER, GATEWAY_SERVICE_NAME);
+        request.addHeader("Authorization", "Bearer " + buildJwtWithoutUserId(TEST_USER_EMAIL, "USER"));
+
+        gatewayAuthFilter.doFilter(request, response, filterChain);
+
+        assertNull(SecurityContextHolder.getContext().getAuthentication());
         verify(filterChain).doFilter(request, response);
     }
 
@@ -97,7 +116,7 @@ class GatewayAuthFilterTest {
     void doFilterInternal_ShouldAuthenticateAdmin_WhenAdminRolePresent() throws Exception {
         request.addHeader(INTERNAL_CALL_HEADER, "true");
         request.addHeader(SOURCE_SERVICE_HEADER, GATEWAY_SERVICE_NAME);
-        request.addHeader("Authorization", "Bearer " + buildJwt(TEST_USER_ID.toString(), "ADMIN"));
+        request.addHeader("Authorization", "Bearer " + buildJwt(TEST_USER_ID, TEST_USER_EMAIL, "ADMIN"));
 
         gatewayAuthFilter.doFilter(request, response, filterChain);
 
@@ -106,12 +125,22 @@ class GatewayAuthFilterTest {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")));
     }
 
-    private String buildJwt(String subject, String role) {
+    private String buildJwt(Long userId, String email, String role) {
+        String payloadJson = "{\"sub\":\"" + email + "\",\"userId\":" + userId
+                + ",\"roles\":[\"" + role + "\"]}";
+        return encodeJwt(payloadJson);
+    }
+
+    private String buildJwtWithoutUserId(String email, String role) {
+        String payloadJson = "{\"sub\":\"" + email + "\",\"roles\":[\"" + role + "\"]}";
+        return encodeJwt(payloadJson);
+    }
+
+    private String encodeJwt(String payloadJson) {
         String header = Base64.getUrlEncoder().withoutPadding()
                 .encodeToString("{\"alg\":\"none\"}".getBytes(StandardCharsets.UTF_8));
         String payload = Base64.getUrlEncoder().withoutPadding()
-                .encodeToString(("{\"sub\":\"" + subject + "\",\"roles\":[\"" + role + "\"]}")
-                        .getBytes(StandardCharsets.UTF_8));
+                .encodeToString(payloadJson.getBytes(StandardCharsets.UTF_8));
         return header + "." + payload + ".signature";
     }
 }

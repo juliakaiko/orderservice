@@ -1,6 +1,7 @@
 package com.mymicroservice.orderservice.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mymicroservice.orderservice.security.AuthenticatedUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -86,16 +87,39 @@ public class GatewayAuthFilter extends OncePerRequestFilter {
         String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
         Map<String, Object> claims = objectMapper.readValue(payloadJson, Map.class);
 
-        String userId = (String) claims.get("sub");
+        String email = (String) claims.get("sub");
+        Long userId = extractUserId(claims);
+        if (userId == null) {
+            log.warn("No 'userId' claim in JWT, skipping authentication");
+            return;
+        }
+
         List<String> roles = (List<String>) claims.getOrDefault("roles", List.of());
 
         var authorities = roles.stream()
                 .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
                 .toList();
 
-        var auth = new UsernamePasswordAuthenticationToken(userId, null, authorities);
+        AuthenticatedUser principal = new AuthenticatedUser(userId, email);
+        var auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        log.info("SecurityContext set for user: {} with roles: {}", userId, roles);
+        log.info("SecurityContext set for userId: {} with roles: {}", userId, roles);
+    }
+
+    private Long extractUserId(Map<String, Object> claims) {
+        Object userIdClaim = claims.get("userId");
+        if (userIdClaim == null) {
+            return null;
+        }
+        if (userIdClaim instanceof Number number) {
+            return number.longValue();
+        }
+        try {
+            return Long.valueOf(userIdClaim.toString());
+        } catch (NumberFormatException ex) {
+            log.warn("Invalid 'userId' claim in JWT: {}", userIdClaim);
+            return null;
+        }
     }
 }

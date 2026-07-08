@@ -262,7 +262,7 @@ class OrderServiceImplTest {
         assertFalse(results.isEmpty());
         assertEquals(testUserDto, results.get(0).getUser());
 
-        verify(orderAuthorizationService).verifyCanAccessUserData(testUserDto.getUserId());
+        verify(orderAuthorizationService).verifyCanAccessUserEmail("test@example.com");
         verify(userClient, times(1)).getUserByEmail(anyString());
         verify(orderRepository, times(1)).findOrdersByUserId(testUserDto.getUserId());
     }

@@ -1,8 +1,12 @@
 package com.mymicroservice.orderservice.unit.security;
 
+import com.mymicroservice.orderservice.security.AuthenticatedUser;
 import com.mymicroservice.orderservice.security.OrderAuthorizationService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -10,15 +14,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 
+import static com.mymicroservice.orderservice.util.data.TestConstants.TEST_USER_EMAIL;
 import static com.mymicroservice.orderservice.util.data.TestConstants.TEST_USER_ID;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(MockitoExtension.class)
 class OrderAuthorizationServiceTest {
 
-    private final OrderAuthorizationService orderAuthorizationService = new OrderAuthorizationService();
+    @InjectMocks
+    private OrderAuthorizationService orderAuthorizationService;
 
     @AfterEach
     void tearDown() {
@@ -63,6 +70,13 @@ class OrderAuthorizationServiceTest {
     }
 
     @Test
+    void requireCurrentUserEmail_ShouldReturnEmail_WhenAuthenticated() {
+        authenticateAsUser(TEST_USER_ID);
+
+        assertEquals(TEST_USER_EMAIL, orderAuthorizationService.requireCurrentUserEmail());
+    }
+
+    @Test
     void isAdmin_ShouldReturnTrue_WhenAdminRolePresent() {
         authenticateAsAdmin();
 
@@ -85,6 +99,21 @@ class OrderAuthorizationServiceTest {
     }
 
     @Test
+    void verifyCanAccessUserEmail_ShouldAllowAccess_WhenUserRequestsOwnEmail() {
+        authenticateAsUser(TEST_USER_ID);
+
+        assertDoesNotThrow(() -> orderAuthorizationService.verifyCanAccessUserEmail(TEST_USER_EMAIL));
+    }
+
+    @Test
+    void verifyCanAccessUserEmail_ShouldThrowAccessDeniedException_WhenAccessingAnotherUser() {
+        authenticateAsUser(TEST_USER_ID);
+
+        assertThrows(AccessDeniedException.class,
+                () -> orderAuthorizationService.verifyCanAccessUserEmail("other@example.com"));
+    }
+
+    @Test
     void getCurrentUserIdIfNotAdmin_ShouldReturnEmpty_WhenUserIsAdmin() {
         authenticateAsAdmin();
 
@@ -104,15 +133,6 @@ class OrderAuthorizationServiceTest {
     }
 
     @Test
-    void requireCurrentUserId_ShouldThrowAccessDeniedException_WhenUserIdIsInvalid() {
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken("not-a-number", null, List.of())
-        );
-
-        assertThrows(AccessDeniedException.class, () -> orderAuthorizationService.requireCurrentUserId());
-    }
-
-    @Test
     void verifyCanCreateOrderForUser_ShouldAllowAccess_WhenCreatingForSelf() {
         authenticateAsUser(TEST_USER_ID);
 
@@ -120,21 +140,19 @@ class OrderAuthorizationServiceTest {
     }
 
     private void authenticateAsUser(Long userId) {
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(
-                        userId.toString(),
-                        null,
-                        List.of(new SimpleGrantedAuthority("ROLE_USER"))
-                )
-        );
+        setPrincipal(new AuthenticatedUser(userId, TEST_USER_EMAIL), "ROLE_USER");
     }
 
     private void authenticateAsAdmin() {
+        setPrincipal(new AuthenticatedUser(TEST_USER_ID, TEST_USER_EMAIL), "ROLE_ADMIN");
+    }
+
+    private void setPrincipal(AuthenticatedUser principal, String role) {
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken(
-                        TEST_USER_ID.toString(),
+                        principal,
                         null,
-                        List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                        List.of(new SimpleGrantedAuthority(role))
                 )
         );
     }

@@ -31,7 +31,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -165,9 +164,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional(readOnly = true)
     public List<OrderWithUserResponse> getOrdersByUserEmail(String email) {
-        UserDto userFromUserService = userClient.getUserByEmail(email);
-        orderAuthorizationService.verifyCanAccessUserData(userFromUserService.getUserId());
+        orderAuthorizationService.verifyCanAccessUserEmail(email);
 
+        UserDto userFromUserService = userClient.getUserByEmail(email);
         log.info("getOrdersByUserEmail: {}", email);
         List<Order> orderList = orderRepository.findOrdersByUserId(userFromUserService.getUserId());
         return orderList.stream()

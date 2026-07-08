@@ -1,5 +1,6 @@
 package com.mymicroservice.orderservice.security;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,7 @@ import java.util.Optional;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class OrderAuthorizationService {
 
     private static final String ADMIN_ROLE = "ROLE_ADMIN";
@@ -48,16 +50,27 @@ public class OrderAuthorizationService {
         }
     }
 
+    public void verifyCanAccessUserEmail(String requestedEmail) {
+        if (isAdmin()) {
+            return;
+        }
+        String currentEmail = requireCurrentUserEmail();
+        if (currentEmail == null || !currentEmail.equalsIgnoreCase(requestedEmail)) {
+            log.warn("Access denied: user {} attempted to access data of user {}", currentEmail, requestedEmail);
+            throw new AccessDeniedException("Access denied to another user's data");
+        }
+    }
+
     public Long requireCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new AccessDeniedException("User is not authenticated");
+        Long userId = currentUser().userId();
+        if (userId == null) {
+            throw new AccessDeniedException("Current user id is not available");
         }
-        try {
-            return Long.parseLong(authentication.getName());
-        } catch (NumberFormatException ex) {
-            throw new AccessDeniedException("Invalid user id in security context");
-        }
+        return userId;
+    }
+
+    public String requireCurrentUserEmail() {
+        return currentUser().email();
     }
 
     public Optional<Long> getCurrentUserIdIfNotAdmin() {
@@ -73,5 +86,15 @@ public class OrderAuthorizationService {
             return false;
         }
         return authentication.getAuthorities().contains(new SimpleGrantedAuthority(ADMIN_ROLE));
+    }
+
+    private AuthenticatedUser currentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null
+                || !authentication.isAuthenticated()
+                || !(authentication.getPrincipal() instanceof AuthenticatedUser authenticatedUser)) {
+            throw new AccessDeniedException("User is not authenticated");
+        }
+        return authenticatedUser;
     }
 }
