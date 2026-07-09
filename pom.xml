@@ -37,7 +37,7 @@
         <spring-security-test.version>6.5.2</spring-security-test.version>
         <common-events.version>1.0.0</common-events.version>
         <postgresql.version>42.7.4</postgresql.version>
-        <common-filters-starter.version>1.0.0</common-filters-starter.version>
+        <common-filters-starter.version>1.0.1</common-filters-starter.version>
         <uuid-creator.version>5.3.0</uuid-creator.version>
         <shedlock-provider-jdbc-template.version>4.45.0</shedlock-provider-jdbc-template.version>
         <shedlock-spring.version>4.45.0</shedlock-spring.version>
@@ -212,6 +212,17 @@
 			<artifactId>spring-boot-testcontainers</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>kafka</artifactId>
+			<version>${org.testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 		<!-- JWT -->
 		<dependency>
@@ -315,13 +326,40 @@
                         <spring.profiles.active>test</spring.profiles.active>
                         <testcontainers.dockerclient.version>1.44</testcontainers.dockerclient.version>
                     </systemPropertyVariables>
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                        <include>**/*IT.java</include>
+                    </includes>
                     <forkCount>1</forkCount>
                     <reuseForks>false</reuseForks>
                     <parallel>none</parallel>
                     <runOrder>filesystem</runOrder>
-                    <forkedProcessTimeoutInSeconds>120</forkedProcessTimeoutInSeconds>
+                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
 				</configuration>
 			</plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <!-- Attaches the Java Agent before running tests -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- Generates an XML report after test execution -->
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 </project>

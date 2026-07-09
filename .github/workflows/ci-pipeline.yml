@@ -83,18 +83,26 @@ jobs:
           unzip -q -j target/*.jar 'BOOT-INF/lib/*.jar' -d target/unpacked-libs || echo "No libraries found in JAR"
 
       # 9. Static code analysis with SonarCloud
+      - name: Check JaCoCo
+        run: |
+          ls -R target/site/jacoco
+          cat target/site/jacoco/jacoco.xml | head -20
+
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
+        run: |
+          mvn -B clean verify sonar:sonar \
+            -Dsonar.projectKey=juliakaiko_orderservice \
+            -Dsonar.projectName=orderservice \
+            -Dsonar.organization=juliakaiko \
+            -Dsonar.sources=src/main/java \
+            -Dsonar.tests=src/test/java \
+            -Dsonar.java.binaries=target/classes,target/generated-sources/annotations \
+            -Dsonar.java.test.binaries=target/test-classes \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml \
+            -Dsonar.sourceEncoding=UTF-8
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
-        with:
-          args: >
-            -Dsonar.projectKey=juliakaiko_orderservice
-            -Dsonar.projectName=orderservice
-            -Dsonar.organization=juliakaiko
-            -Dsonar.java.binaries=target/classes
-            -Dsonar.java.libraries=target/unpacked-libs/*.jar
 
       # 10. Log in to Docker Hub
       - name: Login to Docker Hub
@@ -107,5 +115,8 @@ jobs:
       - name: Build and Push Docker Image
         if: success()
         run: |
-          docker build -t juliakaiko94/orderservice:latest .
+          docker build \
+            --build-arg GITHUB_USERNAME=${{ github.actor }} \
+            --build-arg GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+            -t juliakaiko94/orderservice:latest .
           docker push juliakaiko94/orderservice:latest

@@ -5,6 +5,7 @@ import com.mymicroservice.orderservice.exception.ItemNotFoundException;
 import com.mymicroservice.orderservice.exception.OrderAlreadyPaidException;
 import com.mymicroservice.orderservice.exception.OrderItemNotFoundException;
 import com.mymicroservice.orderservice.exception.OrderNotFoundException;
+import com.mymicroservice.orderservice.exception.OutboxEventNotFoundException;
 import com.mymicroservice.orderservice.util.ErrorItem;
 import feign.FeignException;
 import jakarta.validation.ConstraintViolationException;
@@ -12,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -136,6 +138,12 @@ public class GlobalAdvice {
         return ResponseEntity.status(error.getStatusCode()).body(error);
     }
 
+    @ExceptionHandler({OutboxEventNotFoundException.class})
+    public ResponseEntity<ErrorItem> handleOutboxEventNotFoundException(OutboxEventNotFoundException e) {
+        ErrorItem error = ErrorItem.generateMessage(e, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(error.getStatusCode()).body(error);
+    }
+
     /**
      * Handles Jackson InvalidDefinitionException which occurs during JSON deserialization
      * when there are issues with object mapping definitions, particularly with managed/back references
@@ -178,8 +186,14 @@ public class GlobalAdvice {
      */
     @ExceptionHandler(FeignException.class)
     public ResponseEntity<ErrorItem> handleFeignException(FeignException e) {
-        HttpStatus status = HttpStatus.valueOf(e.status());
+        HttpStatus status = e.status() > 0 ? HttpStatus.valueOf(e.status()) : HttpStatus.BAD_GATEWAY;
         ErrorItem error = ErrorItem.generateMessage(e, status);
+        return ResponseEntity.status(error.getStatusCode()).body(error);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorItem> handleAccessDeniedException(AccessDeniedException e) {
+        ErrorItem error = ErrorItem.generateMessage(e, HttpStatus.FORBIDDEN);
         return ResponseEntity.status(error.getStatusCode()).body(error);
     }
 }

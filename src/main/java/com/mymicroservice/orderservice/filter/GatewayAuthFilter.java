@@ -1,6 +1,7 @@
 package com.mymicroservice.orderservice.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mymicroservice.orderservice.security.AuthenticatedUser;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,22 +19,21 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import static com.mymicroservice.orderservice.util.CommonConstants.GATEWAY_SERVICE_NAME;
+import static com.mymicroservice.orderservice.util.CommonConstants.INTERNAL_CALL_HEADER;
+import static com.mymicroservice.orderservice.util.CommonConstants.SOURCE_SERVICE_HEADER;
+
 @Component
 @Slf4j
 public class GatewayAuthFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private static final String INTERNAL_CALL_HEADER = "X-Internal-Call";
-    private static final String SOURCE_SERVICE_HEADER = "X-Source-Service";
-    private static final String GATEWAY_SERVICE_NAME = "gateway";
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-
-        String path = request.getRequestURI();
-
         try {
             if (isGatewayCall(request)) {
                 log.info("Request received from Gateway, processing JWT authentication");
@@ -87,16 +87,39 @@ public class GatewayAuthFilter extends OncePerRequestFilter {
         String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
         Map<String, Object> claims = objectMapper.readValue(payloadJson, Map.class);
 
-        String userId = (String) claims.get("sub");
+        String email = (String) claims.get("sub");
+        Long userId = extractUserId(claims);
+        if (userId == null) {
+            log.warn("No 'userId' claim in JWT, skipping authentication");
+            return;
+        }
+
         List<String> roles = (List<String>) claims.getOrDefault("roles", List.of());
 
         var authorities = roles.stream()
                 .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
                 .toList();
 
-        var auth = new UsernamePasswordAuthenticationToken(userId, null, authorities);
+        AuthenticatedUser principal = new AuthenticatedUser(userId, email);
+        var auth = new UsernamePasswordAuthenticationToken(principal, null, authorities);
         SecurityContextHolder.getContext().setAuthentication(auth);
 
-        log.info("SecurityContext set for user: {} with roles: {}", userId, roles);
+        log.info("SecurityContext set for userId: {} with roles: {}", userId, roles);
+    }
+
+    private Long extractUserId(Map<String, Object> claims) {
+        Object userIdClaim = claims.get("userId");
+        if (userIdClaim == null) {
+            return null;
+        }
+        if (userIdClaim instanceof Number number) {
+            return number.longValue();
+        }
+        try {
+            return Long.valueOf(userIdClaim.toString());
+        } catch (NumberFormatException ex) {
+            log.warn("Invalid 'userId' claim in JWT: {}", userIdClaim);
+            return null;
+        }
     }
 }

@@ -12,7 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
 
-@Service
+@Deprecated
+//@Service
 @RequiredArgsConstructor
 @Slf4j
 public class OrderEventProducer {
@@ -35,8 +36,7 @@ public class OrderEventProducer {
                 orderTopic
         );
 
-        CompletableFuture<SendResult<String, OrderEventDto>> future =
-                kafkaTemplate.send(message);
+        CompletableFuture<SendResult<String, OrderEventDto>> future = kafkaTemplate.send(message);
 
         future.whenComplete((result, ex) -> {
             if (ex == null) {

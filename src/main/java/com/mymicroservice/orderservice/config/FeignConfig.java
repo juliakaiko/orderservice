@@ -13,9 +13,9 @@ public class FeignConfig {
         return requestTemplate -> {
             requestTemplate.header("X-Internal-Call", "true");
 
-            String requestId = MDC.get("requestId");
-            if (requestId != null && !requestId.isEmpty()) {
-                requestTemplate.header("X-Request-Id", requestId);
+            String traceId = MDC.get("traceId");
+            if (traceId != null && !traceId.isEmpty()) {
+                requestTemplate.header("X-Trace-Id", traceId);
             }
         };
     }
