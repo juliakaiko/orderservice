@@ -42,6 +42,7 @@
         <shedlock-provider-jdbc-template.version>4.45.0</shedlock-provider-jdbc-template.version>
         <shedlock-spring.version>4.45.0</shedlock-spring.version>
         <wiremock.version>3.5.4</wiremock.version>
+        <openapi-generator.version>7.10.0</openapi-generator.version>
 	</properties>
 	<repositories>
         <repository>
@@ -264,6 +265,92 @@
 
 	<build>
 		<plugins>
+            <!-- OpenAPI Generator: генерирует Spring-интерфейсы API из api.yaml на этапе generate-sources -->
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator.version}</version>
+                <executions>
+                    <execution>
+                        <!-- id — уникальный идентификатор execution внутри pom.xml -->
+                        <id>orders-api</id>
+                        <goals>
+                            <!-- goal generate — запускает генерацию Java-классов из OpenAPI-спецификации -->
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <!-- inputSpec — путь к OpenAPI-файлу (контракт API) -->
+                            <inputSpec>${project.basedir}/api.yaml</inputSpec>
+                            <!-- modelPackage — пакет для DTO-моделей (не генерируем, используем существующие) -->
+                            <modelPackage>com.mymicroservice.orderservice.api.model</modelPackage>
+                            <!-- generateModels=false — не создавать DTO, чтобы избежать дубликатов с dto-пакетом -->
+                            <generateModels>false</generateModels>
+                            <!-- apiPackage — пакет для сгенерированных API-интерфейсов -->
+                            <apiPackage>com.mymicroservice.orderservice.api</apiPackage>
+                            <!-- generatorName=spring — генератор для Spring Boot REST API -->
+                            <generatorName>spring</generatorName>
+                            <!-- library=spring-boot — использовать Spring Boot аннотации и стиль -->
+                            <library>spring-boot</library>
+                            <configOptions>
+                                <!-- interfaceOnly=true — генерировать только интерфейс, реализация пишется вручную -->
+                                <interfaceOnly>true</interfaceOnly>
+                                <!-- useTags=true — группировать операции по OpenAPI-тегам (Orders → OrdersApi) -->
+                                <useTags>true</useTags>
+                                <!-- useSpringBoot3=true — совместимость с Spring Boot 3 / Jakarta EE -->
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <!-- useBeanValidation=true — добавить @Valid/@NotNull из схемы OpenAPI -->
+                                <useBeanValidation>true</useBeanValidation>
+                                <!-- skipDefaultInterface=true — не создавать default-методы в интерфейсе -->
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <!-- containerDefaultToNull=true — коллекции по умолчанию null вместо пустых списков -->
+                                <containerDefaultToNull>true</containerDefaultToNull>
+                            </configOptions>
+                            <!-- typeMappings — замена типов OpenAPI на Java-типы -->
+                            <typeMappings>
+                                <!-- OffsetDateTime=Instant — маппинг даты/времени на java.time.Instant -->
+                                <typeMapping>OffsetDateTime=Instant</typeMapping>
+                                <typeMapping>PageOrderDto=Page</typeMapping>
+                            </typeMappings>
+                            <!-- importMappings — явные import для замapped-типов -->
+                            <importMappings>
+                                <importMapping>OffsetDateTime=java.time.Instant</importMapping>
+                                <importMapping>OrderDto=com.mymicroservice.orderservice.dto.OrderDto</importMapping>
+                                <importMapping>OrderItemDto=com.mymicroservice.orderservice.dto.OrderItemDto</importMapping>
+                                <importMapping>OrderWithUserResponse=com.mymicroservice.orderservice.dto.OrderWithUserResponse</importMapping>
+                                <importMapping>UserDto=com.mymicroservice.orderservice.dto.UserDto</importMapping>
+                                <importMapping>OrderStatus=com.mymicroservice.orderservice.model.enums.OrderStatus</importMapping>
+                                <importMapping>PageOrderDto=org.springframework.data.domain.Page</importMapping>
+                                <importMapping>Page=org.springframework.data.domain.Page</importMapping>
+                            </importMappings>
+                            <!-- additionalProperties — дополнительные настройки генератора -->
+                            <additionalProperties>
+                                <!-- removeEnumValuePrefix=false — не удалять префиксы у значений enum -->
+                                <removeEnumValuePrefix>false</removeEnumValuePrefix>
+                            </additionalProperties>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- build-helper: добавляет сгенерированные исходники в classpath компиляции -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>add-generated-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/openapi/src/main/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -357,6 +444,32 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>com/mymicroservice/orderservice/OrderserviceApplication</exclude>
+                                <exclude>com/mymicroservice/orderservice/kafka/OrderEventProducer</exclude>
+                                <exclude>com/mymicroservice/orderservice/api/*</exclude>
+                            </excludes>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.95</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

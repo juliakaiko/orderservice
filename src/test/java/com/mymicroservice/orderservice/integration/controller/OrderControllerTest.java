@@ -1,7 +1,7 @@
 package com.mymicroservice.orderservice.integration.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mymicroservice.orderservice.controller.OrderController;
+import com.mymicroservice.orderservice.controller.OrderControllerApiImpl;
 import com.mymicroservice.orderservice.config.SecurityConfig;
 import com.mymicroservice.orderservice.dto.OrderDto;
 import com.mymicroservice.orderservice.dto.OrderItemDto;
@@ -48,7 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc(addFilters = false)
 @Import(SecurityConfig.class)
 @WithMockUser(roles = {"ADMIN", "USER"})
-@WebMvcTest(OrderController.class)
+@WebMvcTest(OrderControllerApiImpl.class)
 @ActiveProfiles("test")
 @Slf4j
 public class OrderControllerTest {
@@ -108,13 +108,23 @@ public class OrderControllerTest {
         log.info("▶ Running test: createOrder_ShouldReturnCreatedOrderWithUserResponse, ORDER={}", testOrderDto);
         when(orderService.createOrder(any(OrderDto.class))).thenReturn(testOrderWithUserResponse);
 
-        mockMvc.perform(post("/api/orders/")
+        mockMvc.perform(post("/api/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testOrderDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.order.id").value(TEST_ORDER_UUID.toString()));
 
         verify(orderService).createOrder(any(OrderDto.class));
+    }
+
+    @Test
+    public void createOrder_ShouldReturnNotFound_WhenServiceReturnsNull() throws Exception {
+        when(orderService.createOrder(any(OrderDto.class))).thenReturn(null);
+
+        mockMvc.perform(post("/api/orders")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(testOrderDto)))
+                .andExpect(status().isNotFound());
     }
 
     @Test
