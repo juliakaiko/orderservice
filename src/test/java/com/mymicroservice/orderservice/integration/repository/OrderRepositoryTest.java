@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/test/java/com/mymicroservice/orderservice/integration/repository/OrderRepositoryTest.java
 package com.mymicroservice.orderservice.integration.repository;
-========
-package com.mymicroservice.orderservice.repository.testcontainer;
->>>>>>>> main:src/test/java/com/mymicroservice/orderservice/repository/testcontainer/OrderRepositoryTest.java
 
 import com.mymicroservice.orderservice.model.Order;
 import com.mymicroservice.orderservice.repository.OrderRepository;
@@ -17,14 +13,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-<<<<<<<< HEAD:src/test/java/com/mymicroservice/orderservice/integration/repository/OrderRepositoryTest.java
 import com.mymicroservice.orderservice.configuration.AbstractContainerTest;
 import com.mymicroservice.orderservice.model.enums.OrderStatus;
-========
-import com.mymicroservice.orderservice.config.AbstractContainerTest;
-import com.mymicroservice.orderservice.model.OrderStatus;
-import org.springframework.test.context.ActiveProfiles;
->>>>>>>> main:src/test/java/com/mymicroservice/orderservice/repository/testcontainer/OrderRepositoryTest.java
 
 import java.util.List;
 import java.util.Set;

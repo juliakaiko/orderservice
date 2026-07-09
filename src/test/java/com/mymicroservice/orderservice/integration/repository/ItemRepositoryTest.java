@@ -1,8 +1,4 @@
-<<<<<<<< HEAD:src/test/java/com/mymicroservice/orderservice/integration/repository/ItemRepositoryTest.java
 package com.mymicroservice.orderservice.integration.repository;
-========
-package com.mymicroservice.orderservice.repository.testcontainer;
->>>>>>>> main:src/test/java/com/mymicroservice/orderservice/repository/testcontainer/ItemRepositoryTest.java
 
 import com.mymicroservice.orderservice.configuration.AbstractContainerTest;
 import com.mymicroservice.orderservice.model.Item;
