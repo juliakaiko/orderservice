@@ -1,5 +1,11 @@
 package com.mymicroservice.orderservice.controller;
 
+/*
+ * ============================================================================
+ * УСТАРЕВШАЯ РУЧНАЯ РЕАЛИЗАЦИЯ — СОХРАНЕНА ДЛЯ СПРАВКИ
+ * Активная реализация: OrderControllerApiImpl (implements OrdersApi из api.yaml)
+ * ============================================================================
+
 import com.mymicroservice.orderservice.dto.OrderDto;
 import com.mymicroservice.orderservice.dto.OrderWithUserResponse;
 import com.mymicroservice.orderservice.model.enums.OrderStatus;
@@ -112,3 +118,6 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getAllOrdersNativeWithPagination(page, size));
     }
 }
+
+ * ============================================================================
+ */

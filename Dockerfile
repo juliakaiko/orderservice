@@ -13,6 +13,7 @@ RUN mkdir -p /root/.m2
 
 COPY maven-settings.xml /root/.m2/settings.xml
 COPY pom.xml .
+COPY api.yaml .
 COPY src ./src
 
 RUN mvn -B clean package -DskipTests
